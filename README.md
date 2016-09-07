@@ -1,23 +1,35 @@
-#Cmake based project
+#Jobify
 
 # **AppServer** #
 
 
-**Build JSONcpp amalgamated sources:**
+**Building JSONcpp**
+1. Clone JSONCpp from https://github.com/open-source-parsers/jsoncpp.git
 
-1. cd src/jsoncpp/
+2. cd jsoncpp
 
-2. python amalgamate.py
+3. python amalgamate.py
 
+4. mkdir build && cd build
 
-**Build App Steps:**
+5. cmake ..
 
-1. mkdir build
+6. sudo make install
 
-2. cd build
+**Building AppServer**
 
-2. cmake ..
+1. cd AppServer/
 
-3. make
+2. mkdir build && cd build
 
-4. ./main
+3. cmake ..
+
+4. make
+
+5. ./main
+
+**Simple Test**
+
+1. cd AppServer/
+
+2. sh prueba.sh
