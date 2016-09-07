@@ -1,0 +1,17 @@
+#CMake
+
+CMakeFiles
+CMakeCache.txt
+CMakeLists.txt.user
+cmake_install.cmake
+install_manifest.txt
+CMakeLists.txt.user
+
+
+# qtcreator generated files
+*.pro.user*
+
+#Build folder
+
+/build
+

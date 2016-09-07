@@ -1,0 +1,18 @@
+[  
+    {  
+        "user":"John",
+        "pass":"Berlin"
+    },
+    {  
+        "user":"LaloLanda",
+        "pass":"123456"
+    },
+    {  
+        "user":"Homero",
+        "pass":"qwerty"
+    },
+    {  
+        "user":"Bart",
+        "pass":"654321"
+    }
+]
