@@ -1,0 +1,29 @@
+{
+	"users" : 
+	[
+		{
+			"email" : "John@gmail.com",
+			"password" : "Berlin"
+		},
+		{
+			"email" : "LaloLanda@gmail.com",
+			"password" : "123456"
+		},
+		{
+			"email" : "Homero@gmail.com",
+			"password" : "qwerty"
+		},
+		{
+			"email" : "Bart@hotmail.com",
+			"password" : "654321"
+		},
+		{
+			"email" : "locolope@yahoo.com",
+			"password" : "123456"
+		},
+		{
+			"email" : "locolope@yahoo.com.ar",
+			"password" : "123456"
+		}
+	]
+}

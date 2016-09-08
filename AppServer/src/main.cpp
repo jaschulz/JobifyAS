@@ -16,29 +16,16 @@ public:
 		for (Json::ValueConstIterator it = users.begin(); it != users.end();
 				++it) {
 			const Json::Value& user = *it;
-			if (value.compare(user["user"].asString()) == 0) // if by "Petr"
-					{
-				std::cout << "encontro el user" << endl;
-				return 0; // take a copy
+			if (value.compare(user["email"].asString()) == 0)
+			{
+				return 0;
 			}
-			std::cout << user["user"].asString() << endl;
 		}
-
-		return 1; // and return
+		return 1;
 	}
 
 	void registerUser(Request &request, JsonResponse &response) {
 
-		/*		Json::Value users;
-		 Json::Value user1;
-		 Json::Value user2;
-		 user1["login"] = "locolope";
-		 user1["pass"] = "123456";
-		 user2["login"] = "lima";
-		 user2["pass"] = "qwerty";
-		 users.append(user1);
-		 users.append(user2);
-		 */
 		Json::Value users;
 		Json::Reader reader;
 
@@ -60,15 +47,12 @@ public:
 					<< reader2.getFormattedErrorMessages();
 
 		}
-		string username = root.get("user", "").asString();
-		string password = root.get("pass", "").asString();
+		string username = root.get("email", "").asString();
+		string password = root.get("password", "").asString();
 
 		Json::Value user1;
-		user1["user"] = username;
-		user1["pass"] = password;
-
-		//response["result"] = username;//body.toStyledString();
-		//response["result"].append(users);
+		user1["email"] = username;
+		user1["password"] = password;
 
 		file.close();
 
@@ -108,10 +92,6 @@ public:
 
 		}
 
-		Json::Value user1;
-		user1["user"] = "locolope";
-		user1["pass"] = "123456";
-		users["users"].append(user1);
 		std::string data = request.getData();
 
 		Json::Value root;
@@ -124,20 +104,14 @@ public:
 
 		}
 		string username =
-				root.get("user", "A Default Value if not exists").asString();
+				root.get("email", "A Default Value if not exists").asString();
 
-//		body["body"] = request.getData();
-
-		//string username = body.get("login", "fuck").asString();
-		string password = root.get("pass", "").asString();
-
-		//response["result"] = username;//body.toStyledString();
-		//response["result"].append(users);
+		string password = root.get("password", "").asString();
 
 		if (jsonContainsValue(users, username) == 0) { //  == 0 && password.compare(user1["pass"].asString()) == 0) {
 			response["result"].append("login Ok");
 		} else {
-			response["result"].append(users);
+			response["result"].append("login Failed");
 		}
 	}
 
