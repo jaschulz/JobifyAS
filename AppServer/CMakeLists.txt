@@ -38,7 +38,7 @@ add_library (mongoose ${SOURCES})
 target_link_libraries (mongoose ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
 # Compiling executable
-add_executable (main src/main.cpp)
+add_executable (main src/main.cpp src/JobifyController.cpp src/JobifyController.h)
 target_link_libraries (main mongoose)
 
 # install
