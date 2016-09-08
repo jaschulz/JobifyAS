@@ -39,7 +39,7 @@ target_link_libraries (mongoose ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
 # Compiling executable
 add_executable (main src/main.cpp src/JobifyController.cpp src/JobifyController.h)
-target_link_libraries (main mongoose)
+target_link_libraries (main mongoose -L/usr/lib/x86_64-linux-gnu -lcurl -Wl,-Bsymbolic-functions -Wl,-z,relro)
 
 # install
 set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")

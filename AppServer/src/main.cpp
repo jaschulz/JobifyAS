@@ -23,7 +23,7 @@ int main() {
 	signal(SIGINT, handle_signal);
 
 	JobifyController jController;
-	Server server(8080);
+	Server server(8081);
 	server.registerController(&jController);
 	server.setOption("enable_directory_listing", "false");
 	server.start();

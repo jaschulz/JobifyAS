@@ -4,8 +4,12 @@
 #include <fstream>
 #include <iostream>
 #include "JobifyController.h"
+#include <curl/curl.h>
 
 
+
+
+	string data; //will hold the url's contents
 
 	int JobifyController::jsonContainsValue(const Json::Value& root, string key, string value) {
 		const Json::Value& users = root["users"];
@@ -113,6 +117,36 @@
 		}
 	}
 
+	size_t write_data(char* buf, size_t size, size_t nmemb, void* up)
+	{ //callback must have this declaration
+	    //buf is a pointer to the data that curl has for us
+	    //size*nmemb is the size of the buffer
+
+	    for (int c = 0; c<size*nmemb; c++)
+	    {
+		data.push_back(buf[c]);
+	    }
+	    return size*nmemb; //tell curl how many bytes we handled
+	}
+
+	void JobifyController::getJobPositions(Request &request, JsonResponse &response) {
+		CURL * curl_handle;
+		curl_handle = curl_easy_init();
+		curl_global_init(CURL_GLOBAL_ALL);
+
+		/* init the curl session */ 
+		curl_handle = curl_easy_init();
+
+		/* set URL to get */ 
+		curl_easy_setopt(curl_handle, CURLOPT_URL, "http://localhost:8080/job_positions");
+
+		/* send all data to this function  */ 
+		curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+		curl_easy_perform(curl_handle);
+		response["result"] = data;
+		 
+	}
+
 	void JobifyController::setup() {
 		// Example of prefix, putting all the urls into "/api"
 		setPrefix("/api");
@@ -120,5 +154,6 @@
 		addRouteResponse("GET", "/login", JobifyController, login, JsonResponse);
 		addRouteResponse("POST", "/registerUser", JobifyController, registerUser,
 				JsonResponse);
+		addRouteResponse("GET", "/job_positions", JobifyController, getJobPositions, JsonResponse);
 	}
 

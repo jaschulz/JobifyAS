@@ -23,6 +23,8 @@ public:
 
 	void setup();
 
+	void getJobPositions(Request &request, JsonResponse &response);
+
 };
 
 #endif 
