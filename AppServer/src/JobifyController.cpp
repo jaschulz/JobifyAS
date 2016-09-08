@@ -60,34 +60,28 @@
 
 		file.close();
 
-		if (jsonContainsValue(users,"email" ,username) == 1) { //  == 0 && password.compare(user1["pass"].asString()) == 0) {
+		JsonResponse jResponse;
+
+		if (jsonContainsValue(users,"email" ,username) == 1) { 
 			users["users"].append(user1);
 			Json::StyledStreamWriter writer;
 			std::ofstream out("users.json");
 			writer.write(out, users);
 			out.close();
-			response["result"].append("Registration Ok");
+			jResponse["token"] = "ok";
+			fillResponse(response,jResponse,200);
 		} else {
-			response["result"].append("The email provided is already registered");
+			jResponse["error"] = "The email provided is already registered";
+			fillResponse(response,jResponse,401);
 		}
 	}
 
 	void JobifyController::login(Request &request, JsonResponse &response) {
-		/*		Json::Value users;
-		 Json::Value user1;
-		 Json::Value user2;
-		 user1["login"] = "locolope";
-		 user1["pass"] = "123456";
-		 user2["login"] = "lima";
-		 user2["pass"] = "qwerty";
-		 users.append(user1);
-		 users.append(user2);
-		 */
+		
 		Json::Value users;
 		Json::Reader reader;
 
 		std::ifstream file("users.json", std::ifstream::binary);
-		//file >> users;
 
 		bool parsingSuccessful2 = reader.parse(file, users, true); //parse process
 		if (!parsingSuccessful2) {
