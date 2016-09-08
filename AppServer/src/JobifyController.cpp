@@ -141,9 +141,18 @@
 		curl_easy_setopt(curl_handle, CURLOPT_URL, "http://localhost:8080/job_positions");
 
 		/* send all data to this function  */ 
+		
+		curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0L);
 		curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
-		curl_easy_perform(curl_handle);
-		response["result"] = data;
+		CURLcode res = curl_easy_perform(curl_handle);
+		if (res != CURLE_OK) {
+			response["Error"] = curl_easy_strerror(res);
+
+		} else {
+			response["result"] = data;
+		}
+		curl_easy_cleanup(curl_handle);
+
 		 
 	}
 
