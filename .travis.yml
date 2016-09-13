@@ -1,0 +1,12 @@
+language: cpp
+
+before_install:
+ - git clone --branch=master https://github.com/open-source-parsers/jsoncpp.git
+ - cd jsoncpp
+ - python amalgamate.py
+ - mkdir build && cd build
+ - cmake ..
+ - sudo make install
+ - sudo apt-get install libcurl4-openssl-dev
+after_failure:
+- cat build/reports/*/*.xml
