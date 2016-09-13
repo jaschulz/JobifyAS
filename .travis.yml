@@ -3,15 +3,14 @@ language: cpp
 before_install:
  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
  - sudo apt-get update -qq
- - git clone --branch=master https://github.com/open-source-parsers/jsoncpp.git
+cache:
+  directories:
+    $HOME/AppServer
+
 install:
  - sudo apt-get install -qq g++-4.8
  - export CXX="g++-4.8"
- - cd jsoncpp
- - python amalgamate.py
- - mkdir build && cd build
- - cmake ..
- - make install
+ - ./install jsoncpp travis.sh "${HOME}/AppServer"
  - apt-get install libcurl4-openssl-dev
 after_failure:
 - cat build/reports/*/*.xml
