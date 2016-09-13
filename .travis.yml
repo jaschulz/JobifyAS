@@ -13,6 +13,6 @@ install:
  - mkdir build && cd build
  - cmake .. -DCMAKE_INSTALL_PREFIX="json" -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=ON -DJSONCPP_WITH_CMAKE_PACKAGE=ON -DCMAKE_BUILD_TYPE="Release"
  - make -j2 install
- - apt-get install libcurl4-openssl-dev
+ - sudo apt-get install libcurl4-openssl-dev
 after_failure:
 - cat build/reports/*/*.xml
