@@ -10,7 +10,7 @@ cache:
 install:
  - sudo apt-get install -qq g++-4.8
  - export CXX="g++-4.8"
- - ./install jsoncpp travis.sh "${HOME}/AppServer"
+ - ./install-jsoncpp-travis.sh "${HOME}/AppServer"
  - apt-get install libcurl4-openssl-dev
 after_failure:
 - cat build/reports/*/*.xml
