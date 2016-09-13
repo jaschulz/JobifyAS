@@ -1,9 +1,9 @@
 language: cpp
 
 before_install:
- - add-apt-repository ppa:ubuntu-toolchain-r/test
- - apt-get update
- - apt-get install gcc-4.7 g++-4.7
+ - sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+ - sudo apt-get update
+ - sudo apt-get install gcc-4.7 g++-4.7
  - git clone --branch=master https://github.com/open-source-parsers/jsoncpp.git
  - cd jsoncpp
  - python amalgamate.py
