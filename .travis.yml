@@ -7,7 +7,7 @@ before_install:
 install:
  - sudo apt-get install -qq g++-4.8
  - export CXX="g++-4.8"
- - install-jsoncpp-travis.sh
+ - sh install-jsoncpp-travis.sh
  - apt-get install libcurl4-openssl-dev
 after_failure:
 - cat build/reports/*/*.xml
