@@ -15,8 +15,7 @@ install:
  - make -j2 install
  - sudo apt-get install libcurl4-openssl-dev
 
-script: "bash -c ./build.sh"
-	
+script: "bash -c ./build.sh"	
 
 after_failure:
 - cat build/reports/*/*.xml
