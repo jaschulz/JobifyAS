@@ -1,23 +1,32 @@
-sudo: required
-
-dist: trusty
-
 language: cpp
 
-compiler:
-  - gcc
-
 before_install:
-  - sudo pip install cpp-coveralls
+ - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+ - sudo apt-get update -qq
+ - git clone --branch=master https://github.com/open-source-parsers/jsoncpp.git
 
 install:
-  - cd AppServer
+ - sudo apt-get install -qq g++-4.8
+ - export CXX="g++-4.8"
+ - cd jsoncpp
+ - python amalgamate.py
+ - mkdir build && cd build
+ - cmake .. -DCMAKE_INSTALL_PREFIX="json" -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=ON -DJSONCPP_WITH_CMAKE_PACKAGE=ON -DCMAKE_BUILD_TYPE="Release"
+ - make -j2 install
+ - cd .. && cd ..
+ - sudo apt-get install libcurl4-openssl-dev
+ - echo "Installing mongose-cpp"
+ - wget https://github.com/Gregwar/mongoose-cpp/archive/master.zip
+ - unzip master.zip
+ - rm master.zip
+ - cd mongoose-cpp-master
+ - cmake . 
+ - make install
+ - cd ..
+ - cd AppServer/
  - mkdir build && cd build
  - cmake ..
  - make
-
-script:
-  - ctest
 
 notifications:
   slack: 7552-tallerii:zleHiBV470j46D1j36Xl0TUb
