@@ -36,6 +36,9 @@ cd mongoose-cpp-master && \
 cmake . && \
 make install && \
 
+cd $install_dir
+sudo apt-get install libcurl4-openssl-dev
+
 
 cd $root_dir
 rm -rf temp_install
