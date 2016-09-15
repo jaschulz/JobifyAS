@@ -14,3 +14,6 @@ install:
   - cd AppServer
   - chmod +x install.sh
   - sudo ./install.sh
+
+notifications:
+  slack: 7552-tallerii:zleHiBV470j46D1j36Xl0TUb
