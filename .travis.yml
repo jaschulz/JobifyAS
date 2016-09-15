@@ -4,6 +4,9 @@ before_install:
  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
  - sudo apt-get update -qq
  - git clone --branch=master https://github.com/open-source-parsers/jsoncpp.git
+ - wget https://github.com/Gregwar/mongoose-cpp/archive/master.zip
+ - unzip master.zip
+ - rm master.zip
 
 install:
  - sudo apt-get install -qq g++-4.8
@@ -15,7 +18,10 @@ install:
  - make -j2 install
  - cd .. && cd ..
  - sudo apt-get install libcurl4-openssl-dev
- - cd AppServer/
+ - cd mongoose-cpp-master
+ - cmake .
+ - make install
+ - cd AppServer
  - mkdir build && cd build
  - cmake ..
  - make
