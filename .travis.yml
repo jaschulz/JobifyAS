@@ -22,8 +22,8 @@ install:
  - unzip master.zip
  - rm master.zip
  - cd mongoose-cpp-master
- - cmake . 
- - make install
+ - cmake -DEXAMPLES=ON -DHAS_JSONCPP=ON..
+ - make
  - cd ..
  - cd AppServer/
  - mkdir build && cd build
