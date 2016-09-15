@@ -1,5 +1,3 @@
-sudo: required
-
 language: cpp
 
 before_install:
@@ -17,14 +15,6 @@ install:
  - make -j2 install
  - cd .. && cd ..
  - sudo apt-get install libcurl4-openssl-dev
- - echo "Installing mongose-cpp"
- - wget https://github.com/Gregwar/mongoose-cpp/archive/master.zip
- - unzip master.zip
- - rm master.zip
- - cd mongoose-cpp-master
- - cmake -DEXAMPLES=ON -DHAS_JSONCPP=ON..
- - make
- - cd ..
  - cd AppServer/
  - mkdir build && cd build
  - cmake ..
