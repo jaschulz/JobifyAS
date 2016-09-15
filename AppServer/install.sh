@@ -32,7 +32,8 @@ make install && \
 
 sudo apt-get install libcurl4-openssl-dev
 
-cd ../../AppServer
+cd $root_dir
+cd AppServer
 mkdir build && cd build
 cmake ..
 make
