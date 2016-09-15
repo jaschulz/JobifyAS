@@ -14,3 +14,5 @@ install:
   - cd AppServer
   - chmod +x install.sh
   - sudo ./install.sh
+
+script: make

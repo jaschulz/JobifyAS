@@ -32,4 +32,4 @@ sudo apt-get install libcurl4-openssl-dev
 cd $root_dir
 echo "Make and install"
 mkdir -p build && cd build && \
-cmake .. && make
+cmake .. 
