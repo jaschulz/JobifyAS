@@ -33,3 +33,4 @@ cd $root_dir
 echo "Make and install"
 mkdir -p build && cd build && \
 cmake .. 
+make
