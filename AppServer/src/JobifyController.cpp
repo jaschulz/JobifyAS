@@ -82,7 +82,7 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	bool parsingSuccessful2 = reader.parse(file, users, true); //parse process
 	if (!parsingSuccessful2) {
-		std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
+		std::cout << "Failed to parse 1" << reader.getFormattedErrorMessages();
 
 	}
 
@@ -93,19 +93,18 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 	Json::Reader reader2;
 	bool parsingSuccessful = reader2.parse(data.c_str(), root); //parse process
 	if (!parsingSuccessful) {
-		std::cout << "Failed to parse" << reader2.getFormattedErrorMessages();
+		std::cout << "Failed to parse 2" << reader2.getFormattedErrorMessages();
 
 	}
-	string username =
-			root.get("email", "A Default Value if not exists").asString();
+	string username = root.get("email", "").asString();
 
 	string password = root.get("password", "").asString();
 
-	if (jsonContainsValue(users, "email", username) == 0
-			&& jsonContainsValue(users, "password", password) == 0) {
-		response["result"].append("login Ok");
+	if ((jsonContainsValue(users, "email", username) == 0)
+			&& (jsonContainsValue(users, "password", password) == 0)) {
+		response["result"] = "login Ok";
 	} else {
-		response["result"].append("login Failed");
+		response["result"] = "login Failed";
 	}
 }
 
