@@ -2,18 +2,13 @@
 #include <sstream>
 #include <string>
 
-#include "leveldb/db.h"
-
 using namespace std;
 
-int main(int argc, char** argv)
+int dbController::connect(string dataBase)
 {
-    // Set up database connection information and open database
-    leveldb::DB* db;
-    leveldb::Options options;
     options.create_if_missing = true;
 
-    leveldb::Status status = leveldb::DB::Open(options, "./testdb", &db);
+    leveldb::Status status = leveldb::DB::Open(options, dataBase.c_str(), &db);
 
     if (false == status.ok())
     {
@@ -21,7 +16,9 @@ int main(int argc, char** argv)
         cerr << status.ToString() << endl;
         return -1;
     }
-    
+	return 1;
+}
+/*
     // Add 256 values to the database
     leveldb::WriteOptions writeOptions;
     for (unsigned int i = 0; i < 256; ++i)
@@ -54,7 +51,19 @@ int main(int argc, char** argv)
 	
     
     delete it;
+    */
+
+int dbController::addNewUser(Json::Value &user){
+    leveldb::WriteOptions writeOptions;
+	string username = user.get("email", "").asString();
+	string password = user.get("password", "").asString();
+
+        
+        db->Put(writeOptions, username, password);
     
+}
+
+void dbController::CloseDB(){
     // Close the database
     delete db;
 }

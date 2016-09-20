@@ -37,6 +37,12 @@ set (EXTRA_LIBS ${EXTRA_LIBS} dl)
 add_library (mongoose ${SOURCES})
 target_link_libraries (mongoose ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
+set (MYSOURCES "${PROJECT_SOURCE_DIR}/src")
+file(GLOB ${MYSOURCES}
+	"*.h"
+	"*.cpp"
+)
+
 # Compiling executable
 file(GLOB MYSOURCES
     src/*.h
