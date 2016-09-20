@@ -38,7 +38,13 @@ add_library (mongoose ${SOURCES})
 target_link_libraries (mongoose ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
 # Compiling executable
-add_executable (main src/main.cpp src/JobifyController.cpp src/JobifyController.h)
+file(GLOB MYSOURCES
+    src/*.h
+    src/*.cpp
+)
+
+add_executable(main ${MYSOURCES})
+#add_executable (main src/main.cpp src/JobifyController.cpp src/JobifyController.h src/SSHandler.cpp src/SSHandler.h)
 target_link_libraries (main mongoose -L/usr/lib/x86_64-linux-gnu -lcurl -Wl,-Bsymbolic-functions -Wl,-z,relro)
 
 # install
