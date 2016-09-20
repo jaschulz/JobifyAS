@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "leveldb/db.h"
+#include <json/json.h>
 
 using namespace std;
 
@@ -19,6 +20,7 @@ public:
 	int connect(string dataBase);
 	void CloseDB();
 	int addNewUser(Json::Value &user);
+	int verifyLogin(Json::Value &user);
 };
 
 #endif 

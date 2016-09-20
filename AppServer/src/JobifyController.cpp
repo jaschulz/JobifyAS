@@ -70,7 +70,15 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 		fillResponse(response, jResponse, 200);
 
 	} else {
-		jResponse["error"] = "Error";
+	
+		string Result;          // string which will contain the result
+
+ostringstream convert;   // stream used for the conversion
+
+convert << status;      // insert the textual representation of 'Number' in the characters in the stream
+
+Result = convert.str(); 
+		jResponse["error"] = "Error " + Result ;
 		fillResponse(response, jResponse, 401);
 
 	}
@@ -94,13 +102,13 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 	Json::Value users;
 	Json::Reader reader;
 
-	std::ifstream file("users.json", std::ifstream::binary);
+	/*std::ifstream file("users.json", std::ifstream::binary);
 
 	bool parsingSuccessful2 = reader.parse(file, users, true); //parse process
 	if (!parsingSuccessful2) {
 		std::cout << "Failed to parse 1" << reader.getFormattedErrorMessages();
 
-	}
+	}*/
 
 	std::string data = request.getData();
 
@@ -116,8 +124,15 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	string password = root.get("password", "").asString();
 
-	if ((jsonContainsValue(users, "email", username) == 0)
-			&& (jsonContainsValue(users, "password", password) == 0)) {
+	/*if ((jsonContainsValue(users, "email", username) == 0)
+			&& (jsonContainsValue(users, "password", password) == 0)) {*/
+
+	dbController dbCont;
+	dbCont.connect("./testdb");
+	int status = dbCont.verifyLogin(root);
+	dbCont.CloseDB();
+
+	if (status == 1) {
 		response["result"] = "login Ok";
 	} else {
 		response["result"] = "login Failed";
