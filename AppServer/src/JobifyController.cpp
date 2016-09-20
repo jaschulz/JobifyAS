@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include "JobifyController.h"
+#include "dbController.h"
 #include <curl/curl.h>
 
 string data; //will hold the url's contents
@@ -32,12 +33,12 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	Json::Value users;
 	Json::Reader reader;
 
-	std::ifstream file("users.json", std::ifstream::binary);
+/*	std::ifstream file("users.json", std::ifstream::binary);
 	bool parsingSuccessful2 = reader.parse(file, users, true); //parse process
 	if (!parsingSuccessful2) {
 		std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
 
-	}
+	}*/
 	std::string data = request.getData();
 
 	Json::Value root;
@@ -55,11 +56,26 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	user1["email"] = username;
 	user1["password"] = password;
 
-	file.close();
+	//file.close();
+
+	dbController dbCont;
+	dbCont.connect("./testdb");
+	int status = dbCont.addNewUser(root);
+	dbCont.CloseDB();
 
 	JsonResponse jResponse;
 
-	if (jsonContainsValue(users, "email", username) == 1) {
+
+	if (status == 1) {
+		jResponse["token"] = "ok";
+		fillResponse(response, jResponse, 200);
+
+	} else {
+		jResponse["error"] = "Error";
+		fillResponse(response, jResponse, 401);
+
+	}
+	/*if (jsonContainsValue(users, "email", username) == 1) {
 		users["users"].append(user1);
 		Json::StyledStreamWriter writer;
 		std::ofstream out("users.json");
@@ -70,7 +86,8 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	} else {
 		jResponse["error"] = "The email provided is already registered";
 		fillResponse(response, jResponse, 401);
-	}
+	}*/
+
 }
 
 void JobifyController::login(Request &request, JsonResponse &response) {
