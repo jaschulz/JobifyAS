@@ -44,7 +44,7 @@ sudo apt-get install libsnappy-dev
 wget https://github.com/google/leveldb/archive/master.zip && \
 unzip master.zip && \
 rm master.zip && \
-cd leveldb && \
+cd leveldb-master && \
 make install 
 
 cd $root_dir
