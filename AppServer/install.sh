@@ -40,6 +40,13 @@ cd $install_dir
 sudo apt-get install libcurl4-openssl-dev
 
 
+sudo apt-get install libsnappy-dev
+wget https://github.com/google/leveldb/archive/master.zip && \
+unzip master.zip && \
+rm master.zip && \
+cd leveldb && \
+make install 
+
 cd $root_dir
 rm -rf temp_install
 
