@@ -32,12 +32,6 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	Json::Value users;
 	Json::Reader reader;
 
-/*	std::ifstream file("users.json", std::ifstream::binary);
-	bool parsingSuccessful2 = reader.parse(file, users, true); //parse process
-	if (!parsingSuccessful2) {
-		std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
-
-	}*/
 	std::string data = request.getData();
 
 	Json::Value root;
@@ -55,60 +49,34 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	user1["email"] = username;
 	user1["password"] = password;
 
-	//file.close();
+	string error = "";
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	int status = dbCont.addNewUser(root);
+	dbCont.addNewUser(root, error);
 	dbCont.CloseDB();
 
 	JsonResponse jResponse;
 
 
-	if (status == 1) {
-		jResponse["token"] = "ok";
-		fillResponse(response, jResponse, 200);
+	if (error == "") {
+		response.setCode(200);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["token"] = "ok";
 
 	} else {
-	
-		string Result;          // string which will contain the result
 
-ostringstream convert;   // stream used for the conversion
-
-convert << status;      // insert the textual representation of 'Number' in the characters in the stream
-
-Result = convert.str(); 
-		jResponse["error"] = "Error " + Result ;
-		fillResponse(response, jResponse, 401);
+		response.setCode(401);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["error"] = error;
 
 	}
-	/*if (jsonContainsValue(users, "email", username) == 1) {
-		users["users"].append(user1);
-		Json::StyledStreamWriter writer;
-		std::ofstream out("users.json");
-		writer.write(out, users);
-		out.close();
-		jResponse["token"] = "ok";
-		fillResponse(response, jResponse, 200);
-	} else {
-		jResponse["error"] = "The email provided is already registered";
-		fillResponse(response, jResponse, 401);
-	}*/
-
 }
 
 void JobifyController::login(Request &request, JsonResponse &response) {
 
 	Json::Value users;
 	Json::Reader reader;
-
-	/*std::ifstream file("users.json", std::ifstream::binary);
-
-	bool parsingSuccessful2 = reader.parse(file, users, true); //parse process
-	if (!parsingSuccessful2) {
-		std::cout << "Failed to parse 1" << reader.getFormattedErrorMessages();
-
-	}*/
 
 	std::string data = request.getData();
 
@@ -124,18 +92,20 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	string password = root.get("password", "").asString();
 
-	/*if ((jsonContainsValue(users, "email", username) == 0)
-			&& (jsonContainsValue(users, "password", password) == 0)) {*/
-
 	dbController dbCont;
 	dbCont.connect("./testdb");
 	int status = dbCont.verifyLogin(root);
 	dbCont.CloseDB();
 
 	if (status == 1) {
-		response["result"] = "login Ok";
-	} else {
-		response["result"] = "login Failed";
+		response.setCode(200);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["token"] = "Ok";
+		response["user"] = root;
+	} else {		
+		response.setCode(401);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["error"] = "login Failed";
 	}
 }
 

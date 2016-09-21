@@ -28,15 +28,22 @@ void dbController::CloseDB(){
     delete db;
 }
 
-int dbController::addNewUser(Json::Value &user){
+void dbController::addNewUser(Json::Value &user, string &error){
     leveldb::WriteOptions writeOptions;
 	string username = user.get("email", "").asString();
 	string password = user.get("password", "").asString();
 
-        
-        db->Put(writeOptions, username, password);
-	return 1;
-    
+	string pass;
+	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&pass);
+	if (false == st.ok()) {
+		if (st.ToString().compare("NotFound:") == 0) {
+		        db->Put(writeOptions, username, password);    
+		} else {
+			error = "Failed: " + st.ToString();
+		}
+	} else {
+		error = "Email already exists.";
+	}
 }
 
 //verifyLogin

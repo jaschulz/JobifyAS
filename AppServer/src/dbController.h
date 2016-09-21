@@ -19,7 +19,7 @@ public:
 
 	int connect(string dataBase);
 	void CloseDB();
-	int addNewUser(Json::Value &user);
+	void addNewUser(Json::Value &user, string &error);
 	int verifyLogin(Json::Value &user);
 };
 
