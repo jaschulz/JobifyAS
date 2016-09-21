@@ -45,7 +45,10 @@ wget https://github.com/google/leveldb/archive/master.zip && \
 unzip master.zip && \
 rm master.zip && \
 cd leveldb-master && \
-make install 
+make && \
+cp --preserve=links out-shared/libleveldb.* /usr/local/lib && \
+cp -r include/leveldb /usr/local/include/ && \
+ldconfig
 
 cd $root_dir
 rm -rf temp_install
