@@ -25,6 +25,8 @@ public:
 
 	void getJobPositions(Request &request, JsonResponse &response);
 
+	void printDB(Request &request, JsonResponse &response);
+
 };
 
 #endif 

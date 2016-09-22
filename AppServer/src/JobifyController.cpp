@@ -49,13 +49,13 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	dbCont.addNewUser(root);
+	error = dbCont.addNewUser(root);
 	dbCont.CloseDB();
 
 	JsonResponse jResponse;
 
 
-	if (error == "") {
+	if (error.compare("") == 0) {
 		response.setCode(200);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
 		response["token"] = "ok";
@@ -68,6 +68,24 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 
 	}
 }
+
+void JobifyController::printDB(Request &request, JsonResponse &response) {
+	dbController dbCont;
+	dbCont.connect("./testdb");
+	string error = dbCont.printDB();
+	dbCont.CloseDB();
+
+	if (error == "") {
+		response.setCode(200);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["print"] = "Ok";
+	} else {		
+		response.setCode(401);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["error"] = error;
+	}
+}
+
 
 void JobifyController::login(Request &request, JsonResponse &response) {
 
@@ -88,7 +106,7 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	string error = dbCont.verifyLogin(root);
+string error = dbCont.verifyLogin(root);
 	dbCont.CloseDB();
 
 	if (error == "") {
@@ -102,6 +120,7 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 		response["error"] = "login Failed";
 	}
 }
+
 
 void JobifyController::getJobPositions(Request &request,
 		JsonResponse &response) {
@@ -118,6 +137,9 @@ void JobifyController::setup() {
 	addRouteResponse("POST", "/users", JobifyController, registerUser,
 			JsonResponse);
 	addRouteResponse("GET", "/job_positions", JobifyController, getJobPositions,
+			JsonResponse);
+
+	addRouteResponse("GET", "/printDB", JobifyController, printDB,
 			JsonResponse);
 }
 

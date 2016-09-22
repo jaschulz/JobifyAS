@@ -36,7 +36,7 @@ string dbController::addNewUser(Json::Value &user){
 	string pass;
 	string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&pass);
-	if (false == st.ok()) {
+	if (st.ok() != 1) {
 		if (st.ToString().compare("NotFound: ") == 0) {
 		        db->Put(writeOptions, username, password);    
 		} else {
@@ -65,4 +65,24 @@ string dbController::verifyLogin(Json::Value &user){
     
 }
 
+string dbController::printDB(){
+
+
+    // Iterate over each item in the database and print them
+    leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
+    
+    for (it->SeekToFirst(); it->Valid(); it->Next())
+    {
+        cout << it->key().ToString() << " : " << it->value().ToString() << endl;
+    }
+    string error ="";
+    if (false == it->status().ok())
+    {
+        cerr << "An error was found during the scan" << endl;
+        cerr << it->status().ToString() << endl; 
+	error = "Failed: " + it->status().ToString();
+    }
+	delete it;
+	return error;
+}
 

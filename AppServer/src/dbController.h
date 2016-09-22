@@ -21,6 +21,7 @@ public:
 	void CloseDB();
 	string addNewUser(Json::Value &user);
 	string verifyLogin(Json::Value &user);
+	string printDB();
 };
 
 #endif 
