@@ -71,17 +71,15 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 
 void JobifyController::login(Request &request, JsonResponse &response) {
 
-	Json::Value users;
 	Json::Reader reader;
 
 	std::string data = request.getData();
 
 	Json::Value root;
 
-	Json::Reader reader2;
-	bool parsingSuccessful = reader2.parse(data.c_str(), root); //parse process
+	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
 	if (!parsingSuccessful) {
-		std::cout << "Failed to parse 2" << reader2.getFormattedErrorMessages();
+		std::cout << "Failed to parse 2" << reader.getFormattedErrorMessages();
 
 	}
 	string username = root.get("email", "").asString();
@@ -116,8 +114,8 @@ void JobifyController::setup() {
 	// Example of prefix, putting all the urls into "/api"
 	setPrefix("/api");
 
-	addRouteResponse("GET", "/login", JobifyController, login, JsonResponse);
-	addRouteResponse("POST", "/registerUser", JobifyController, registerUser,
+	addRouteResponse("GET", "/session", JobifyController, login, JsonResponse);
+	addRouteResponse("POST", "/users", JobifyController, registerUser,
 			JsonResponse);
 	addRouteResponse("GET", "/job_positions", JobifyController, getJobPositions,
 			JsonResponse);

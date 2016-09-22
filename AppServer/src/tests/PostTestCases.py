@@ -9,7 +9,7 @@ class PostTest(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(PostTest, self).__init__(*args, **kwargs)
 		self.__api_base_url = "http://localhost:8081/"
-		self._url_registerUser = "api/registerUser"
+		self._url_registerUser = "api/users"
 
 	#Successful signup
 	def test_1(self):

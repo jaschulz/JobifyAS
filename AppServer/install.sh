@@ -56,3 +56,6 @@ rm -rf temp_install
 echo "Make and install"
 mkdir -p build && cd build && \
 cmake .. && make
+
+#corro para ejecutar los tests
+./main
