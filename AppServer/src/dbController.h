@@ -19,8 +19,8 @@ public:
 
 	int connect(string dataBase);
 	void CloseDB();
-	void addNewUser(Json::Value &user, string &error);
-	int verifyLogin(Json::Value &user);
+	string addNewUser(Json::Value &user);
+	string verifyLogin(Json::Value &user);
 };
 
 #endif 

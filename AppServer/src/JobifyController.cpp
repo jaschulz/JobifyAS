@@ -45,15 +45,11 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	string username = root.get("email", "").asString();
 	string password = root.get("password", "").asString();
 
-	Json::Value user1;
-	user1["email"] = username;
-	user1["password"] = password;
-
 	string error = "";
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	dbCont.addNewUser(root, error);
+	dbCont.addNewUser(root);
 	dbCont.CloseDB();
 
 	JsonResponse jResponse;
@@ -94,10 +90,10 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	int status = dbCont.verifyLogin(root);
+	string error = dbCont.verifyLogin(root);
 	dbCont.CloseDB();
 
-	if (status == 1) {
+	if (error == "") {
 		response.setCode(200);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
 		response["token"] = "Ok";

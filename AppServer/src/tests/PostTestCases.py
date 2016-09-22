@@ -3,18 +3,19 @@ import unittest
 import json
 import uuid
 import ConfigParser
+import datetime
 
 class PostTest(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(PostTest, self).__init__(*args, **kwargs)
 		self.__api_base_url = "http://localhost:8081/"
-		self._url_login = "api/login"
+		self._url_registerUser = "api/registerUser"
 
 	#Successful signup
 	def test_1(self):
-		payload = {"email" : "John@gmail.com",
-			"password" : "Berlin"}
-		r = requests.get(self.__api_base_url + self._url_login, json=payload)
+		payload = {'email' : 'JohnDoe'+datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'@gmail.com','password' : 'Berlin'}
+		r = requests.post(self.__api_base_url + self._url_registerUser, json=payload)
 		self.assertEqual(r.status_code, 200)
 		data = json.loads(r.text)
-		self.assertEqual(data["result"], "login Ok")
+		self.assertEqual(data["token"], "ok")
+

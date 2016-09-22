@@ -28,15 +28,16 @@ void dbController::CloseDB(){
     delete db;
 }
 
-void dbController::addNewUser(Json::Value &user, string &error){
+string dbController::addNewUser(Json::Value &user){
     leveldb::WriteOptions writeOptions;
 	string username = user.get("email", "").asString();
 	string password = user.get("password", "").asString();
 
 	string pass;
+	string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&pass);
 	if (false == st.ok()) {
-		if (st.ToString().compare("NotFound:") == 0) {
+		if (st.ToString().compare("NotFound: ") == 0) {
 		        db->Put(writeOptions, username, password);    
 		} else {
 			error = "Failed: " + st.ToString();
@@ -44,22 +45,23 @@ void dbController::addNewUser(Json::Value &user, string &error){
 	} else {
 		error = "Email already exists.";
 	}
+		return error;
 }
 
 //verifyLogin
-int dbController::verifyLogin(Json::Value &user){
+string dbController::verifyLogin(Json::Value &user){
 
 	string username = user.get("email", "").asString();
 	string password = user.get("password", "").asString();
 	string pass;
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&pass);
-        
+        string error = "";
 
     if (password.compare(pass) != 0) {
     
-	return -1;
+	error = "Incorrect user or password";
 }
-	return 1;
+	return error;
     
 }
 
