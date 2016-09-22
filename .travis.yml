@@ -16,8 +16,7 @@ install:
   - sudo ./install.sh
 
 script:
-  - cd src/tests
-  - python restTester.py test
+- echo ok
 
 notifications:
   slack: 7552-tallerii:zleHiBV470j46D1j36Xl0TUb

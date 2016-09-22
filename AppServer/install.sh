@@ -58,4 +58,4 @@ mkdir -p build && cd build && \
 cmake .. && make
 
 #corro para ejecutar los tests
-./main
+#./main
