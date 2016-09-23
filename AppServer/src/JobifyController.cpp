@@ -7,6 +7,7 @@
 #include "SSHandler.h"
 #include "dbController.h"
 #include <curl/curl.h>
+#include <openssl/sha.h>
 
 int JobifyController::jsonContainsValue(const Json::Value& root, string key,
 		string value) {
@@ -18,6 +19,19 @@ int JobifyController::jsonContainsValue(const Json::Value& root, string key,
 		}
 	}
 	return 1;
+}
+
+
+string sha256(const string str)
+{
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, str.c_str(), str.size());
+    SHA256_Final(hash, &sha256);
+    stringstream ss;
+    ss << hash;
+    return ss.str();
 }
 
 void JobifyController::fillResponse(JsonResponse &response,
@@ -58,7 +72,7 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	if (error.compare("") == 0) {
 		response.setCode(200);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["token"] = "ok";
+		response["token"] = generateToken(username,password);
 
 	} else {
 
@@ -121,6 +135,11 @@ string error = dbCont.verifyLogin(root);
 	}
 }
 
+string JobifyController::generateToken(const string &email, const string &password) const {
+    time_t now = time(0);
+    char *dt = ctime(&now);
+    return sha256(email + password + dt);
+}
 
 void JobifyController::getJobPositions(Request &request,
 		JsonResponse &response) {

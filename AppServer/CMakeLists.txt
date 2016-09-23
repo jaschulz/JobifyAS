@@ -51,7 +51,7 @@ file(GLOB MYSOURCES
 
 add_executable(main ${MYSOURCES})
 #add_executable (main src/main.cpp src/JobifyController.cpp src/JobifyController.h src/SSHandler.cpp src/SSHandler.h)
-target_link_libraries (main mongoose -L/usr/lib/x86_64-linux-gnu -lcurl -lleveldb -lpthread -lsnappy -Wl,-Bsymbolic-functions -Wl,-z,relro)
+target_link_libraries (main mongoose -L/usr/lib/x86_64-linux-gnu -lcurl -lleveldb -lpthread -lsnappy -lcrypto -Wl,-Bsymbolic-functions -Wl,-z,relro)
 
 # install
 set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
