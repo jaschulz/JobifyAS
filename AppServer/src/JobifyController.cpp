@@ -9,19 +9,6 @@
 #include <curl/curl.h>
 #include <openssl/sha.h>
 
-int JobifyController::jsonContainsValue(const Json::Value& root, string key,
-		string value) {
-	const Json::Value& users = root["users"];
-	for (Json::ValueConstIterator it = users.begin(); it != users.end(); ++it) {
-		const Json::Value& user = *it;
-		if (value.compare(user[key].asString()) == 0) {
-			return 0;
-		}
-	}
-	return 1;
-}
-
-
 string sha256(const string str)
 {
     unsigned char hash[SHA256_DIGEST_LENGTH];
@@ -41,6 +28,18 @@ void JobifyController::fillResponse(JsonResponse &response,
 	response.setHeader("Content-Type", "application/json; charset=utf-8");
 }
 
+Json::Value hashCredentials(Json::Value root){
+
+	string username = root.get("email", "").asString();
+	string pass = root.get("password", "").asString();
+	string password = sha256(pass);
+
+	Json::Value credentials;
+	credentials["email"] = username;
+	credentials["password"] = password;
+	return credentials;
+}
+
 void JobifyController::registerUser(Request &request, JsonResponse &response) {
 
 	Json::Value users;
@@ -56,14 +55,14 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 		std::cout << "Failed to parse" << reader2.getFormattedErrorMessages();
 
 	}
-	string username = root.get("email", "").asString();
-	string password = root.get("password", "").asString();
+
+	Json::Value credentials = hashCredentials(root);
 
 	string error = "";
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	error = dbCont.addNewUser(root);
+	error = dbCont.addNewUser(credentials);
 	dbCont.CloseDB();
 
 	JsonResponse jResponse;
@@ -72,7 +71,7 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	if (error.compare("") == 0) {
 		response.setCode(200);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["token"] = generateToken(username,password);
+		response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
 
 	} else {
 
@@ -114,19 +113,19 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 		std::cout << "Failed to parse 2" << reader.getFormattedErrorMessages();
 
 	}
-	string username = root.get("email", "").asString();
 
-	string password = root.get("password", "").asString();
+	Json::Value credentials = hashCredentials(root);
+
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-string error = dbCont.verifyLogin(root);
+	string error = dbCont.verifyLogin(credentials);
 	dbCont.CloseDB();
 
 	if (error == "") {
 		response.setCode(200);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["token"] = "Ok";
+		response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
 		response["user"] = root;
 	} else {		
 		response.setCode(401);
