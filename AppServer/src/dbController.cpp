@@ -29,7 +29,7 @@ void dbController::CloseDB(){
 }
 
 string dbController::addNewUser(Json::Value &user){
-    leveldb::WriteOptions writeOptions;
+	leveldb::WriteOptions writeOptions;
 	string username = user.get("email", "").asString();
 	string password = user.get("password", "").asString();
 
@@ -45,7 +45,7 @@ string dbController::addNewUser(Json::Value &user){
 	} else {
 		error = "Email already exists.";
 	}
-		return error;
+	return error;
 }
 
 //verifyLogin

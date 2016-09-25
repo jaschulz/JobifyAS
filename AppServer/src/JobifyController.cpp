@@ -8,18 +8,8 @@
 #include "dbController.h"
 #include <curl/curl.h>
 #include <openssl/sha.h>
-
-string sha256(const string str)
-{
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    SHA256_Update(&sha256, str.c_str(), str.size());
-    SHA256_Final(hash, &sha256);
-    stringstream ss;
-    ss << hash;
-    return ss.str();
-}
+#include "Profile.h"
+#include "Encrypt.h"
 
 void JobifyController::fillResponse(JsonResponse &response,
 		JsonResponse &jResponse, int code) {
@@ -29,10 +19,9 @@ void JobifyController::fillResponse(JsonResponse &response,
 }
 
 Json::Value hashCredentials(Json::Value root){
-
 	string username = root.get("email", "").asString();
 	string pass = root.get("password", "").asString();
-	string password = sha256(pass);
+	string password = encrypt::sha256(pass);
 
 	Json::Value credentials;
 	credentials["email"] = username;
@@ -56,13 +45,17 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 
 	}
 
-	Json::Value credentials = hashCredentials(root);
+	//Json::Value credentials = hashCredentials(root);
+
+	string username = root.get("email", "").asString();
+	string pass = root.get("password", "").asString();
+	Profile profile (username,pass);
 
 	string error = "";
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	error = dbCont.addNewUser(credentials);
+	error = dbCont.addNewUser(profile.profileToJSON());
 	dbCont.CloseDB();
 
 	JsonResponse jResponse;
@@ -114,12 +107,12 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	}
 
-	Json::Value credentials = hashCredentials(root);
-
+//	Json::Value credentials = hashCredentials(root);
+	Profile profile(root);
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	string error = dbCont.verifyLogin(credentials);
+	string error = dbCont.verifyLogin(profile.profileToJSON());
 	dbCont.CloseDB();
 
 	if (error == "") {
@@ -137,7 +130,7 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 string JobifyController::generateToken(const string &email, const string &password) const {
     time_t now = time(0);
     char *dt = ctime(&now);
-    return sha256(email + password + dt);
+    return encrypt::sha256(email + password + dt);
 }
 
 void JobifyController::getJobPositions(Request &request,
