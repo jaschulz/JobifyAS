@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <mongoose/Server.h>
-#include "JobifyController.h"
+#include "../Handlers/JobifyController.h"
 
 using namespace std;
 using namespace Mongoose;

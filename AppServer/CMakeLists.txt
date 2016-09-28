@@ -41,12 +41,28 @@ set (MYSOURCES "${PROJECT_SOURCE_DIR}/src")
 file(GLOB ${MYSOURCES}
 	"*.h"
 	"*.cpp"
+	"db/*.h"
+	"db/*.cpp"
+	"Handlers/*.h"
+	"Handlers/*.cpp"
+	"Model/*.h"
+	"Model/*.cpp"
+	"utils/*.h"
+	"utils/*.cpp"
 )
 
 # Compiling executable
 file(GLOB MYSOURCES
-    src/*.h
-    src/*.cpp
+    	src/db/*.h
+	src/db/*.cpp
+	src/Handlers/*.h
+	src/Handlers/*.cpp
+	src/Model/*.h
+	src/Model/*.cpp
+	src/utils/*.h
+	src/utils/*.cpp
+	src/*.h
+	src/*.cpp
 )
 
 add_executable(main ${MYSOURCES})
