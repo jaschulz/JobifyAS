@@ -1,6 +1,10 @@
 #include "Encrypt.h"
 #include <openssl/sha.h>
 #include <sstream>
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
 
 std::string encrypt::sha256(const std::string str)
 {
@@ -10,6 +14,9 @@ std::string encrypt::sha256(const std::string str)
     SHA256_Update(&sha256, str.c_str(), str.size());
     SHA256_Final(hash, &sha256);
     std::stringstream ss;
-    ss << hash;
+    for(int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+    {
+        ss << hex << setw(2) << setfill('0') << (int)hash[i];
+    }
     return ss.str();
 }
