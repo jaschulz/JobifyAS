@@ -93,14 +93,15 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	dbController dbCont;
 	dbCont.connect("./testdb");
-	string error = dbCont.verifyLogin(profile.profileToJSON());
+	Json::Value jsonProfile = profile.profileToJSON();
+	string error = dbCont.verifyLogin(jsonProfile);
 	dbCont.CloseDB();
 
 	if (error == "") {
 		response.setCode(200);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
 		response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
-		response["user"] = root;
+		response["user"] = jsonProfile;
 	} else {		
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");

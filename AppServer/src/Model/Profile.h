@@ -42,6 +42,8 @@ public:
 	~Profile();
 
 	void fromJSON(Json::Value value);
+
+	Json::Value &profileGetUserJSON();
 };
 
 
