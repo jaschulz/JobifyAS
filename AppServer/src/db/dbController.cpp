@@ -58,7 +58,7 @@ string dbController::verifyLogin(Json::Value &user){
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&pass);
         string error = "";
 	if (password.compare(pass) != 0) {    
-		error = password + " - " + pass;
+		error = "Login failed";
 	}
 	return error;
 }

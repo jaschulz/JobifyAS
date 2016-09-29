@@ -13,17 +13,14 @@
 
 void JobifyController::registerUser(Request &request, JsonResponse &response) {
 
-	Json::Value users;
-	Json::Reader reader;
-
 	std::string data = request.getData();
 
 	Json::Value root;
 
-	Json::Reader reader2;
-	bool parsingSuccessful = reader2.parse(data.c_str(), root); //parse process
+	Json::Reader reader;
+	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
 	if (!parsingSuccessful) {
-		std::cout << "Failed to parse" << reader2.getFormattedErrorMessages();
+		std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
 
 	}
 
@@ -40,9 +37,6 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 	error = dbCont.addNewUser(profile.profileToJSON());
 	dbCont.CloseDB();
 
-	JsonResponse jResponse;
-
-
 	if (error.compare("") == 0) {
 		response.setCode(200);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -53,7 +47,6 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
 		response["error"] = error;
-
 	}
 }
 
@@ -85,7 +78,7 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
 	if (!parsingSuccessful) {
-		std::cout << "Failed to parse 2" << reader.getFormattedErrorMessages();
+		std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
 
 	}
 
