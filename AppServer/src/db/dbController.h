@@ -11,7 +11,7 @@ using namespace std;
 
 class dbController {
 
-private:
+protected:
     leveldb::DB* db;
     leveldb::Options options;
 
@@ -19,9 +19,6 @@ public:
 
 	int connect(string dataBase);
 	void CloseDB();
-	string addNewUser(Json::Value &user);
-	string verifyLogin(Json::Value &user);
-	string printDB();
 };
 
 #endif 

@@ -5,6 +5,7 @@
 #include <iostream>
 #include "JobifyController.h"
 #include "SSHandler.h"
+#include "../db/dbCredentials.h"
 #include "../db/dbController.h"
 #include <curl/curl.h>
 #include <openssl/sha.h>
@@ -32,7 +33,7 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 
 	string error = "";
 
-	dbController dbCont;
+	dbCredentials dbCont;
 	dbCont.connect("./testdb");
 	error = dbCont.addNewUser(profile.profileToJSON());
 	dbCont.CloseDB();
@@ -51,7 +52,7 @@ void JobifyController::registerUser(Request &request, JsonResponse &response) {
 }
 
 void JobifyController::printDB(Request &request, JsonResponse &response) {
-	dbController dbCont;
+	dbCredentials dbCont;
 	dbCont.connect("./testdb");
 	string error = dbCont.printDB();
 	dbCont.CloseDB();
@@ -84,7 +85,7 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 
 	Profile profile(root);
 
-	dbController dbCont;
+	dbCredentials dbCont;
 	dbCont.connect("./testdb");
 	Json::Value jsonProfile = profile.profileToJSON();
 	string error = dbCont.verifyLogin(jsonProfile);
