@@ -63,6 +63,18 @@ string dbController::verifyLogin(Json::Value &user){
 	return error;
 }
 
+/*Json::Value dbController::getProfile(string &email){
+	string username = user.get("email", "").asString();
+	string password = user.get("password", "").asString();
+	string pass;
+	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&pass);
+        string error = "";
+	if (password.compare(pass) != 0) {    
+		error = "Login failed";
+	}
+	return error;
+}*/
+
 string dbController::printDB(){
 
 

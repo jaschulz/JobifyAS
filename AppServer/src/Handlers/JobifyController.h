@@ -26,6 +26,8 @@ public:
 	void getJobPositions(Request &request, JsonResponse &response);
 
 	void printDB(Request &request, JsonResponse &response);
+
+//	void getProfile(Request &request, JsonResponse &response);
 private:
 	string generateToken(const string &email, const string &password) const;
 };

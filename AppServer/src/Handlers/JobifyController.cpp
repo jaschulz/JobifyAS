@@ -102,6 +102,25 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 	}
 }
 
+/*void JobifyController::getProfile(Request &request, JsonResponse &response) {
+	string email = routeParams->at("email");
+	dbController dbCont;
+	dbCont.connect("./testdb");
+	Json::Value dbResponse = dbCont.getProfile(email);
+	dbCont.CloseDB();
+	string error = dbResponse.get("error", "").asString();
+
+	if (error == "") {
+		response.setCode(200);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["user"] = dbResponse;
+	} else {		
+		response.setCode(401);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["error"] = error;
+	}
+}
+*/
 string JobifyController::generateToken(const string &email, const string &password) const {
     time_t now = time(0);
     char *dt = ctime(&now);
@@ -122,6 +141,7 @@ void JobifyController::setup() {
 	addRouteResponse("GET", "/session", JobifyController, login, JsonResponse);
 	addRouteResponse("POST", "/users", JobifyController, registerUser,
 			JsonResponse);
+	//addRouteResponse("GET", "/users/{email}", JobifyController, getProfile, JsonResponse);
 	addRouteResponse("GET", "/job_positions", JobifyController, getJobPositions,
 			JsonResponse);
 
