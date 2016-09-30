@@ -116,7 +116,8 @@ void JobifyController::editProfile(Request &request, JsonResponse &response) {
 		}
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
-		//string error = dbuser.editProfile(JsonBody);
+		string error = "";
+		error = dbuser.editProfile(JsonBody);
 		dbuser.CloseDB();
 
 

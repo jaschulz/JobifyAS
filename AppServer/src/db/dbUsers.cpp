@@ -6,10 +6,15 @@ using namespace std;
 
 string dbUsers::editProfile(Json::Value &user){
 	string username = user.get("email", "").asString();
-	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&user);
+	string strJson;
+	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&strJson);
         string error = "";
-	if (password.compare(pass) != 0) {    
-		error = "Login failed";
+	Json::Value root;   
+	Json::Reader reader;
+	bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
+	if ( !parsingSuccessful )
+	{
+		error = reader.getFormattedErrorMessages();;
 	}
 	return error;
 }
