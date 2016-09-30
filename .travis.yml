@@ -7,16 +7,12 @@ language: cpp
 compiler:
   - gcc
 
-python:
-
-  - "3.4"
-
 before_install:
   - sudo pip install cpp-coveralls
   - sudo apt-get install python3-pip
   - sudo apt-get install python3-setuptools
   - sudo python3 -m easy_install pip
-  - sudo pip3.4 install requests
+  - sudo pip3 install requests
 
 install:
   - cd AppServer
@@ -25,6 +21,8 @@ install:
 
 script:
 - cd src/tests
+- pip -V
+- python -V
 - python restTester.py test
 
 notifications:
