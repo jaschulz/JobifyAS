@@ -13,7 +13,10 @@ python:
 
 before_install:
   - sudo pip install cpp-coveralls
-  - sudo pip install requests
+  - sudo apt-get install python3-pip
+  - sudo apt-get install python3-setuptools
+  - sudo python3 -m easy_install pip
+  - sudo pip-3.2 install requests
 
 install:
   - cd AppServer
@@ -22,8 +25,6 @@ install:
 
 script:
 - cd src/tests
-- pip -V
-- python -V
 - python restTester.py test
 
 notifications:
