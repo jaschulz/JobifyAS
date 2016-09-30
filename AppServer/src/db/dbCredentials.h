@@ -15,7 +15,6 @@ class dbCredentials : public dbController {
 public:
 	string addNewUser(Json::Value &user);
 	string verifyLogin(Json::Value &user);
-	string printDB();
 };
 
 #endif 

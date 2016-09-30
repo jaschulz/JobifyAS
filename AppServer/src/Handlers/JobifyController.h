@@ -10,7 +10,19 @@ using namespace std;
 using namespace Mongoose;
 
 class JobifyController: public JsonController {
+
+protected:
+
+    map<string,string> *routeParams;
+
 public:
+ 
+	virtual Response *process(Request &request) override;
+
+	virtual bool handles(string method, string url) override;
+
+	JobifyController();
+
 	int jsonContainsValue(const Json::Value& root, string key, string value);
 
 
@@ -30,6 +42,10 @@ public:
 	void editProfile(Request &request, JsonResponse &response);
 private:
 	string generateToken(const string &email, const string &password) const;
+
+	string replaceRouteParams(string key) const;
+
+    void parseRouteParams(const string &key, const string &currentRequest) const;
 };
 
 #endif 

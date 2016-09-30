@@ -19,6 +19,7 @@ public:
 
 	int connect(string dataBase);
 	void CloseDB();
+	string printDB();
 };
 
 #endif 
