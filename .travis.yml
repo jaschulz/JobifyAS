@@ -9,6 +9,7 @@ compiler:
 
 before_install:
   - sudo pip install cpp-coveralls
+  - sudo python -m ensurepip
   - sudo pip3 install requests
 
 install:
