@@ -9,9 +9,8 @@ string dbUsers::editProfile(Json::Value &user){
 	string strJson;
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&strJson);
         string error = "";
-	Json::Value root;   
 	Json::Reader reader;
-	bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
+	bool parsingSuccessful = reader.parse( strJson.c_str(), user );     //parse process
 	if ( !parsingSuccessful )
 	{
 		error = reader.getFormattedErrorMessages();;
