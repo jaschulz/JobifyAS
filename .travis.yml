@@ -9,7 +9,7 @@ compiler:
 
 before_install:
   - sudo pip install cpp-coveralls
-  - sudo pip-2.7 install requests
+#  - sudo pip-2.7 install requests
 
 install:
   - cd AppServer
@@ -18,9 +18,9 @@ install:
 
 script:
 - cd src/tests
-- pip -V
-- python -V
-- python restTester.py test
+#- pip -V
+#- python -V
+#- python restTester.py test
 
 notifications:
   slack: 7552-tallerii:zleHiBV470j46D1j36Xl0TUb
