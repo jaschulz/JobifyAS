@@ -8,11 +8,12 @@ compiler:
   - gcc
 
 python:
+
   - "3.4"
 
 before_install:
   - sudo pip install cpp-coveralls
-  - sudo apt-get install python3-requests
+  - sudo pip install requests
 
 install:
   - cd AppServer
@@ -21,6 +22,8 @@ install:
 
 script:
 - cd src/tests
+- pip -V
+- python -V
 - python restTester.py test
 
 notifications:
