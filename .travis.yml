@@ -7,10 +7,12 @@ language: cpp
 compiler:
   - gcc
 
+python:
+  - "3.4"
+
 before_install:
   - sudo pip install cpp-coveralls
-  - sudo python -m ensurepip
-  - sudo pip3 install requests
+  - sudo pip install requests
 
 install:
   - cd AppServer
