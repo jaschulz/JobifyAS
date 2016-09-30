@@ -39,6 +39,8 @@ public:
 
 	Json::Value &profileToJSON();
 
+	Json::Value &publicProfileToJSON();
+
 	~Profile();
 
 	void fromJSON(Json::Value value);

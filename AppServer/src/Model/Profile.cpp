@@ -24,6 +24,13 @@ Json::Value &Profile::profileToJSON() {
     return jsonProfile;
 }
 
+Json::Value &Profile::publicProfileToJSON() {
+    jsonProfile["email"] = email;
+    jsonProfile["first_name"] = first_name;
+    jsonProfile["last_name"] = last_name;
+    return jsonProfile;
+}
+
 void Profile::setEmail(const string &mail) {
     email = mail;
 }

@@ -7,8 +7,8 @@
 #include "SSHandler.h"
 #include "../db/dbCredentials.h"
 #include "../db/dbController.h"
+#include "../db/dbUsers.h"
 #include <curl/curl.h>
-#include <openssl/sha.h>
 #include "../Model/Profile.h"
 #include "../utils/Encrypt.h"
 
@@ -103,25 +103,40 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 	}
 }
 
-/*void JobifyController::getProfile(Request &request, JsonResponse &response) {
-	string email = routeParams->at("email");
-	dbController dbCont;
-	dbCont.connect("./testdb");
-	Json::Value dbResponse = dbCont.getProfile(email);
-	dbCont.CloseDB();
-	string error = dbResponse.get("error", "").asString();
+void JobifyController::editProfile(Request &request, JsonResponse &response) {
+	string email;
+	std::string data = request.getData();
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",&email)) {
+		Json::Reader reader;
+		Json::Value JsonBody;
+		bool parsingSuccessful = reader.parse(data.c_str(), JsonBody); //parse process
+		if (!parsingSuccessful) {
+			std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
 
-	if (error == "") {
-		response.setCode(200);
-		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["user"] = dbResponse;
+		}
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");
+		//string error = dbuser.editProfile(JsonBody);
+		dbuser.CloseDB();
+
+
+		if (error == "") {
+			response.setCode(200);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["user"] = JsonBody;
+		} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = error;
+		}
 	} else {		
-		response.setCode(401);
-		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["error"] = error;
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
 	}
+        
 }
-*/
+
 string JobifyController::generateToken(const string &email, const string &password) const {
     time_t now = time(0);
     char *dt = ctime(&now);
@@ -143,6 +158,7 @@ void JobifyController::setup() {
 	addRouteResponse("POST", "/users", JobifyController, registerUser,
 			JsonResponse);
 	//addRouteResponse("GET", "/users/{email}", JobifyController, getProfile, JsonResponse);
+	addRouteResponse("PUT", "/users/{email}", JobifyController, editProfile, JsonResponse);
 	addRouteResponse("GET", "/job_positions", JobifyController, getJobPositions,
 			JsonResponse);
 
