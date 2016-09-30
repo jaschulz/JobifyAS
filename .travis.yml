@@ -12,7 +12,7 @@ python:
 
 before_install:
   - sudo pip install cpp-coveralls
-  - sudo pip install requests
+  - sudo apt-get install python3-requests
 
 install:
   - cd AppServer
