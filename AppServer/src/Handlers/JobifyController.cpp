@@ -196,6 +196,7 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 void JobifyController::editProfile(Request &request, JsonResponse &response) {
 	char email[50];
 	string data = request.getData();
+	//TODO verify login
 	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",email)) {
 		Json::Reader reader;
 		Json::Value JsonBody;
@@ -230,7 +231,6 @@ void JobifyController::editProfile(Request &request, JsonResponse &response) {
 
 void JobifyController::getProfile(Request &request, JsonResponse &response) {
 	char email[50];
-	string data = request.getData();
 	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",email)) {
 		string mail(email);
 		Json::Value JsonBody;
@@ -239,6 +239,44 @@ void JobifyController::getProfile(Request &request, JsonResponse &response) {
 		dbuser.connect("./usersdb");
 		string error = "";
 		error = dbuser.getProfile(JsonBody);
+		dbuser.CloseDB();
+		if (error == "") {
+			response.setCode(200);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["user"] = JsonBody;
+		} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = error;
+		}
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+        
+}
+
+void JobifyController::setLocation(Request &request, JsonResponse &response) {
+	char email[50];
+	string data = request.getData();
+		//sscanf(text, "http://%99[^:]:%99d/%99[^\n]", ip, &port, page);
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^\n]/location",email)) {
+		string mail(email);
+		cout<<mail<<"."<<endl;
+ 		size_t pos = mail.find("/location");      // position of "location" in str
+		mail = mail.substr (0,pos);     // get from "live" to the end
+		cout<<mail<<"."<<endl;
+		Json::Value JsonBody;
+		Json::Reader reader;
+		bool parsingSuccessful = reader.parse(data.c_str(), JsonBody); //parse process
+		if (!parsingSuccessful) {
+			std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
+		}
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");
+		string error = "";
+		error = dbuser.setLocation(mail,JsonBody);
 		dbuser.CloseDB();
 		if (error == "") {
 			response.setCode(200);
@@ -279,6 +317,7 @@ void JobifyController::setup() {
 			JsonResponse);
 	addRouteResponse("GET", "/users/{email}", JobifyController, getProfile, JsonResponse);
 	addRouteResponse("PUT", "/users/{email}", JobifyController, editProfile, JsonResponse);
+	addRouteResponse("POST", "/users/{email}/location", JobifyController, setLocation, JsonResponse);
 	addRouteResponse("GET", "/job_positions", JobifyController, getJobPositions,
 			JsonResponse);
 

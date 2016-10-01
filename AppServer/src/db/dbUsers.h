@@ -15,6 +15,8 @@ public:
 	string editProfile(string &key,Json::Value &user);
 
 	string getProfile(Json::Value &user);
+
+	string setLocation(string &key,Json::Value &user);
 };
 
 #endif 
