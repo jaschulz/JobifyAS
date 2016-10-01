@@ -82,7 +82,6 @@ void JobifyController::parseRouteParams(const string &key, const string &current
     routeParams->insert(std::pair<string, string>(mapKey, value));
 }
 
-//@Fede Due to a mongoose cpp "double url check" issue we have to run this method twice, so we validate that we are in first one
 string JobifyController::replaceRouteParams(string key) const {
 
     string replacedKey = key;
@@ -195,11 +194,9 @@ void JobifyController::login(Request &request, JsonResponse &response) {
 }
 
 void JobifyController::editProfile(Request &request, JsonResponse &response) {
-	char email;
+	char email[50];
 	string data = request.getData();
-	std::cout <<data<<endl;
-	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",&email)) {
-		std::cout <<"scanf"<<endl;
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",email)) {
 		Json::Reader reader;
 		Json::Value JsonBody;
 		bool parsingSuccessful = reader.parse(data.c_str(), JsonBody); //parse process
@@ -210,7 +207,38 @@ void JobifyController::editProfile(Request &request, JsonResponse &response) {
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
 		string error = "";
-		error = dbuser.editProfile(JsonBody);
+		string key(email);
+		error = dbuser.editProfile(key,JsonBody);
+		dbuser.CloseDB();
+		if (error == "") {
+			response.setCode(200);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["user"] = JsonBody;
+		} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = error;
+		}
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+        
+}
+
+
+void JobifyController::getProfile(Request &request, JsonResponse &response) {
+	char email[50];
+	string data = request.getData();
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",email)) {
+		string mail(email);
+		Json::Value JsonBody;
+		JsonBody["email"] = mail;
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");
+		string error = "";
+		error = dbuser.getProfile(JsonBody);
 		dbuser.CloseDB();
 		if (error == "") {
 			response.setCode(200);
@@ -249,7 +277,7 @@ void JobifyController::setup() {
 	addRouteResponse("GET", "/session", JobifyController, login, JsonResponse);
 	addRouteResponse("POST", "/users", JobifyController, registerUser,
 			JsonResponse);
-	//addRouteResponse("GET", "/users/{email}", JobifyController, getProfile, JsonResponse);
+	addRouteResponse("GET", "/users/{email}", JobifyController, getProfile, JsonResponse);
 	addRouteResponse("PUT", "/users/{email}", JobifyController, editProfile, JsonResponse);
 	addRouteResponse("GET", "/job_positions", JobifyController, getJobPositions,
 			JsonResponse);

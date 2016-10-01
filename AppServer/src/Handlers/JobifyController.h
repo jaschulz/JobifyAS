@@ -25,9 +25,7 @@ public:
 
 	int jsonContainsValue(const Json::Value& root, string key, string value);
 
-
 	void fillResponse(JsonResponse &response, JsonResponse &jResponse, int code);
-
 
 	void registerUser(Request &request, JsonResponse &response);
 
@@ -40,12 +38,14 @@ public:
 	void printDB(Request &request, JsonResponse &response);
 
 	void editProfile(Request &request, JsonResponse &response);
+
+	void getProfile(Request &request, JsonResponse &response);
 private:
 	string generateToken(const string &email, const string &password) const;
 
 	string replaceRouteParams(string key) const;
 
-    void parseRouteParams(const string &key, const string &currentRequest) const;
+	void parseRouteParams(const string &key, const string &currentRequest) const;
 };
 
 #endif 
