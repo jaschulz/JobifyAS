@@ -13,23 +13,25 @@ class JobifyController: public JsonController {
 
 protected:
 
-    map<string,string> *routeParams;
+	map<string,string> *routeParams;
+
+	string replaceRouteParams(string key) const;
+
+	void parseRouteParams(const string &key, const string &currentRequest) const;
 
 public:
+	
+	JobifyController();
  
 	virtual Response *process(Request &request) override;
 
 	virtual bool handles(string method, string url) override;
 
-	JobifyController();
-
-	int jsonContainsValue(const Json::Value& root, string key, string value);
-
-	void fillResponse(JsonResponse &response, JsonResponse &jResponse, int code);
+	//void fillResponse(JsonResponse &response, JsonResponse &jResponse, int code);
 
 	void registerUser(Request &request, JsonResponse &response);
 
-	void login(Request &request, JsonResponse &response);
+/*	void login(Request &request, JsonResponse &response);
 
 	void setup();
 
@@ -42,12 +44,6 @@ public:
 	void getProfile(Request &request, JsonResponse &response);
 
 	void setLocation(Request &request, JsonResponse &response);
-private:
-	string generateToken(const string &email, const string &password) const;
-
-	string replaceRouteParams(string key) const;
-
-	void parseRouteParams(const string &key, const string &currentRequest) const;
-};
+*/};
 
 #endif 
