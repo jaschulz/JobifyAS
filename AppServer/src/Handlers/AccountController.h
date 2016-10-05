@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include "JobifyController.h"
+#include "../Model/Profile.h"
 
 using namespace std;
 using namespace Mongoose;
@@ -13,6 +14,8 @@ class AccountController: public JobifyController {
 
 public:
 	AccountController();
+
+	string registerUserDB(Profile & profile);
 
 	void registerUser(Request &request, JsonResponse &response);
 

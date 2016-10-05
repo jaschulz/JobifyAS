@@ -27,7 +27,10 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 	Json::Reader reader;
 	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
 	if (!parsingSuccessful) {
-		std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
+		response.setCode(401);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["error"] = reader.getFormattedErrorMessages();
+		return;
 
 	}
 
@@ -45,10 +48,17 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 	dbCont.CloseDB();
 
 	if (error.compare("") == 0) {
-		response.setCode(200);
-		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
+		Json::Value JsonBody;
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");
+		error = dbuser.editProfile(username,JsonBody);
+		dbuser.CloseDB();
 
+		if (error.compare("") == 0) {
+			response.setCode(200);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
+		}
 	} else {
 
 		response.setCode(401);
