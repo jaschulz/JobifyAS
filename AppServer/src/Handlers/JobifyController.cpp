@@ -98,3 +98,17 @@ string JobifyController::replaceRouteParams(string key) const {
     return replacedKey;
 }
 
+
+string  JobifyController::requestToJson(Request &request, Json::Value root) {
+	Json::Reader reader;
+
+	std::string data = request.getData();
+
+	string error = "";
+
+	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
+	if (!parsingSuccessful) {
+		error = "Failed to parse" + reader.getFormattedErrorMessages();
+	}
+	return error;
+}

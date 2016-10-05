@@ -31,6 +31,8 @@ public:
 
 	void registerUser(Request &request, JsonResponse &response);
 
+	string  requestToJson(Request &request, Json::Value root);
+
 /*	void login(Request &request, JsonResponse &response);
 
 	void setup();
