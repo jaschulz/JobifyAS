@@ -35,7 +35,9 @@ void	SSHandler::handleGet(string url, JsonResponse &response){
 	curl_easy_setopt(curl_handle, CURLOPT_URL,url.c_str());
 
 	curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0L);
-	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+        std::string response_string;
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, writeFunction);
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &response_string);
 	CURLcode res = curl_easy_perform(curl_handle);
 	if (res != CURLE_OK) {
 		response["Error"] = curl_easy_strerror(res);
@@ -43,7 +45,7 @@ void	SSHandler::handleGet(string url, JsonResponse &response){
 	} else {
 	
 		Json::Reader reader2;
-		bool parsingSuccessful = reader2.parse(data.c_str(), response); //parse process
+		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
 		if (!parsingSuccessful) {
 			response["error"] = reader2.getFormattedErrorMessages();
 
