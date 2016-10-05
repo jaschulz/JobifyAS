@@ -11,7 +11,7 @@ using namespace Mongoose;
 
 class SSHandler {
 public:
-	JsonResponse	handleGet(string url);
+	void	handleGet(string url,JsonResponse &response);
 };
 
 #endif 

@@ -111,17 +111,17 @@ void AccountController::login(Request &request, JsonResponse &response) {
 
 void AccountController::getJobPositions(Request &request, JsonResponse &response) {
 	SSHandler ss;
-	response = ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions");
+	ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions",response);
 }
 
 void AccountController::getCategories(Request &request, JsonResponse &response) {
 	SSHandler ss;
-	response = ss.handleGet("https://still-falls-40635.herokuapp.com/categories");
+	ss.handleGet("https://still-falls-40635.herokuapp.com/categories",response);
 }
 
 void AccountController::getSkills(Request &request, JsonResponse &response) {
 	SSHandler ss;
-	response = ss.handleGet("https://still-falls-40635.herokuapp.com/skills");
+	ss.handleGet("https://still-falls-40635.herokuapp.com/skills",response);
 }
 
 void AccountController::filterJobPositionsByCategory(Request &request,
@@ -130,7 +130,7 @@ void AccountController::filterJobPositionsByCategory(Request &request,
 	if (1 == sscanf(request.getUrl().c_str(),"/api/job_positions/categories/%s",cat)) {
 		string category(cat);
 		SSHandler ss;
-		response = ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions/categories/"+category);
+		ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions/categories/"+category,response);
 	} else {		
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -144,7 +144,7 @@ void AccountController::filterSkillsByCategory(Request &request,
 	if (1 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%s",cat)) {
 		string category(cat);
 		SSHandler ss;
-		response = ss.handleGet("https://still-falls-40635.herokuapp.com/skills/categories/"+category);
+		ss.handleGet("https://still-falls-40635.herokuapp.com/skills/categories/"+category,response);
 	} else {		
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -162,7 +162,7 @@ void AccountController::setup() {
 	// Example of prefix, putting all the urls into "/api"
 	setPrefix("/api");
 
-	addRouteResponse("GET", "/session", AccountController, login, JsonResponse);
+	addRouteResponse("POST", "/session", AccountController, login, JsonResponse);
 	addRouteResponse("POST", "/users", AccountController, registerUser,
 			JsonResponse);
 	addRouteResponse("GET", "/printAccounts", AccountController, printDB,
