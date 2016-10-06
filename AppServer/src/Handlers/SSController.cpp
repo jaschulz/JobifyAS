@@ -76,6 +76,20 @@ void SSController::getSkills(Request &request, JsonResponse &response) {
 	ss.handleGet("https://still-falls-40635.herokuapp.com/skills",response);
 }
 
+void SSController::addSkills(Request &request, JsonResponse &response) {
+	char charCategory[50];
+	if (1 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%s",charCategory)) {
+		string category(charCategory);
+
+		SSHandler ss;
+		ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category,request,response);
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+}
+
 void SSController::filterJobPositionsByCategory(Request &request,
 		JsonResponse &response) {
 	char cat[50];
@@ -115,6 +129,8 @@ void SSController::setup() {
 			JsonResponse);
 	addRouteResponse("GET", "/skills", SSController, getSkills,
 			JsonResponse);
+	addRouteResponse("POST", "/skills/categories/{category}", SSController, addSkills,
+				JsonResponse);
 	addRouteResponse("GET", "/job_positions/categories/{category}", SSController, filterJobPositionsByCategory,
 			JsonResponse);
 	addRouteResponse("GET", "/skills/categories/{category}", SSController, filterSkillsByCategory,

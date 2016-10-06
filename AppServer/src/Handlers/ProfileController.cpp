@@ -200,7 +200,7 @@ void ProfileController::setup() {
 	addRouteResponse("GET", "/users/{email}", ProfileController, getProfile, JsonResponse);
 	addRouteResponse("PUT", "/users/{email}", ProfileController, editProfile, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/contacts", ProfileController, addContact, JsonResponse);
-	addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
+	//addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/location", ProfileController, setLocation, JsonResponse);
 	addRouteResponse("GET", "/printProfiles", ProfileController, printDB,JsonResponse);
 }

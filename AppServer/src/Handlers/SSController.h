@@ -23,6 +23,8 @@ public:
 
 	void getSkills(Request &request, JsonResponse &response);
 
+	void addSkills(Request &request, JsonResponse &response);
+
 	void filterJobPositionsByCategory(Request &request, JsonResponse &response);
 
 	void filterSkillsByCategory(Request &request, JsonResponse &response);
