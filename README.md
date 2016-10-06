@@ -285,6 +285,35 @@ install.sh installs every dependency so that the AppServer can be built and run 
 >```
 
 
+#### Follow contact
+><table>
+  <tbody>
+    <tr>
+      <th>Attribute</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td>Method</td>
+      <td>POST</td>
+    </tr>
+    <tr>
+      <td>URL</td>
+      <td>/users/:id/contacts</td>
+    </tr>
+      <td>Parameters</td>
+      <td>
+        <ul>
+          <li>email (string)</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+>No response
+>Server status 201 on success
+>Server status 404 if contact does not exist
+
+
 #### User contacts
 ><table>
   <tbody>
