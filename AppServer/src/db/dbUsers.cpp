@@ -65,6 +65,64 @@ string dbUsers::setLocation(string &key,Json::Value &user){
 	return error;
 }
 
+string dbUsers::putContact(string &user1,string &idNewContact){
+	Json::Value root;   
+	leveldb::WriteOptions writeOptions;
+	Json::Reader reader;
+	string error = "";
+	bool parsingSuccessful = reader.parse( user1.c_str(), root );     //parse process
+	if ( !parsingSuccessful )
+	{
+		error = reader.getFormattedErrorMessages();
+		return error;
+	}
+	string key = root.get("email","").asString();
+	Json::Value newContact;
+	newContact["id"] = idNewContact;
+	Json::Value contactsArray = root["contacts"];
+	contactsArray.append(newContact);
+	root["contacts"] = contactsArray;
+	leveldb::Status st = db->Put(writeOptions, key, root.toStyledString());
+	if (st.ok() != 1) {
+		error = "Failed: " + st.ToString();
+	} 
+	return error;
+}
+string dbUsers::addContact(string &key,Json::Value &user){
+	leveldb::WriteOptions writeOptions;
+	string loggedUserJson;
+        string error = "";	
+	string newContactJson;
+	string	newContact = user.get("email","").asString();
+	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&loggedUserJson);
+	if (st.ok() != 1) {
+		error = "Failed: " + st.ToString();
+		return error;
+	} 
+	st =  db->Get(leveldb::ReadOptions(),newContact,&newContactJson);
+	if (st.ok() != 1) {
+		error = "Failed: " + st.ToString();
+		return error;
+	}
+	error = putContact(loggedUserJson,newContact);
+	error = putContact(newContactJson,key);
+	return error;
+/*
+	Json::Value root;   
+	Json::Reader reader;
+	bool parsingSuccessful = reader.parse( loggedUser.c_str(), root );     //parse process
+	if ( !parsingSuccessful )
+	{
+		error = reader.getFormattedErrorMessages();;
+	}
+	Json::Value contactsArray = rootUser["contacts"];
+	contactsArray.append();
+	rootUser["contacts"] = contactsArray;
+	db->Put(writeOptions, key, root.toStyledString());
+	user = root;*/
+	return error;
+}
+
 string dbUsers::getProfile(Json::Value &user){
 	string username = user.get("email", "").asString();
 	string strJson;
