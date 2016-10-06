@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <mongoose/Server.h>
-#include "JobifyController.h"
+#include "../Handlers/ProfileController.h"
+#include "../Handlers/AccountController.h"
+#include "../Handlers/SSController.h"
 
 using namespace std;
 using namespace Mongoose;
@@ -22,14 +24,20 @@ int main() {
 
 	signal(SIGINT, handle_signal);
 
-	JobifyController jController;
+	ProfileController pController;
+	AccountController aController;
+	SSController ssController;
 	Server server(8081);
-	server.registerController(&jController);
+	server.registerController(&pController);
+	server.registerController(&aController);
+	server.registerController(&ssController);
 	server.setOption("enable_directory_listing", "false");
 	server.start();
 
 	cout << "Server started, routes:" << endl;
-	jController.dumpRoutes();
+	aController.dumpRoutes();
+	pController.dumpRoutes();
+	ssController.dumpRoutes();
 
 	while (running) {
 		sleep(10);

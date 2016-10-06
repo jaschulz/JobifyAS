@@ -6,7 +6,7 @@ install_dir="$root_dir/temp_install"
 # Instalación de dependencias y herramientas
 echo "Installing tools and dependencies"
 apt-get update
-apt-get install -y --assume-yes --force-yes libsnappy-dev zlib1g-dev libbz2-dev libgflags-dev cmake libcppunit-doc libcppunit-dev lcov libboost-all-dev libssl-dev git
+apt-get install -y --assume-yes --force-yes libsnappy-dev zlib1g-dev libbz2-dev libgflags-dev cmake lcov libboost-all-dev libssl-dev git
 
 ## Instala las librerías
 echo "Installing libraries"
@@ -38,7 +38,17 @@ make install && \
 
 cd $install_dir
 sudo apt-get install libcurl4-openssl-dev
+sudo apt-get install libssl-dev 
 
+sudo apt-get install libsnappy-dev
+wget https://github.com/google/leveldb/archive/master.zip && \
+unzip master.zip && \
+rm master.zip && \
+cd leveldb-master && \
+make && \
+cp --preserve=links out-shared/libleveldb.* /usr/local/lib && \
+cp -r include/leveldb /usr/local/include/ && \
+ldconfig
 
 cd $root_dir
 rm -rf temp_install
@@ -46,3 +56,6 @@ rm -rf temp_install
 echo "Make and install"
 mkdir -p build && cd build && \
 cmake .. && make
+
+#corro para ejecutar los tests
+./main &

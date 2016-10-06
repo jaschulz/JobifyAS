@@ -4,31 +4,13 @@
 
 ## Building
 
-**Building JSONcpp**
-
-1. Clone JSONCpp from https://github.com/open-source-parsers/jsoncpp.git
-
-2. cd jsoncpp
-
-3. python amalgamate.py
-
-4. mkdir build && cd build
-
-5. cmake ..
-
-6. sudo make install
-
 **Building AppServer**
 
 1. cd AppServer/
 
-2. mkdir build && cd build
+2. sudo sh install.sh
 
-3. cmake ..
-
-4. make
-
-5. ./main
+install.sh installs every dependency so that the AppServer can be built and run flawlessly.
 
 **Simple Test**
 
@@ -301,6 +283,35 @@
 >    users: [USERS]
 >}
 >```
+
+
+#### Follow contact
+><table>
+  <tbody>
+    <tr>
+      <th>Attribute</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td>Method</td>
+      <td>POST</td>
+    </tr>
+    <tr>
+      <td>URL</td>
+      <td>/users/:id/contacts</td>
+    </tr>
+      <td>Parameters</td>
+      <td>
+        <ul>
+          <li>email (string)</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+>No response
+>Server status 201 on success
+>Server status 404 if contact does not exist
 
 
 #### User contacts
