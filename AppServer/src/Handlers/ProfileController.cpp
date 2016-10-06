@@ -40,35 +40,32 @@ void ProfileController::printDB(Request &request, JsonResponse &response) {
 void ProfileController::editProfile(Request &request, JsonResponse &response) {
 	char email[50];
 	string data = request.getData();
-	//TODO verify login
+	//TODO verify token
+	string error = "Wrong number or type of parameters.";	
 	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",email)) {
+		error = "";
 		Json::Reader reader;
 		Json::Value JsonBody;
 		bool parsingSuccessful = reader.parse(data.c_str(), JsonBody); //parse process
-		if (!parsingSuccessful) {
-			std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
-
+		if (parsingSuccessful) {
+			dbUsers dbuser;
+			dbuser.connect("./usersdb");
+			string key(email);
+			error = dbuser.editProfile(key,JsonBody);
+			dbuser.CloseDB();
+			if (error == "") {
+				response.setCode(200);
+				response.setHeader("Content-Type", "application/json; charset=utf-8");
+				response["user"] = JsonBody;
+				return;
+			} 
+		} else {
+			error = reader.getFormattedErrorMessages();
 		}
-		dbUsers dbuser;
-		dbuser.connect("./usersdb");
-		string error = "";
-		string key(email);
-		error = dbuser.editProfile(key,JsonBody);
-		dbuser.CloseDB();
-		if (error == "") {
-			response.setCode(200);
-			response.setHeader("Content-Type", "application/json; charset=utf-8");
-			response["user"] = JsonBody;
-		} else {		
-			response.setCode(401);
-			response.setHeader("Content-Type", "application/json; charset=utf-8");
-			response["error"] = error;
-		}
-	} else {		
-			response.setCode(401);
-			response.setHeader("Content-Type", "application/json; charset=utf-8");
-			response["error"] = "Wrong number or type of parameters.";
 	}
+	response.setCode(401);
+	response.setHeader("Content-Type", "application/json; charset=utf-8");
+	response["error"] = error;
         
 }
 
@@ -104,12 +101,8 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 void ProfileController::setLocation(Request &request, JsonResponse &response) {
 	char email[50];
 	string data = request.getData();
-	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^\n]/location",email)) {
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^/]/location",email)) {
 		string mail(email);
-		cout<<mail<<"."<<endl;
- 		size_t pos = mail.find("/location");      // position of "location" in str
-		mail = mail.substr (0,pos);     // get from "live" to the end
-		cout<<mail<<"."<<endl;
 		Json::Value JsonBody;
 		Json::Reader reader;
 		bool parsingSuccessful = reader.parse(data.c_str(), JsonBody); //parse process

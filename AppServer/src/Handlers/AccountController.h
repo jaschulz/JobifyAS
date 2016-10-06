@@ -25,6 +25,8 @@ public:
 
 	void getJobPositions(Request &request, JsonResponse &response);
 
+	void addJobPositions(Request &request, JsonResponse &response);
+
 	void getCategories(Request &request, JsonResponse &response);
 
 	void getSkills(Request &request, JsonResponse &response);

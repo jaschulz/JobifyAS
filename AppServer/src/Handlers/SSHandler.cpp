@@ -3,25 +3,14 @@
 //#include <mongoose/JsonResponse.h>
 #include "SSHandler.h"
 
+#include <stdio.h>
+
 string data; //will hold the url's contents
-
-
-size_t write_data(char* buf, size_t size, size_t nmemb, void* up) { //callback must have this declaration
-
-//buf is a pointer to the data that curl has for us
-																	//size*nmemb is the size of the buffer
-
-	for (int c = 0; c < size * nmemb; c++) {
-		data.push_back(buf[c]);
-	}
-	return size * nmemb; //tell curl how many bytes we handled
-}
 
 size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data) {
     data->append((char*) ptr, size * nmemb);
     return size * nmemb;
 }
-
 
 void	SSHandler::handleGet(string url, JsonResponse &response){
 	CURL * curl_handle;
@@ -51,95 +40,108 @@ void	SSHandler::handleGet(string url, JsonResponse &response){
 
 		}
 	}
-	/*CURL * curl_handle;
-	curl_handle = curl_easy_init();
-	curl_global_init(CURL_GLOBAL_ALL);
-
-	
-	curl_easy_cleanup(curl_handle);
-	curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
-        curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "curl/7.42.0");
-        curl_easy_setopt(curl_handle, CURLOPT_MAXREDIRS, 50L);
-        curl_easy_setopt(curl_handle, CURLOPT_TCP_KEEPALIVE, 1L);
-        
-        std::string response_string;
-        std::string header_string;
-        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, writeFunction);
-        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &response_string);
-        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, &header_string);
-        
-        char* url2;
-        long response_code;
-        double elapsed;
-        curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &response_code);
-        curl_easy_getinfo(curl_handle, CURLINFO_TOTAL_TIME, &elapsed);
-        curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &url2);
-        Json::Reader reader2;
-		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
-		if (!parsingSuccessful) {
-			response["error"] = reader2.getFormattedErrorMessages();
-
-		}
-        curl_easy_perform(curl_handle);
-        curl_easy_cleanup(curl_handle);
-	curl_handle = NULL;*/
 }
 
 
-/*JsonResponse	SSHandler::handlePut(string url, Request &request){
-  CURL *curl;
+JsonResponse	SSHandler::handlePost(string url, Request &request, JsonResponse &response){
+CURL *curl;
   CURLcode res;
  
-  /* In windows, this will init the winsock stuff */ 
-  //curl_global_init(CURL_GLOBAL_ALL);
- 
-  /* get a curl handle */ 
- // curl = curl_easy_init();
- // if(curl) {
-    /* we want to use our own read function */ 
-//    curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
- 
-    /* enable uploading */ 
-  //  curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
- 
-    /* HTTP PUT please */ 
-  //  curl_easy_setopt(curl, CURLOPT_PUT, 1L);
- 
-    /* specify target URL, and note that this URL should include a file
-       name, not only a directory */ 
-   /* curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
-	struct curl_slist *headers = NULL;
-	headers = curl_slist_append(headers, "Accept: application/json");
-	headers = curl_slist_append(headers, "Content-Type: application/json");
-	headers = curl_slist_append(headers, "charsets: utf-8");
+  curl_global_init(CURL_GLOBAL_ALL);
+  curl = curl_easy_init();
+  if(curl) {
 
+	
+	std::string jsonstr = request.getData();
 
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers); 
+	        std::string response_string;
  
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT"); /* !!! */
-
-    //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_struct); /* data goes here */
-    /* now specify which file to upload */ 
-    //curl_easy_setopt(curl, CURLOPT_READDATA, hd_src);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
  
-    /* provide the size of the upload, we specicially typecast the value
-       to curl_off_t since we must be sure to use the correct data size */ 
-    //curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE,(curl_off_t)file_info.st_size);
+    /* send all data to this function  */ 
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunction);
  
-    /* Now run off and do what you've been told! */ 
-   // res = curl_easy_perform(curl);
+    /* we pass our 'chunk' struct to the callback function */ 
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
+ 
+    /* some servers don't like requests that are made without a user-agent
+       field, so we provide one */ 
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+ 
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonstr.c_str());
+ 
+    /* if we don't provide POSTFIELDSIZE, libcurl will strlen() by
+       itself */ 
+//    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(jsonstr.c_str()));
+ 
+    /* Perform the request, res will get the return code */ 
+    res = curl_easy_perform(curl);
     /* Check for errors */ 
-   /* if(res != CURLE_OK)
+    if(res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n",
               curl_easy_strerror(res));
- */
+    }
+    else {std::cout <<"else" << endl;
+		Json::Reader reader2;
+
+		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
+		if (!parsingSuccessful) {
+			response["error"] = reader2.getFormattedErrorMessages();
+		}
+    }
+ 
     /* always cleanup */ 
-   /* curl_easy_cleanup(curl);
-  }
+    curl_easy_cleanup(curl);
+ 
 
  
-  curl_global_cleanup();
-  return 0;
-}*/
+    /* we're done with libcurl, so clean it up */ 
+    curl_global_cleanup();
+  }
+
+/*	CURLcode ret;
+	CURL *hnd;
+	struct curl_slist *slist1;
+	std::string jsonstr = request.getData();
+
+	slist1 = NULL;
+	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
+
+				std::cout <<"1" << endl;
+	hnd = curl_easy_init();
+
+	        std::string response_string;
+	curl_easy_setopt(hnd, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, writeFunction);
+        curl_easy_setopt(hnd, CURLOPT_WRITEDATA, &response_string);
+	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);
+	curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, jsonstr.c_str());
+	curl_easy_setopt(hnd, CURLOPT_USERAGENT, "curl/7.38.0");
+	curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, slist1);
+	curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
+	curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");
+	curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
+
+
+	std::cout <<"2" << endl;
+	ret = curl_easy_perform(hnd);
+	if (ret != CURLE_OK) {
+	std::cout <<"if" << endl;
+		response["Error"] = curl_easy_strerror(ret);
+	std::cout <<"if2" << endl;
+	} else {
+			std::cout <<"else" << endl;
+		Json::Reader reader2;
+
+		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
+		if (!parsingSuccessful) {
+			response["error"] = reader2.getFormattedErrorMessages();
+		}
+	}
+
+	curl_easy_cleanup(hnd);
+	hnd = NULL;
+	curl_slist_free_all(slist1);
+	slist1 = NULL; */
+}

@@ -124,6 +124,48 @@ void AccountController::getJobPositions(Request &request, JsonResponse &response
 	ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions",response);
 }
 
+/*void AccountController::addJobPositions(Request &request, JsonResponse &response) {
+	char oldCategory[50];
+	char oldName[50];
+	if (2 == sscanf(request.getUrl().c_str(),"/api/job_positions/categories/%99[^/]/%s",oldCategory,oldName)) {
+		string category(oldCategory);
+		string name(oldName);
+		SSHandler ss;
+		ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category + "/" + name,request,response);	
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+}*/
+
+void AccountController::addJobPositions(Request &request, JsonResponse &response) {
+	
+	char charCategory[50];
+	if (1 == sscanf(request.getUrl().c_str(),"/api/job_positions/categories/%s",charCategory)) {
+		string category(charCategory);
+		/*Json::Reader reader;
+		std::cout << category << endl;
+		std::string data = request.getData();
+				std::cout << data << endl;
+		Json::Value root;
+
+		bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
+		if (!parsingSuccessful) {
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = reader.getFormattedErrorMessages();
+			return;
+		}*/
+		SSHandler ss;
+		ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category,request,response);
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+}
+
 void AccountController::getCategories(Request &request, JsonResponse &response) {
 	SSHandler ss;
 	ss.handleGet("https://still-falls-40635.herokuapp.com/categories",response);
@@ -179,13 +221,15 @@ void AccountController::setup() {
 			JsonResponse);
 	addRouteResponse("GET", "/job_positions", AccountController, getJobPositions,
 			JsonResponse);
+	addRouteResponse("POST", "/job_positions/categories/{category}", AccountController, addJobPositions,
+				JsonResponse);
 	addRouteResponse("GET", "/categories", AccountController, getCategories,
 			JsonResponse);
 	addRouteResponse("GET", "/skills", AccountController, getSkills,
 			JsonResponse);
-	addRouteResponse("GET", "/job_positions/categories/{categoty}", AccountController, filterJobPositionsByCategory,
+	addRouteResponse("GET", "/job_positions/categories/{category}", AccountController, filterJobPositionsByCategory,
 			JsonResponse);
-	addRouteResponse("GET", "/skills/categories/{categoty}", AccountController, filterSkillsByCategory,
+	addRouteResponse("GET", "/skills/categories/{category}", AccountController, filterSkillsByCategory,
 			JsonResponse);
 }
 
