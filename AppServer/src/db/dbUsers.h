@@ -19,6 +19,8 @@ public:
 	string setLocation(string &key,Json::Value &user);
 
 	string addContact(string &key,Json::Value &user);
+
+	string getContacts(string &key,Json::Value &contacts);
 private:
 	string putContact(string &user1,string &idNewContact);
 };

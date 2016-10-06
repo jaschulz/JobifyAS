@@ -19,7 +19,7 @@ string dbUsers::editProfile(string &key,Json::Value &user){
 		if (st.ToString().compare("NotFound: ") == 0) {
 			db->Put(writeOptions, key, user.toStyledString());
 		} else {
-			error = "Failed: " + st.ToString();
+			error = "Failed1: " + st.ToString();
 		}
 	} else {
 		Json::Value root;   
@@ -48,7 +48,7 @@ string dbUsers::setLocation(string &key,Json::Value &user){
         string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
-		error = "Failed: " + st.ToString();
+		error = "Failed2: " + st.ToString();
 	} else {
 		Json::Value root;   
 		Json::Reader reader;
@@ -84,10 +84,11 @@ string dbUsers::putContact(string &user1,string &idNewContact){
 	root["contacts"] = contactsArray;
 	leveldb::Status st = db->Put(writeOptions, key, root.toStyledString());
 	if (st.ok() != 1) {
-		error = "Failed: " + st.ToString();
+		error = "Failed3: " + st.ToString();
 	} 
 	return error;
 }
+
 string dbUsers::addContact(string &key,Json::Value &user){
 	leveldb::WriteOptions writeOptions;
 	string loggedUserJson;
@@ -96,12 +97,12 @@ string dbUsers::addContact(string &key,Json::Value &user){
 	string	newContact = user.get("email","").asString();
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&loggedUserJson);
 	if (st.ok() != 1) {
-		error = "Failed: " + st.ToString();
+		error = "Failed4: " + st.ToString();
 		return error;
 	} 
 	st =  db->Get(leveldb::ReadOptions(),newContact,&newContactJson);
 	if (st.ok() != 1) {
-		error = "Failed: " + st.ToString();
+		error = "Failed5: " + st.ToString();
 		return error;
 	}
 	error = putContact(loggedUserJson,newContact);
@@ -123,13 +124,32 @@ string dbUsers::addContact(string &key,Json::Value &user){
 	return error;
 }
 
-string dbUsers::getProfile(Json::Value &user){
+string dbUsers::getContacts(string &key,Json::Value &contacts) {
+	string strJson;
+        string error = "";
+	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
+	if (st.ok() != 1) {
+		error = "Failed1111: " + st.ToString();
+	} else {
+		Json::Value user;   
+		Json::Reader reader;
+		bool parsingSuccessful = reader.parse( strJson.c_str(), user );     //parse process
+		if ( !parsingSuccessful )
+		{
+			error = reader.getFormattedErrorMessages();
+		}
+		contacts = user["contacts"];
+	}
+	return error;
+}
+
+string dbUsers::getProfile(Json::Value &user) {
 	string username = user.get("email", "").asString();
 	string strJson;
         string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&strJson);
 	if (st.ok() != 1) {
-		error = "Failed: " + st.ToString();
+		error = "Failed7: " + st.ToString();
 	} else {
 		Json::Value root;   
 		Json::Reader reader;

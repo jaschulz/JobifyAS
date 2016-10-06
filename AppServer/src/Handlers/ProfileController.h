@@ -26,6 +26,8 @@ public:
 	void setLocation(Request &request, JsonResponse &response);
 
 	void addContact(Request &request, JsonResponse &response);
+
+	void getContacts(Request &request, JsonResponse &response);
 };
 
 #endif 

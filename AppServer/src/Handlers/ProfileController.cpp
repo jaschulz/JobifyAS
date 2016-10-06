@@ -74,6 +74,8 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 	char email[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",email)) {
 		string mail(email);
+
+		cout<<mail<<"no se porqye"<<endl;
 		Json::Value JsonBody;
 		JsonBody["email"] = mail;
 		dbUsers dbuser;
@@ -89,6 +91,34 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 			response.setCode(401);
 			response.setHeader("Content-Type", "application/json; charset=utf-8");
 			response["error"] = error;
+		}
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+        
+}
+
+void ProfileController::getContacts(Request &request, JsonResponse &response) {
+	char email[50];
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^/]/contacts",email)) {
+		string mail(email);
+		cout<<mail<<endl;
+		Json::Value JsonBody;
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");
+		string error = "";
+		error = dbuser.getContacts(mail,JsonBody);
+		dbuser.CloseDB();
+		if (error == "") {
+			response.setCode(200);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["contacts"] = JsonBody;
+		} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error aca"] = error;
 		}
 	} else {		
 			response.setCode(401);
@@ -170,6 +200,7 @@ void ProfileController::setup() {
 	addRouteResponse("GET", "/users/{email}", ProfileController, getProfile, JsonResponse);
 	addRouteResponse("PUT", "/users/{email}", ProfileController, editProfile, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/contacts", ProfileController, addContact, JsonResponse);
+	addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/location", ProfileController, setLocation, JsonResponse);
 	addRouteResponse("GET", "/printProfiles", ProfileController, printDB,JsonResponse);
 }
