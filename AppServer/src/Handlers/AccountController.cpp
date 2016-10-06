@@ -108,15 +108,22 @@ void AccountController::login(Request &request, JsonResponse &response) {
 	dbCont.CloseDB();
 
 	if (error == "") {
-		response.setCode(200);
-		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
-		response["user"] = jsonProfile;
-	} else {		
-		response.setCode(401);
-		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["error"] = error;
-	}
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");
+		error = dbuser.getProfile(root);
+		dbuser.CloseDB();
+		if (error == "") {
+			response.setCode(200);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
+			response["user"] = root;
+			return;
+		}
+	} 
+	response.setCode(401);
+	response.setHeader("Content-Type", "application/json; charset=utf-8");
+	response["error"] = error;
+
 }
 
 string AccountController::generateToken(const string &email, const string &password) const {
