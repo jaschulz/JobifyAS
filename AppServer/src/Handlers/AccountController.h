@@ -23,18 +23,6 @@ public:
 
 	void printDB(Request &request, JsonResponse &response);
 
-	void getJobPositions(Request &request, JsonResponse &response);
-
-	void addJobPositions(Request &request, JsonResponse &response);
-
-	void getCategories(Request &request, JsonResponse &response);
-
-	void getSkills(Request &request, JsonResponse &response);
-
-	void filterJobPositionsByCategory(Request &request, JsonResponse &response);
-
-	void filterSkillsByCategory(Request &request, JsonResponse &response);
-
 	void setup();
 private:
 	string generateToken(const string &email, const string &password) const;

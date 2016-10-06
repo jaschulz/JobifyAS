@@ -4,6 +4,7 @@
 #include <mongoose/Server.h>
 #include "../Handlers/ProfileController.h"
 #include "../Handlers/AccountController.h"
+#include "../Handlers/SSController.h"
 
 using namespace std;
 using namespace Mongoose;
@@ -25,15 +26,18 @@ int main() {
 
 	ProfileController pController;
 	AccountController aController;
+	SSController ssController;
 	Server server(8081);
 	server.registerController(&pController);
 	server.registerController(&aController);
+	server.registerController(&ssController);
 	server.setOption("enable_directory_listing", "false");
 	server.start();
 
 	cout << "Server started, routes:" << endl;
 	aController.dumpRoutes();
 	pController.dumpRoutes();
+	ssController.dumpRoutes();
 
 	while (running) {
 		sleep(10);
