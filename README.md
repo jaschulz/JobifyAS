@@ -14,10 +14,25 @@ install.sh installs every dependency so that the AppServer can be built and run 
 
 **Simple Test**
 
-1. cd AppServer/
+1. cd AppServer/scripts
 
 2. sh prueba.sh
 
+**Checkpoint 2**
+
+1. GET Requests al SharedServer.
+
+2. POST Requests al SharedServer. Incompleto -> Segmentation Fault.
+
+3. Generación de Token, pero sin su posterior uso para validación.
+
+4. Registro de usuario.
+
+5. Obtención de perfil de usuario.
+
+6. Agregado de contactos. Se agregan mutuamente, sin esperar la aceptación.
+
+7. Modificación de location.
 
 ## REST API
 
