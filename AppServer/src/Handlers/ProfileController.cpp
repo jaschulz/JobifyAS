@@ -74,8 +74,6 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 	char email[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",email)) {
 		string mail(email);
-
-		cout<<mail<<"no se porqye"<<endl;
 		Json::Value JsonBody;
 		JsonBody["email"] = mail;
 		dbUsers dbuser;
