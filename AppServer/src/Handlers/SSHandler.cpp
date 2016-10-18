@@ -4,8 +4,7 @@
 #include "SSHandler.h"
 
 #include <stdio.h>
-
-string data; //will hold the url's contents
+	
 
 size_t SSHandler::writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data) {
     data->append((char*) ptr, size * nmemb);
@@ -38,8 +37,12 @@ void	SSHandler::handleGet(string url, JsonResponse &response){
 	}
 }
 
+size_t write_to_string(void *ptr, size_t size, size_t count, void *stream) {
+  ((string*)stream)->append((char*)ptr, 0, size*count);
+  return size*count;
+}
 
-JsonResponse	SSHandler::handlePost(string url, Request &request, JsonResponse &response){
+void	SSHandler::handlePost(string url, Request &request, JsonResponse &response){
 	CURLcode ret;
 	CURL *hnd;
 	struct curl_slist *slist1;
@@ -48,7 +51,6 @@ JsonResponse	SSHandler::handlePost(string url, Request &request, JsonResponse &r
 	slist1 = NULL;
 	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
 
-				std::cout <<"1" << endl;
 	hnd = curl_easy_init();
 
 	        std::string response_string;
@@ -63,17 +65,11 @@ JsonResponse	SSHandler::handlePost(string url, Request &request, JsonResponse &r
 	curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");
 	curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
 
-
-	std::cout <<"2" << endl;
 	ret = curl_easy_perform(hnd);
 	if (ret != CURLE_OK) {
-	std::cout <<"if" << endl;
 		response["Error"] = curl_easy_strerror(ret);
-	std::cout <<"if2" << endl;
 	} else {
-			std::cout <<"else" << response_string<<endl;
 		Json::Reader reader2;
-
 		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
 		if (!parsingSuccessful) {
 			response["error"] = reader2.getFormattedErrorMessages();
@@ -83,5 +79,6 @@ JsonResponse	SSHandler::handlePost(string url, Request &request, JsonResponse &r
 	curl_easy_cleanup(hnd);
 	hnd = NULL;
 	curl_slist_free_all(slist1);
-	slist1 = NULL; 
+slist1 = NULL; 
+
 }

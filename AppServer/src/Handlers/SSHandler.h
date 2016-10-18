@@ -14,7 +14,7 @@ class SSHandler {
 public:
 	void handleGet(string url,JsonResponse &response);
 
-	JsonResponse handlePost(string url, Request &request, JsonResponse &response);
+	void handlePost(string url, Request &request, JsonResponse &response);
 
 private:
 	static size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data);
