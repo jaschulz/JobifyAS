@@ -6,7 +6,7 @@ install_dir="$root_dir/temp_install"
 # Instalación de dependencias y herramientas
 echo "Installing tools and dependencies"
 apt-get update
-apt-get install -y --assume-yes --force-yes libsnappy-dev zlib1g-dev libbz2-dev libgflags-dev cmake lcov libboost-all-dev libssl-dev git
+apt-get install -y --assume-yes --force-yes libsnappy-dev zlib1g-dev libbz2-dev libgflags-dev cmake lcov libboost-all-dev libssl-dev git libcppunit-dev
 
 ## Instala las librerías
 echo "Installing libraries"
