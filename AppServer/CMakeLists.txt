@@ -2,10 +2,12 @@ cmake_minimum_required (VERSION 2.6)
 project (appServer)
 find_package (Threads)
 
-# - use ISO C++11 required for RocksDB
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -lz -lrt -pthread -std=c++11 -g -fno-strict-aliasing")
 set(WARNINGS "-Wall -Wextra -Wunused-parameter -Wcast-align -Wcast-qual -Wconversion -Wformat=2 -Winit-self -Winvalid-pch -Wmissing-format-attribute -Wmissing-include-dirs -Wpacked -Wredundant-decls -Wunreachable-code")
 set(LD_FLAGS "${LD_FLAGS} -Wl,-z,defs")
+
+# Tests SRC folder
+set(TESTS "${PROJECT_SOURCE_DIR}/tests/")
 
 set (MONGOOSE_CPP "${PROJECT_SOURCE_DIR}/src/mongoose")
 
@@ -84,11 +86,15 @@ file(GLOB MYSOURCES
 
 add_executable(main ${MYSOURCES})
 #add_executable (main src/main.cpp src/JobifyController.cpp src/JobifyController.h src/SSHandler.cpp src/SSHandler.h)
-target_link_libraries (main mongoose ${Casablanca_LIBRARIES} -L/usr/lib/x86_64-linux-gnu -lcurl -lleveldb -lpthread -lsnappy -lcrypto -Wl,-Bsymbolic-functions -Wl,-z,relro)
+target_link_libraries (main mongoose -L/usr/lib/x86_64-linux-gnu -lcurl -lleveldb cppunit -lpthread -lsnappy -lcrypto -Wl,-Bsymbolic-functions -Wl,-z,relro)
 
 # install
 set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
 configure_file(AppServerConfig.cmake.in AppServerConfig.cmake @ONLY)
+
+# Tests
+enable_testing()
+add_subdirectory(${TESTS})
 
 install (FILES src/mongoose/mongoose.h DESTINATION "${INCLUDE_INSTALL_DIR}")
 install (DIRECTORY src/mongoose DESTINATION "${INCLUDE_INSTALL_DIR}" PATTERN "*.cpp" EXCLUDE)

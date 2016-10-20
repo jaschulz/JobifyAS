@@ -12,6 +12,8 @@
 #include <curl/curl.h>
 #include "../Model/Profile.h"
 #include "../utils/Encrypt.h"
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
 
 
 AccountController::AccountController() {
