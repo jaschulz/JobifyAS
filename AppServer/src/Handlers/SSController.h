@@ -15,6 +15,8 @@ class SSController: public JobifyController {
 public:
 	SSController();
 
+	void deleteJobPosition(Request &request, JsonResponse &response);
+
 	void getJobPositions(Request &request, JsonResponse &response);
 
 	void addJobPositions(Request &request, JsonResponse &response);
