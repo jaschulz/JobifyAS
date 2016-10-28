@@ -95,6 +95,8 @@ string dbUsers::addContact(string &key,Json::Value &user){
         string error = "";	
 	string newContactJson;
 	string	newContact = user.get("email","").asString();
+	cout<<"newContact: "<<newContact<<endl;
+	cout<<"key: "<<key<<endl;
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&loggedUserJson);
 	if (st.ok() != 1) {
 		error = "Failed4: " + st.ToString();
@@ -127,6 +129,7 @@ string dbUsers::addContact(string &key,Json::Value &user){
 string dbUsers::getContacts(string &key,Json::Value &contacts) {
 	string strJson;
         string error = "";
+	cout<<"key: "<<key<<endl;
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
 		error = "Failed1111: " + st.ToString();

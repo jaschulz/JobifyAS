@@ -84,21 +84,22 @@ file(GLOB MYSOURCES
 	src/*.cpp
 )
 
-add_executable(main ${MYSOURCES} ${SOURCES})
-set(LIBS mongoose -L/usr/lib/x86_64-linux-gnu -lcurl -lleveldb cppunit -lpthread -lsnappy -lcrypto -Wl,-Bsymbolic-functions -Wl,-z,relro)
-target_link_libraries (${LIBS} ${SOURCES})
+add_executable(main ${MYSOURCES})
+#add_executable (main src/main.cpp src/JobifyController.cpp src/JobifyController.h src/SSHandler.cpp src/SSHandler.h)
+target_link_libraries (main mongoose -L/usr/lib/x86_64-linux-gnu -lcurl -lleveldb cppunit -lpthread -lsnappy -lcrypto -Wl,-Bsymbolic-functions -Wl,-z,relro)
 
 # install
 set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
 configure_file(AppServerConfig.cmake.in AppServerConfig.cmake @ONLY)
 
 # Tests
-enable_testing()
-add_subdirectory(${TESTS})
+#enable_testing()
+#add_subdirectory(${TESTS})
 
-install (FILES src/mongoose/mongoose.h DESTINATION "${INCLUDE_INSTALL_DIR}")
-install (DIRECTORY src/mongoose DESTINATION "${INCLUDE_INSTALL_DIR}" PATTERN "*.cpp" EXCLUDE)
-install (TARGETS mongoose DESTINATION lib EXPORT mongoose-targets)
-install (EXPORT mongoose-targets DESTINATION "lib/cmake/mongoose" FILE MongooseTargets.cmake)
-install (FILES ${CMAKE_CURRENT_BINARY_DIR}/MongooseConfig.cmake DESTINATION "lib/cmake/mongoose")
+#install (FILES src/mongoose/mongoose.h DESTINATION "${INCLUDE_INSTALL_DIR}")
+#install (DIRECTORY src/mongoose DESTINATION "${INCLUDE_INSTALL_DIR}" PATTERN "*.cpp" EXCLUDE)
+#install (TARGETS mongoose DESTINATION lib EXPORT mongoose-targets)
+#install (EXPORT mongoose-targets DESTINATION "lib/cmake/mongoose" FILE MongooseTargets.cmake)
+#install (FILES ${CMAKE_CURRENT_BINARY_DIR}/MongooseConfig.cmake DESTINATION "lib/cmake/mongoose")
+
 

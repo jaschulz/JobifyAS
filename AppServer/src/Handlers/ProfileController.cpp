@@ -72,11 +72,12 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 
 void ProfileController::getProfile(Request &request, JsonResponse &response) {
 	char email[50];
-	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%s",email)) {
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^/]",email)) {
 		string mail(email);
 		Json::Value JsonBody;
 		JsonBody["email"] = mail;
 		dbUsers dbuser;
+		//cout<<"mail (getProfile): "<<mail<<endl;
 		dbuser.connect("./usersdb");
 		string error = "";
 		error = dbuser.getProfile(JsonBody);
@@ -183,6 +184,8 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 			response.setCode(401);
 			response.setHeader("Content-Type", "application/json; charset=utf-8");
 			response["error"] = error;
+			
+			std::cout << "Failed aqui" << endl;
 		}
 	} else {		
 			response.setCode(401);
@@ -198,7 +201,7 @@ void ProfileController::setup() {
 	addRouteResponse("GET", "/users/{email}", ProfileController, getProfile, JsonResponse);
 	addRouteResponse("PUT", "/users/{email}", ProfileController, editProfile, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/contacts", ProfileController, addContact, JsonResponse);
-	//addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
+	addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/location", ProfileController, setLocation, JsonResponse);
 	addRouteResponse("GET", "/printProfiles", ProfileController, printDB,JsonResponse);
 }

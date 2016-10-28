@@ -39,18 +39,20 @@ bool JobifyController::handles(string method, string url) {
 Response *JobifyController::process(Request &request) {
 
     string currentRequest = request.getMethod() + ":" + request.getUrl();
-
+	//cout<<"currentRequest: "<<currentRequest<<endl;
     Response *response = NULL;
 
     map<string, RequestHandlerBase *>::iterator it;
     for (it = routes.begin(); it != routes.end(); it++) {
         string key = it->first;
-
+	//	cout<<"key: "<<key<<endl;
 
         string regexKey = replaceRouteParams(key);
+	//	cout<<"regexKey: "<<regexKey<<endl;
 
         if (regex_match(currentRequest, regex(regexKey))) {
 
+	//	cout<<"adentro: "<<endl;
             //Only search for route params in regex keys
             if (regexKey.find(".*") != string::npos) {
                 parseRouteParams(key, currentRequest);
@@ -73,12 +75,10 @@ void JobifyController::parseRouteParams(const string &key, const string &current
     unsigned long secondPos = key.find("}");
 
     string mapKey = key.substr(firstPos + 1, secondPos - firstPos - 1);
-
     //Get map value
     string requestTail = currentRequest.substr(firstPos);
     unsigned long incomingRequestValueEnd = requestTail.find("/");
     string value = currentRequest.substr(firstPos, incomingRequestValueEnd);
-
     routeParams->insert(std::pair<string, string>(mapKey, value));
 }
 
@@ -90,11 +90,12 @@ string JobifyController::replaceRouteParams(string key) const {
 
     //Replace {param} with .*
     while (firstPos != string::npos && secondPos != string::npos) {
-        replacedKey = replacedKey.replace(firstPos, secondPos - firstPos + 1, ".*");
+        replacedKey = replacedKey.replace(firstPos, secondPos - firstPos + 1, "\[^/]*");
         firstPos = replacedKey.find("{");
         secondPos = replacedKey.find("}");
     }
-
+//	replacedKey = replacedKey+"\[^/]";
+		cout<<"replacedKey: "<<replacedKey<<endl;
     return replacedKey;
 }
 
