@@ -20,10 +20,14 @@ wget https://github.com/open-source-parsers/jsoncpp/archive/0.y.z.zip && \
 unzip 0.y.z.zip && \
 cd jsoncpp-0.y.z && \
 python amalgamate.py && \
-cd dist && \
-gcc -c jsoncpp.cpp && \
-ar rvs libjsoncpp.a jsoncpp.o && \
-sudo cp libjsoncpp.a /usr/lib && \
+#cd dist && \
+#gcc -c jsoncpp.cpp && \
+#ar rvs libjsoncpp.a jsoncpp.o && \
+#sudo cp libjsoncpp.a /usr/lib && \
+mkdir build && cd build && \
+cmake .. && \
+make install && \
+echo "Installation complete."
 
 
 cd $install_dir
