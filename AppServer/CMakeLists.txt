@@ -41,8 +41,7 @@ set(Regex_LIBRARIES ${Boost_FILESYSTEM_LIBRARY}
 
 
 # Nombres de las librerías a usar en el proyecto
-#set(LIBS mongoose -L/usr/lib/x86_64-linux-gnu -lcurl -lleveldb cppunit -lpthread -lsnappy -lcrypto -Wl,-Bsymbolic-functions -Wl,-z,relro)
-set(LIBS_NAMES z snappy bz2 jsoncpp mongoose cppunit -lcurl -lleveldb -L/usr/lib/x86_64-linux-gnu -lpthread -lsnappy -lcrypto)
+set(LIBS_NAMES z snappy bz2 jsoncpp mongoose cppunit -lcurl -lleveldb -lpthread -lsnappy -lcrypto)
 
 # Chequeo la existencia de todas las librerias agregadas
 message(STATUS "*** Check for libs existence ***")
@@ -78,16 +77,17 @@ set(MONGOOSE_SOURCES
         ${MONGOOSE_CPP}/WebSockets.cpp)
 
 
-#set(JSONCPP_CPP "${ROOT_PATH}/json")
+set(JSONCPP_CPP "${ROOT_PATH}/json")
 
-#set(JSONCPP_SOURCES
-#        ${JSONCPP_SOURCES}
-#        ${JSONCPP_CPP}/json.h)
+set(JSONCPP_SOURCES
+        ${JSONCPP_SOURCES}
+        ${JSONCPP_CPP}/json.h
+        ${JSONCPP_CPP}/json-forwards.h)
 
 
 include_directories(src)
 include_directories("${LEVELDB_INCLUDE_DIRS}")
-#include_directories("${JSONCPP_CPP}")
+include_directories("${JSONCPP_CPP}")
 include_directories("${MONGOOSE_CPP}")
 #include_directories("${JSONCPP_INCLUDE_DIRS}")
 
@@ -110,8 +110,8 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/src/Model")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/Handlers")
 
 
-add_executable(${PROJECT_NAME} ${SRC_PATH}/main.cpp ${MONGOOSE_SOURCES})
-target_link_libraries(${PROJECT_NAME} mongoose db Model Handlers utils)
+add_executable(${PROJECT_NAME} ${SRC_PATH}/main.cpp ${MONGOOSE_SOURCES} ${JSONCPP_SOURCES})
+target_link_libraries(${PROJECT_NAME} mongoose jsoncpp db Model Handlers utils)
 
 
 
