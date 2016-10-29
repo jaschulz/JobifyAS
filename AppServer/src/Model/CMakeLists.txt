@@ -1,6 +1,6 @@
 project(${PROJECT_NAME} C CXX)
 
-add_library(model Profile.cpp Profile.h)
-target_link_libraries(model ${LIBS_NAMES})
+add_library(Model Profile.cpp Profile.h)
+target_link_libraries(Model ${LIBS_NAMES})
 
 

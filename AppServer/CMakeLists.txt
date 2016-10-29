@@ -17,9 +17,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -lz -lrt -pthread -std=c++11 
 set(WARNINGS "-Wall -Wextra -Wunused-parameter -Wcast-align -Wcast-qual -Wconversion -Wformat=2 -Winit-self -Winvalid-pch -Wmissing-format-attribute -Wmissing-include-dirs -Wpacked -Wredundant-decls -Wunreachable-code")
 set(LD_FLAGS "${LD_FLAGS} -Wl,-z,defs")
 
-
-
-
 set(ROOT_PATH "${${PROJECT_NAME}_SOURCE_DIR}")
 # SRC folder
 set(SRC_PATH "${ROOT_PATH}/src")
@@ -105,16 +102,16 @@ include_directories("${MONGOOSE_CPP}")
 message(STATUS "*** Generating executable ***")
 
 # Tests
-enable_testing()
-add_subdirectory(${TEST_PATH})
+#enable_testing()
+#add_subdirectory(${TEST_PATH})
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/db")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/utils")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/Model")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/Handlers")
 
 
-add_executable(${PROJECT_NAME} ${SRC_PATH}/main.cpp ${MONGOOSE_SOURCES})
-target_link_libraries(${PROJECT_NAME} mongoose db model handlers utils ljsoncpp ${Casablanca_LIBRARIES})
+add_executable(${PROJECT_NAME} ${SRC_PATH}/main.cpp ${MONGOOSE_SOURCES} ${JSONCPP_SOURCES})
+target_link_libraries(${PROJECT_NAME} mongoose db Model Handlers utils jsoncpp )
 
 
 
