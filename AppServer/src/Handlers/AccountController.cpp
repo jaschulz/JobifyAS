@@ -53,7 +53,7 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 		Json::Value JsonBody;
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
-		error = dbuser.editProfile(username,JsonBody);
+		error = dbuser.editProfile(username,profile.publicProfileToJSON());
 		dbuser.CloseDB();
 
 		if (error.compare("") == 0) {

@@ -95,7 +95,7 @@ string JobifyController::replaceRouteParams(string key) const {
         secondPos = replacedKey.find("}");
     }
 //	replacedKey = replacedKey+"\[^/]";
-		cout<<"replacedKey: "<<replacedKey<<endl;
+		//cout<<"replacedKey: "<<replacedKey<<endl;
     return replacedKey;
 }
 
