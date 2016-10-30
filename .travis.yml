@@ -17,7 +17,7 @@ install:
   - sudo ./install.sh
 
 script:
-- cd src/tests
+#- cd src/tests
 #- pip -V
 #- python -V
 #- python restTester.py test
