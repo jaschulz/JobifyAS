@@ -91,13 +91,6 @@ include_directories("${LEVELDB_INCLUDE_DIRS}")
 include_directories("${MONGOOSE_CPP}")
 #include_directories("${JSONCPP_INCLUDE_DIRS}")
 
-#include_directories("${CPPUNIT_ROOT_DIR}")
-##include_directories("${ROCKSDB_INCLUDE_DIRS}")
-#include_directories("${Casablanca_INCLUDE_DIRS}")
-#include_directories(${Boost_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR})
-
-
-
 # Compiling executable
 message(STATUS "*** Generating executable ***")
 
@@ -112,6 +105,3 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/src/Handlers")
 
 add_executable(${PROJECT_NAME} ${SRC_PATH}/main.cpp ${MONGOOSE_SOURCES})
 target_link_libraries(${PROJECT_NAME} mongoose db Model Handlers utils)
-
-
-
