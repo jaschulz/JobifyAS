@@ -2,7 +2,7 @@
 #include <stdlib.h>
 //#include <mongoose/JsonResponse.h>
 #include "SSHandler.h"
-
+#include <curl/curl.h>
 #include <stdio.h>
 	
 
