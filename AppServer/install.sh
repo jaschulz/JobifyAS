@@ -44,6 +44,7 @@ make install && \
 cd $install_dir
 sudo apt-get install libcurl4-openssl-dev
 sudo apt-get install libssl-dev 
+sudo apt-get install request
 
 sudo apt-get install libsnappy-dev
 wget https://github.com/google/leveldb/archive/master.zip && \
@@ -62,7 +63,6 @@ echo "Make and install"
 mkdir -p build && cd build && \
 cmake .. && make
 
-sudo apt-get install request
 
 #corro para ejecutar los tests
 ./appServer &
