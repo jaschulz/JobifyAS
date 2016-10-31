@@ -62,5 +62,7 @@ echo "Make and install"
 mkdir -p build && cd build && \
 cmake .. && make
 
+sudo apt-get install request
+
 #corro para ejecutar los tests
 ./appServer &
