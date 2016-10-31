@@ -44,7 +44,7 @@ make install && \
 cd $install_dir
 sudo apt-get install libcurl4-openssl-dev
 sudo apt-get install libssl-dev 
-sudo apt-get install request
+sudo pip install requests
 
 sudo apt-get install libsnappy-dev
 wget https://github.com/google/leveldb/archive/master.zip && \
