@@ -100,7 +100,7 @@ string JobifyController::replaceRouteParams(string key) const {
 }
 
 
-string  JobifyController::requestToJson(Request &request, Json::Value root) {
+string  JobifyController::requestToJson(Request &request, Json::Value & root) {
 	Json::Reader reader;
 
 	std::string data = request.getData();

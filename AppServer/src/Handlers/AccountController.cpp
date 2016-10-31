@@ -26,7 +26,8 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 
 	Json::Value root;
 
-	Json::Reader reader;
+	string error = requestToJson(request,root);
+/*	Json::Reader reader;
 	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
 	if (!parsingSuccessful) {
 		response.setCode(401);
@@ -34,15 +35,13 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 		response["error"] = reader.getFormattedErrorMessages();
 		return;
 
-	}
+	}*/
 
 	string username = root.get("email", "").asString();
 	string pass = root.get("password", "").asString();
 	string first_name = root.get("first_name", "").asString();
 	string last_name = root.get("last_name", "").asString();
 	Profile profile (username,pass,first_name,last_name);
-
-	string error = "";
 
 	dbCredentials dbCont;
 	dbCont.connect("./testdb");
@@ -95,18 +94,20 @@ void AccountController::login(Request &request, JsonResponse &response) {
 
 	Json::Value root;
 
+	string error = requestToJson(request,root);
+/*
 	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
 	if (!parsingSuccessful) {
 		std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
 
 	}
-
+*/
 	Profile profile(root);
 
 	dbCredentials dbCont;
 	dbCont.connect("./testdb");
 	Json::Value jsonProfile = profile.profileToJSON();
-	string error = dbCont.verifyLogin(jsonProfile);
+	error = dbCont.verifyLogin(jsonProfile);
 	dbCont.CloseDB();
 
 	if (error == "") {

@@ -27,6 +27,7 @@ python amalgamate.py && \
 mkdir build && cd build && \
 cmake .. && \
 make install && \
+ldconfig
 echo "Installation complete."
 
 
@@ -62,4 +63,4 @@ mkdir -p build && cd build && \
 cmake .. && make
 
 #corro para ejecutar los tests
-#./main &
+./appServer &
