@@ -119,6 +119,7 @@ void AccountController::login(Request &request, JsonResponse &response) {
 			response.setHeader("Content-Type", "application/json; charset=utf-8");
 			response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
 			response["user"] = root;
+			response["message"] = "Successful login";
 			return;
 		}
 	} 
