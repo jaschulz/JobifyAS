@@ -95,8 +95,8 @@ include_directories("${MONGOOSE_CPP}")
 message(STATUS "*** Generating executable ***")
 
 # Tests
-#enable_testing()
-#add_subdirectory(${TEST_PATH})
+enable_testing()
+add_subdirectory(${TEST_PATH})
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/db")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/utils")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/Model")
