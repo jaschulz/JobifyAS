@@ -94,20 +94,18 @@ void AccountController::login(Request &request, JsonResponse &response) {
 
 	Json::Value root;
 
-	string error = requestToJson(request,root);
-/*
 	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
 	if (!parsingSuccessful) {
 		std::cout << "Failed to parse" << reader.getFormattedErrorMessages();
 
 	}
-*/
+
 	Profile profile(root);
 
 	dbCredentials dbCont;
 	dbCont.connect("./testdb");
 	Json::Value jsonProfile = profile.profileToJSON();
-	error = dbCont.verifyLogin(jsonProfile);
+	string error = dbCont.verifyLogin(jsonProfile);
 	dbCont.CloseDB();
 
 	if (error == "") {
@@ -127,6 +125,8 @@ void AccountController::login(Request &request, JsonResponse &response) {
 	response.setCode(401);
 	response.setHeader("Content-Type", "application/json; charset=utf-8");
 	response["error"] = error;
+
+//			response["message"] = "Successful login";
 
 }
 

@@ -54,7 +54,7 @@ Response *JobifyController::process(Request &request) {
 
 	//	cout<<"adentro: "<<endl;
             //Only search for route params in regex keys
-            if (regexKey.find(".*") != string::npos) {
+            if (regexKey.find("\[^/]*") != string::npos) {
                 parseRouteParams(key, currentRequest);
             }
 
