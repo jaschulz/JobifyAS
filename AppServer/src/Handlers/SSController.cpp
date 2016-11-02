@@ -56,6 +56,24 @@ void SSController::deleteJobPosition(Request &request, JsonResponse &response) {
 	}
 }
 
+void SSController::deleteSkill(Request &request, JsonResponse &response) {
+	char charCategory[50];
+	char charName[50];
+	if (2 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%99[^/]/%99[0-9a-zA-Z ]",charCategory,charName)) {
+		string category(charCategory);
+		string name(charName);		
+		std::cout << category <<" - "<<name<< endl;
+		name = replaceSpace(name);
+		std::cout << category <<" - "<<name<< endl;
+		SSHandler ss;
+		ss.handleDelete("https://still-falls-40635.herokuapp.com/skills/categories/" + category + "/" + name,request,response);	
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+}
+
 void SSController::modifyJobPosition(Request &request, JsonResponse &response) {
 	char charCategory[50];
 	char charName[50];
@@ -67,6 +85,24 @@ void SSController::modifyJobPosition(Request &request, JsonResponse &response) {
 		std::cout << category <<" - "<<name<< endl;
 		SSHandler ss;
 		ss.handlePut("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category + "/" + name,request,response);	
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+}
+
+void SSController::modifyJobPosition(Request &request, JsonResponse &response) {
+	char charCategory[50];
+	char charName[50];
+	if (2 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%99[^/]/%99[0-9a-zA-Z ]",charCategory,charName)) {
+		string category(charCategory);
+		string name(charName);		
+		std::cout << category <<" - "<<name<< endl;
+		name = replaceSpace(name);
+		std::cout << category <<" - "<<name<< endl;
+		SSHandler ss;
+		ss.handlePut("https://still-falls-40635.herokuapp.com/skills/categories/" + category + "/" + name,request,response);	
 	} else {		
 			response.setCode(401);
 			response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -163,19 +199,23 @@ void SSController::setup() {
 				JsonResponse);
 	addRouteResponse("PUT", "/job_positions/categories/{category}/{name}", SSController, modifyJobPosition,
 				JsonResponse);
-
-
-
-	addRouteResponse("GET", "/categories", SSController, getCategories,
+	addRouteResponse("DELETE", "/job_positions/categories/{category}/{name}", SSController, deleteJobPosition,
 			JsonResponse);
 	addRouteResponse("GET", "/skills", SSController, getSkills,
 			JsonResponse);
 	addRouteResponse("POST", "/skills/categories/{category}", SSController, addSkills,
 				JsonResponse);
+	addRouteResponse("PUT", "/skills/categories/{category}/{name}", SSController, modifySkill,
+				JsonResponse);
+	addRouteResponse("DELETE", "/skills/categories/{category}/{name}", SSController, deleteSkill,
+			JsonResponse);
 
+
+
+	addRouteResponse("GET", "/categories", SSController, getCategories,
+			JsonResponse);
 	addRouteResponse("GET", "/skills/categories/{category}", SSController, filterSkillsByCategory,
 			JsonResponse);
-	addRouteResponse("DELETE", "/job_positions/categories/{category}/{name}", SSController, deleteJobPosition,
-			JsonResponse);
+
 }
 
