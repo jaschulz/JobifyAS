@@ -35,36 +35,28 @@ bool JobifyController::handles(string method, string url) {
     return handle;
 }
 
+void JobifyController::fillResponse(JsonResponse &response, int code) {
+	response.setCode(code);
+	response.setHeader("Content-Type", "application/json; charset=utf-8");
+}
 
 Response *JobifyController::process(Request &request) {
 
     string currentRequest = request.getMethod() + ":" + request.getUrl();
-	//cout<<"currentRequest: "<<currentRequest<<endl;
     Response *response = NULL;
 
     map<string, RequestHandlerBase *>::iterator it;
     for (it = routes.begin(); it != routes.end(); it++) {
         string key = it->first;
-	//	cout<<"key: "<<key<<endl;
-
         string regexKey = replaceRouteParams(key);
-	//	cout<<"regexKey: "<<regexKey<<endl;
-
         if (regex_match(currentRequest, regex(regexKey))) {
-
-	//	cout<<"adentro: "<<endl;
-            //Only search for route params in regex keys
             if (regexKey.find("\[^/]*") != string::npos) {
                 parseRouteParams(key, currentRequest);
             }
-
             response = it->second->process(request);
             break;
         }
-
-
     }
-
     return response;
 }
 
@@ -88,14 +80,11 @@ string JobifyController::replaceRouteParams(string key) const {
     unsigned long firstPos = replacedKey.find("{");
     unsigned long secondPos = replacedKey.find("}");
 
-    //Replace {param} with .*
     while (firstPos != string::npos && secondPos != string::npos) {
         replacedKey = replacedKey.replace(firstPos, secondPos - firstPos + 1, "\[^/]*");
         firstPos = replacedKey.find("{");
         secondPos = replacedKey.find("}");
     }
-//	replacedKey = replacedKey+"\[^/]";
-		//cout<<"replacedKey: "<<replacedKey<<endl;
     return replacedKey;
 }
 

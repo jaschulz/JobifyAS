@@ -48,22 +48,26 @@ string dbUsers::setLocation(string &key,Json::Value &user){
         string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
-		error = "Failed2: " + st.ToString();
+		error = "Failed: " + st.ToString();
 	} else {
 		Json::Value root;   
 		Json::Reader reader;
-		bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
-		if ( !parsingSuccessful )
-		{
-			error = reader.getFormattedErrorMessages();;
+		//bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
+		if (reader.parse( strJson.c_str(), root ))
+		{			
+			root["location"]["latitude"] = user["location"]["latitude"];
+			root["location"]["longitude"] = user["location"]["longitude"];
+			db->Put(writeOptions, key, root.toStyledString());
+			user = root;
+			return "";
+		} else {
+			error = reader.getFormattedErrorMessages();
 		}
-		root["location"]["latitude"] = user["location"]["latitude"];
-		root["location"]["longitude"] = user["location"]["longitude"];
-		db->Put(writeOptions, key, root.toStyledString());
-		user = root;
 	}
 	return error;
 }
+
+
 
 string dbUsers::putContact(string &user1,string &idNewContact){
 	Json::Value root;   
@@ -128,11 +132,58 @@ string dbUsers::addContact(string &key,Json::Value &user){
 	user = root;*/
 	return error;
 }
+/*
+string dbUsers::putPendingContact(string &user1,string &idNewContact){
+	Json::Value root;   
+	Json::Reader reader;
+	string userJson;
+	string error = "";
+	leveldb::Status st =  db->Get(leveldb::ReadOptions(),user1,&userJson);
+	if (st.ok() != 1) {
+		error = "Failed: " + st.ToString();
+		return error;
+	} 
+	cout<<"aca 1"<<endl;
+	bool parsingSuccessful = reader.parse( userJson.c_str(), root );     //parse process
+	if ( !parsingSuccessful )
+	{
+		error = reader.getFormattedErrorMessages();
+		return error;
+	}
+		cout<<"aca 12"<<endl;
+	Json::Value newContact;	
+	Json::Value contactsArray = root["pendingContacts"];
+	if(contactsArray.isMember(idNewContact)) {
+		error = "invitation has already been sent.";
+		return error;
+	}
+	cout<<"aca 3 1"<<endl;
+	newContact[idNewContact] = idNewContact;
+	contactsArray.append(newContact);
+	root["pendingContacts"] = contactsArray;	
+	st = db->Put(leveldb::WriteOptions(), user1, root.toStyledString());
+	if (st.ok() != 1) {
+		error = "Failed: " + st.ToString();
+	} 
+	return error;
+}
+
+string dbUsers::addPendingContact(string &key,Json::Value &user){
+        string error = "";	
+	string	newContact = user.get("email","").asString();	
+	cout<<"antes"<<endl;
+	error = putPendingContact(key,newContact);
+	if (error == "") {
+			cout<<"durantes"<<endl;
+		error = putPendingContact(newContact,key);
+	}
+		cout<<"des"<<endl;
+	return error;
+}*/
 
 string dbUsers::getContacts(string &key,Json::Value &contacts) {
 	string strJson;
         string error = "";
-//	cout<<"key: "<<key<<endl;
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
 		error = "Failed1111: " + st.ToString();
@@ -155,7 +206,7 @@ string dbUsers::getProfile(Json::Value &user) {
         string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&strJson);
 	if (st.ok() != 1) {
-		error = "Failed7: " + st.ToString();
+		error = "Failed: " + st.ToString();
 	} else {
 		Json::Value root;   
 		Json::Reader reader;

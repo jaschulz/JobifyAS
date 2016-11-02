@@ -1,3 +1,3 @@
 cd ../build
-rm -r testdb
+rm -r accounts
 rm -r usersdb

@@ -12,8 +12,6 @@
 #include <curl/curl.h>
 #include "../Model/Profile.h"
 #include "../utils/Encrypt.h"
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/ui/text/TestRunner.h>
 
 
 AccountController::AccountController() {
@@ -26,51 +24,48 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 
 	Json::Value root;
 
-	string error = requestToJson(request,root);
-/*	Json::Reader reader;
-	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
-	if (!parsingSuccessful) {
-		response.setCode(401);
-		response.setHeader("Content-Type", "application/json; charset=utf-8");
+	Json::Reader reader;
+//	bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
+	if (!reader.parse(data.c_str(), root)) {	
+		fillResponse(response,401);
+		//response.setCode(401);
+		//response.setHeader("Content-Type", "application/json; charset=utf-8");
 		response["error"] = reader.getFormattedErrorMessages();
-		return;
+	} else {
+		string username = root.get("email", "").asString();
+		string pass = root.get("password", "").asString();
+		Profile profile (username,pass);
 
-	}*/
-
-	string username = root.get("email", "").asString();
-	string pass = root.get("password", "").asString();
-	string first_name = root.get("first_name", "").asString();
-	string last_name = root.get("last_name", "").asString();
-	Profile profile (username,pass,first_name,last_name);
-
-	dbCredentials dbCont;
-	dbCont.connect("./testdb");
-	error = dbCont.addNewUser(profile.profileToJSON());
-	dbCont.CloseDB();
-
-	if (error.compare("") == 0) {
-		Json::Value JsonBody;
-		dbUsers dbuser;
-		dbuser.connect("./usersdb");
-		error = dbuser.editProfile(username,profile.publicProfileToJSON());
-		dbuser.CloseDB();
+		dbCredentials dbCont;
+		dbCont.connect("./accounts");
+		string error = dbCont.addNewUser(profile.profileToJSON());
+		dbCont.CloseDB();
 
 		if (error.compare("") == 0) {
-			response.setCode(200);
-			response.setHeader("Content-Type", "application/json; charset=utf-8");
-			response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
-		}
-	} else {
+			Json::Value JsonBody;
+			dbUsers dbuser;
+			dbuser.connect("./usersdb");
+			error = dbuser.editProfile(username,profile.publicProfileToJSON());
+			dbuser.CloseDB();
 
-		response.setCode(401);
-		response.setHeader("Content-Type", "application/json; charset=utf-8");
-		response["error"] = error;
+			if (error.compare("") == 0) {
+				fillResponse(response,200);
+				//response.setCode(200);
+				//response.setHeader("Content-Type", "application/json; charset=utf-8");
+				response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
+			}
+		} else {
+			fillResponse(response, 401);
+			//response.setCode(401);
+			//response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = error;
+		}
 	}
 }
 
 void AccountController::printDB(Request &request, JsonResponse &response) {
 	dbCredentials dbCont;
-	dbCont.connect("./testdb");
+	dbCont.connect("./accounts");
 	string error = dbCont.printDB();
 	dbCont.CloseDB();
 
@@ -100,10 +95,13 @@ void AccountController::login(Request &request, JsonResponse &response) {
 
 	}
 
-	Profile profile(root);
+	
+	string username = root.get("email", "").asString();
+	string pass = root.get("password", "").asString();
+	Profile profile(username, pass);
 
 	dbCredentials dbCont;
-	dbCont.connect("./testdb");
+	dbCont.connect("./accounts");
 	Json::Value jsonProfile = profile.profileToJSON();
 	string error = dbCont.verifyLogin(jsonProfile);
 	dbCont.CloseDB();
@@ -114,19 +112,14 @@ void AccountController::login(Request &request, JsonResponse &response) {
 		error = dbuser.getProfile(root);
 		dbuser.CloseDB();
 		if (error == "") {
-			response.setCode(200);
-			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			fillResponse(response, 200);
 			response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
 			response["user"] = root;
-			response["message"] = "Successful login";
 			return;
 		}
 	} 
-	response.setCode(401);
-	response.setHeader("Content-Type", "application/json; charset=utf-8");
+	fillResponse(response, 401);
 	response["error"] = error;
-
-//			response["message"] = "Successful login";
 
 }
 
@@ -137,9 +130,7 @@ string AccountController::generateToken(const string &email, const string &passw
 }
 
 void AccountController::setup() {
-	// Example of prefix, putting all the urls into "/api"
 	setPrefix("/api");
-
 	addRouteResponse("POST", "/session", AccountController, login, JsonResponse);
 	addRouteResponse("POST", "/users", AccountController, registerUser,
 			JsonResponse);

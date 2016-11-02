@@ -15,12 +15,20 @@ private:
 	string password;
 	string first_name;
 	string last_name;
+	string about;
+
 	Json::Value jsonProfile;
 
-public:
-	Profile(const Json::Value &value);
+	vector<string> skills;
+	vector<string> contacts;
+	vector<string> pendingContacts;
 
-	Profile(const string &mail, const string &pass, const string &firstName, const string &lastName);
+public:
+	Profile(const string &mail, const string &pass);
+
+	void jsonToProfile(const Json::Value &value);
+
+	void emptyJsonProfile();
 
 	void setEmail(const string &mail);
 
