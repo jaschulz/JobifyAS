@@ -18,6 +18,8 @@ public:
 
 	void handleDelete(string url, Request &request, JsonResponse &response);
 
+	void handlePut(string url, Request &request, JsonResponse &response);
+
 private:
 	static size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data);
 };

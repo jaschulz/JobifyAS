@@ -123,3 +123,30 @@ void	SSHandler::handleDelete(string url, Request &request, JsonResponse &respons
 	curl_slist_free_all(slist1);
 	slist1 = NULL; 
 }
+
+
+void SSHandler::handlePut(string url, Request &request, JsonResponse &response){
+	CURL * curl_handle;
+	curl_handle = curl_easy_init();
+	curl_global_init(CURL_GLOBAL_ALL);
+
+	curl_easy_setopt(curl_handle, CURLOPT_URL,url.c_str());
+
+	curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, "PUT");
+        std::string response_string;
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, writeFunction);
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &response_string);
+	CURLcode res = curl_easy_perform(curl_handle);
+	if (res != CURLE_OK) {
+		response["Error"] = curl_easy_strerror(res);
+
+	} else {
+	
+		Json::Reader reader2;
+		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
+		if (!parsingSuccessful) {
+			response["error"] = reader2.getFormattedErrorMessages();
+
+		}
+	}
+}

@@ -56,6 +56,24 @@ void SSController::deleteJobPosition(Request &request, JsonResponse &response) {
 	}
 }
 
+void SSController::modifyJobPosition(Request &request, JsonResponse &response) {
+	char charCategory[50];
+	char charName[50];
+	if (2 == sscanf(request.getUrl().c_str(),"/api/job_positions/categories/%99[^/]/%99[0-9a-zA-Z ]",charCategory,charName)) {
+		string category(charCategory);
+		string name(charName);		
+		std::cout << category <<" - "<<name<< endl;
+		name = replaceSpace(name);
+		std::cout << category <<" - "<<name<< endl;
+		SSHandler ss;
+		ss.handlePut("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category + "/" + name,request,response);	
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+}
+
 void SSController::addJobPositions(Request &request, JsonResponse &response) {
 	
 	char charCategory[50];
@@ -136,20 +154,25 @@ void SSController::filterSkillsByCategory(Request &request,
 }
 
 void SSController::setup() {
-	// Example of prefix, putting all the urls into "/api"
 	setPrefix("/api");
 	addRouteResponse("GET", "/job_positions", SSController, getJobPositions,
 			JsonResponse);
+	addRouteResponse("GET", "/job_positions/categories/{category}", SSController, filterJobPositionsByCategory,
+			JsonResponse);
 	addRouteResponse("POST", "/job_positions/categories/{category}", SSController, addJobPositions,
 				JsonResponse);
+	addRouteResponse("PUT", "/job_positions/categories/{category}/{name}", SSController, modifyJobPosition,
+				JsonResponse);
+
+
+
 	addRouteResponse("GET", "/categories", SSController, getCategories,
 			JsonResponse);
 	addRouteResponse("GET", "/skills", SSController, getSkills,
 			JsonResponse);
 	addRouteResponse("POST", "/skills/categories/{category}", SSController, addSkills,
 				JsonResponse);
-	addRouteResponse("GET", "/job_positions/categories/{category}", SSController, filterJobPositionsByCategory,
-			JsonResponse);
+
 	addRouteResponse("GET", "/skills/categories/{category}", SSController, filterSkillsByCategory,
 			JsonResponse);
 	addRouteResponse("DELETE", "/job_positions/categories/{category}/{name}", SSController, deleteJobPosition,
