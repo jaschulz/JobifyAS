@@ -74,6 +74,21 @@ void SSController::deleteSkill(Request &request, JsonResponse &response) {
 	}
 }
 
+void SSController::deleteCategory(Request &request, JsonResponse &response) {
+	char charName[50];
+	if (1 == sscanf(request.getUrl().c_str(),"/api/categories/%99[^/]",charName)) {
+		string name(charName);		
+		name = replaceSpace(name);
+		SSHandler ss;
+		ss.handleDelete("https://still-falls-40635.herokuapp.com/categories/" + name,request,response);	
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+}
+
+
 void SSController::modifyJobPosition(Request &request, JsonResponse &response) {
 	char charCategory[50];
 	char charName[50];
@@ -92,7 +107,7 @@ void SSController::modifyJobPosition(Request &request, JsonResponse &response) {
 	}
 }
 
-void SSController::modifyJobPosition(Request &request, JsonResponse &response) {
+void SSController::modifySkill(Request &request, JsonResponse &response) {
 	char charCategory[50];
 	char charName[50];
 	if (2 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%99[^/]/%99[0-9a-zA-Z ]",charCategory,charName)) {
@@ -136,6 +151,12 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 			response["error"] = "Wrong number or type of parameters.";
 	}
 }
+
+void SSController::addCategory(Request &request, JsonResponse &response) {
+	SSHandler ss;
+	ss.handlePost("https://still-falls-40635.herokuapp.com/categories",request,response);
+}
+
 
 void SSController::getCategories(Request &request, JsonResponse &response) {
 	SSHandler ss;
@@ -193,12 +214,16 @@ void SSController::setup() {
 	setPrefix("/api");
 	addRouteResponse("GET", "/job_positions", SSController, getJobPositions,
 			JsonResponse);
+
+
 	addRouteResponse("GET", "/job_positions/categories/{category}", SSController, filterJobPositionsByCategory,
 			JsonResponse);
 	addRouteResponse("POST", "/job_positions/categories/{category}", SSController, addJobPositions,
 				JsonResponse);
 	addRouteResponse("PUT", "/job_positions/categories/{category}/{name}", SSController, modifyJobPosition,
 				JsonResponse);
+	addRouteResponse("POST", "/categories", SSController, addCategory,JsonResponse);
+
 	addRouteResponse("DELETE", "/job_positions/categories/{category}/{name}", SSController, deleteJobPosition,
 			JsonResponse);
 	addRouteResponse("GET", "/skills", SSController, getSkills,
@@ -209,8 +234,7 @@ void SSController::setup() {
 				JsonResponse);
 	addRouteResponse("DELETE", "/skills/categories/{category}/{name}", SSController, deleteSkill,
 			JsonResponse);
-
-
+	addRouteResponse("DELETE", "/categories/{name}", SSController, deleteCategory, JsonResponse);
 
 	addRouteResponse("GET", "/categories", SSController, getCategories,
 			JsonResponse);

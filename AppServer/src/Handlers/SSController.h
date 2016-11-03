@@ -15,6 +15,14 @@ class SSController: public JobifyController {
 public:
 	SSController();
 
+	void deleteSkill(Request &request, JsonResponse &response);
+
+	void deleteCategory(Request &request, JsonResponse &response);
+
+	void modifyJobPosition(Request &request, JsonResponse &response);
+
+	void modifySkill(Request &request, JsonResponse &response);
+
 	void deleteJobPosition(Request &request, JsonResponse &response);
 
 	void getJobPositions(Request &request, JsonResponse &response);
@@ -26,6 +34,8 @@ public:
 	void getSkills(Request &request, JsonResponse &response);
 
 	void addSkills(Request &request, JsonResponse &response);
+
+	void addCategory(Request &request, JsonResponse &response);
 
 	void filterJobPositionsByCategory(Request &request, JsonResponse &response);
 
