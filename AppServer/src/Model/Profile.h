@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <jsoncpp/json/json.h>
-//#include "Location.h"
+#include "Location.h"
 
 using namespace std;
 
@@ -16,7 +16,7 @@ private:
 	string first_name;
 	string last_name;
 	string about;
-	//Location location;
+	Location location;
 
 	Json::Value jsonProfile;
 
@@ -26,6 +26,8 @@ private:
 
 public:
 	Profile(const string &mail, const string &pass);
+
+	Profile(const string &mail, const double &latitude, const double &longitude);
 
 	void jsonToProfile(const Json::Value &value);
 

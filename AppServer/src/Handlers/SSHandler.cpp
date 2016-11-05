@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <stdlib.h>
-//#include <mongoose/JsonResponse.h>
 #include "SSHandler.h"
 #include <curl/curl.h>
 #include <stdio.h>
@@ -37,18 +36,12 @@ void	SSHandler::handleGet(string url, JsonResponse &response){
 	}
 }
 
-size_t write_to_string(void *ptr, size_t size, size_t count, void *stream) {
-  ((string*)stream)->append((char*)ptr, 0, size*count);
-  return size*count;
-}
-
 void	SSHandler::handlePost(string url, Request &request, JsonResponse &response){
 	CURLcode ret;
 	CURL *hnd;
 	struct curl_slist *slist1;
 	std::string jsonstr = request.getData();
 
-	slist1 = NULL;
 	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
 
 	hnd = curl_easy_init();
