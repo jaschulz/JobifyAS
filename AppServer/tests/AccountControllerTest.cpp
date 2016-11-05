@@ -17,7 +17,7 @@ void AccountControllerTest::successfulLogin() {
 
     Json::Value value;// = response->get("data", "[]");
     value["message"] =  "Successful login";
-    //delete (response);
+    delete (response);
     CPPUNIT_ASSERT(value["message"] == "Successful login");
 }
 

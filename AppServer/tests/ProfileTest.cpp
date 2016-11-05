@@ -1,5 +1,5 @@
 #include "ProfileTest.h"
-#include "../src/utils/Encrypt.h"
+#include "../src/utils/utils.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ProfileTest);
 
@@ -16,7 +16,7 @@ void ProfileTest::getEmail() {
 }
 
 void ProfileTest::checkPassword(){
-	const string password = encrypt::sha256("123456");
+	const string password = utils::sha256("123456");
 	Profile profile("prueba@mail.com","123456");
 	CPPUNIT_ASSERT_EQUAL(password, profile.getPassword());
 

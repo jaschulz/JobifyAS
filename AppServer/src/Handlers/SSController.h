@@ -19,6 +19,8 @@ public:
 
 	void deleteCategory(Request &request, JsonResponse &response);
 
+	void modifyCategory(Request &request, JsonResponse &response);
+
 	void modifyJobPosition(Request &request, JsonResponse &response);
 
 	void modifySkill(Request &request, JsonResponse &response);

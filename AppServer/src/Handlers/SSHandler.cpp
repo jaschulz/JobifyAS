@@ -130,9 +130,20 @@ void SSHandler::handlePut(string url, Request &request, JsonResponse &response){
 	curl_handle = curl_easy_init();
 	curl_global_init(CURL_GLOBAL_ALL);
 
+	
+	struct curl_slist *slist1;
+	std::string jsonstr = request.getData();
+
+	slist1 = NULL;
+	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
+
 	curl_easy_setopt(curl_handle, CURLOPT_URL,url.c_str());
 
 	curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, "PUT");
+
+	curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, jsonstr.c_str());
+	curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "curl/7.38.0");
+	curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, slist1);
         std::string response_string;
         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, writeFunction);
         curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &response_string);
@@ -149,4 +160,8 @@ void SSHandler::handlePut(string url, Request &request, JsonResponse &response){
 
 		}
 	}
+	curl_easy_cleanup(curl_handle);
+	curl_handle = NULL;
+	curl_slist_free_all(slist1);
+	slist1 = NULL; 
 }

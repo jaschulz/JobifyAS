@@ -11,7 +11,6 @@
 #include "../db/dbUsers.h"
 #include <curl/curl.h>
 #include "../Model/Profile.h"
-#include "../utils/Encrypt.h"
 
 
 ProfileController::ProfileController() {

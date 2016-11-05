@@ -2,7 +2,6 @@
 #include <sstream>
 #include <string>
 #include "dbController.h"
-#include "../utils/Encrypt.h"
 
 #include "leveldb/db.h"
 

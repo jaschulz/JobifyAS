@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <mongoose/Server.h>
-#include "../Handlers/ProfileController.h"
-#include "../Handlers/AccountController.h"
-#include "../Handlers/SSController.h"
+#include "Handlers/ProfileController.h"
+#include "Handlers/AccountController.h"
+#include "Handlers/SSController.h"
+#include "Model/Location.h"
 
 using namespace std;
 using namespace Mongoose;
@@ -35,6 +36,11 @@ int main() {
 	server.start();
 
 	cout << "Server started, routes:" << endl;
+	Location source(-34.7035466,-58.3930756);
+
+	Location destination(-34.703450,-58.385126);
+
+	cout<<"Distance: "<<	source.distanceTo(destination) <<endl;
 	aController.dumpRoutes();
 	pController.dumpRoutes();
 	ssController.dumpRoutes();

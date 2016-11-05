@@ -11,8 +11,6 @@
 #include "../db/dbUsers.h"
 #include <curl/curl.h>
 #include "../Model/Profile.h"
-#include "../utils/Encrypt.h"
-
 
 SSController::SSController() {
 
@@ -78,6 +76,7 @@ void SSController::deleteCategory(Request &request, JsonResponse &response) {
 	char charName[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/categories/%99[^/]",charName)) {
 		string name(charName);		
+		std::cout << " Name "<<name<< endl;
 		name = replaceSpace(name);
 		SSHandler ss;
 		ss.handleDelete("https://still-falls-40635.herokuapp.com/categories/" + name,request,response);	
@@ -118,6 +117,21 @@ void SSController::modifySkill(Request &request, JsonResponse &response) {
 		std::cout << category <<" - "<<name<< endl;
 		SSHandler ss;
 		ss.handlePut("https://still-falls-40635.herokuapp.com/skills/categories/" + category + "/" + name,request,response);	
+	} else {		
+			response.setCode(401);
+			response.setHeader("Content-Type", "application/json; charset=utf-8");
+			response["error"] = "Wrong number or type of parameters.";
+	}
+}
+
+void SSController::modifyCategory(Request &request, JsonResponse &response) {
+	char charName[50];
+	if (1 == sscanf(request.getUrl().c_str(),"/api/categories/%99[^/]",charName)) {
+		string name(charName);		
+		name = replaceSpace(name);
+		std::cout << "name - "<<name<< endl;
+		SSHandler ss;
+		ss.handlePut("https://still-falls-40635.herokuapp.com/categories/" + name,request,response);	
 	} else {		
 			response.setCode(401);
 			response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -212,9 +226,8 @@ void SSController::filterSkillsByCategory(Request &request,
 
 void SSController::setup() {
 	setPrefix("/api");
-	addRouteResponse("GET", "/job_positions", SSController, getJobPositions,
-			JsonResponse);
 
+	addRouteResponse("GET", "/job_positions", SSController, getJobPositions,JsonResponse);
 
 	addRouteResponse("GET", "/job_positions/categories/{category}", SSController, filterJobPositionsByCategory,
 			JsonResponse);
@@ -235,6 +248,8 @@ void SSController::setup() {
 	addRouteResponse("DELETE", "/skills/categories/{category}/{name}", SSController, deleteSkill,
 			JsonResponse);
 	addRouteResponse("DELETE", "/categories/{name}", SSController, deleteCategory, JsonResponse);
+
+	addRouteResponse("PUT", "/categories/{name}", SSController, modifyCategory, JsonResponse);
 
 	addRouteResponse("GET", "/categories", SSController, getCategories,
 			JsonResponse);

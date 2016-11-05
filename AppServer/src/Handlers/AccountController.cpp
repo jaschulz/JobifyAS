@@ -11,7 +11,7 @@
 #include "../db/dbUsers.h"
 #include <curl/curl.h>
 #include "../Model/Profile.h"
-#include "../utils/Encrypt.h"
+#include "../utils/utils.h"
 
 
 AccountController::AccountController() {
@@ -126,7 +126,7 @@ void AccountController::login(Request &request, JsonResponse &response) {
 string AccountController::generateToken(const string &email, const string &password) const {
     time_t now = time(0);
     char *dt = ctime(&now);
-    return encrypt::sha256(email + password + dt);
+    return utils::sha256(email + password + dt);
 }
 
 void AccountController::setup() {

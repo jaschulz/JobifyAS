@@ -1,12 +1,12 @@
 #include "Profile.h"
-#include "../utils/Encrypt.h"
+#include "../utils/utils.h"
 #include <openssl/sha.h>
 #include <string>
 #include <iostream>
 
 Profile::Profile(const string &mail, const string &pass) {
 	this->email = mail;//value.get("email", "").asString();
-	this->password = encrypt::sha256(pass);//value.get("password", "").asString());
+	this->password = utils::sha256(pass);//value.get("password", "").asString());
 	this->skills.empty();
 	this->contacts.empty();
 	this->pendingContacts.empty();
@@ -15,7 +15,7 @@ Profile::Profile(const string &mail, const string &pass) {
 
 void Profile::jsonToProfile(const Json::Value &value) {
 	this->email = value.get("email", "").asString();
-	this->password = encrypt::sha256(value.get("password", "").asString());
+	this->password = utils::sha256(value.get("password", "").asString());
 	this->first_name = value.get("first_name", "").asString();
 	this->last_name = value.get("last_name", "").asString();
 }
@@ -55,7 +55,7 @@ const string &Profile::getEmail() const {
 }
 
 void Profile::setPassword(const string &pass) {
-    this->password = encrypt::sha256(pass);
+    this->password = utils::sha256(pass);
 }
 
 const string &Profile::getPassword() const {

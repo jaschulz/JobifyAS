@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string>
 #include "dbCredentials.h"
-#include "../utils/Encrypt.h"
+#include "../utils/utils.h"
 
 #include "leveldb/db.h"
 
