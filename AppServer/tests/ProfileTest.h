@@ -9,7 +9,7 @@ using namespace CPPUNIT_NS;
 class ProfileTest : public TestFixture {
 CPPUNIT_TEST_SUITE(ProfileTest);
         CPPUNIT_TEST(getEmail);
-        CPPUNIT_TEST(checkPassword);
+        CPPUNIT_TEST(profileToJSON);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -17,7 +17,7 @@ public:
 
     void getEmail();
 
-	void checkPassword();
+    void profileToJSON();
 
     virtual void setUp() override;
 

@@ -32,6 +32,8 @@ public:
 	void registerUser(Request &request, JsonResponse &response);
 
 	string  requestToJson(Request &request, Json::Value &root);
+
+	bool isValidToken(string email, string token);
 };
 
 #endif 

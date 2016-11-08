@@ -1,6 +1,7 @@
 #include "ProfileTest.h"
 #include "../src/utils/utils.h"
 
+
 CPPUNIT_TEST_SUITE_REGISTRATION(ProfileTest);
 
 ProfileTest::ProfileTest() {
@@ -15,11 +16,11 @@ void ProfileTest::getEmail() {
 	CPPUNIT_ASSERT_EQUAL(mail, profile.getEmail());
 }
 
-void ProfileTest::checkPassword(){
-	const string password = utils::sha256("123456");
-	Profile profile("prueba@mail.com","123456");
-	CPPUNIT_ASSERT_EQUAL(password, profile.getPassword());
-
+void ProfileTest::profileToJSON() {
+	const string mail = "prueba@mail.com";
+	Profile profile(mail,"aPassword");
+	Json::Value jsonProfile = profile.profileToJSON();
+	CPPUNIT_ASSERT_EQUAL(jsonProfile.get("email", "").asString(), profile.getEmail());
 }
 
 void ProfileTest::tearDown() {

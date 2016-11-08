@@ -101,3 +101,14 @@ string  JobifyController::requestToJson(Request &request, Json::Value & root) {
 	}
 	return error;
 }
+
+bool JobifyController::isValidToken(string email, string token) {
+	dbCredentials credentials;
+	credentials.connect("./accounts");
+	if(!credentials.isValidToken(email, token)) {	
+		credentials.CloseDB();	
+		return false;
+	}
+	credentials.CloseDB();
+	return true;
+}

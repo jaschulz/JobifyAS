@@ -13,8 +13,11 @@ using namespace std;
 class dbCredentials : public dbController {
 
 public:
-	string addNewUser(Json::Value &user);
-	string verifyLogin(Json::Value &user);
+	bool addNewUser(Json::Value user, string &error);
+
+	bool verifyLogin(Json::Value &user, string &error);
+
+	bool isValidToken(string email, string token);
 };
 
 #endif 

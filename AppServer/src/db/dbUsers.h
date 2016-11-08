@@ -12,7 +12,7 @@ using namespace std;
 class dbUsers : public dbController {
 
 public:
-	string editProfile(string &key,Json::Value &user);
+	string editProfile(string &key,Json::Value user);
 
 	string getProfile(Json::Value &user);
 

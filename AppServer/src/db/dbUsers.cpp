@@ -10,7 +10,7 @@
 
 using namespace std;
 
-string dbUsers::editProfile(string &key,Json::Value &user){
+string dbUsers::editProfile(string &key,Json::Value user){
 	leveldb::WriteOptions writeOptions;
 	string strJson;
         string error = "";
@@ -24,8 +24,7 @@ string dbUsers::editProfile(string &key,Json::Value &user){
 	} else {
 		Json::Value root;   
 		Json::Reader reader;
-		bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
-		if ( !parsingSuccessful )
+		if ( !reader.parse( strJson.c_str(), root ) )
 		{
 			error = reader.getFormattedErrorMessages();;
 		} else {
@@ -201,19 +200,18 @@ string dbUsers::getContacts(string &key,Json::Value &contacts) {
 }
 
 string dbUsers::getProfile(Json::Value &user) {
-	string username = user.get("email", "").asString();
+	string email = user.get("email", "").asString();
 	string strJson;
         string error = "";
-	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&strJson);
+	leveldb::Status st =  db->Get(leveldb::ReadOptions(),email,&strJson);
 	if (st.ok() != 1) {
 		error = "Failed: " + st.ToString();
 	} else {
 		Json::Value root;   
 		Json::Reader reader;
-		bool parsingSuccessful = reader.parse( strJson.c_str(), user );     //parse process
-		if ( !parsingSuccessful )
+		if ( ! reader.parse( strJson.c_str(), user ) )
 		{
-			error = reader.getFormattedErrorMessages();;
+			error = reader.getFormattedErrorMessages();
 		}
 	}
 	return error;

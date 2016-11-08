@@ -18,8 +18,6 @@ private:
 	string about;
 	Location location;
 
-	Json::Value jsonProfile;
-
 	vector<string> skills;
 	vector<string> contacts;
 	vector<string> pendingContacts;
@@ -30,8 +28,6 @@ public:
 	Profile(const string &mail, const double &latitude, const double &longitude);
 
 	void jsonToProfile(const Json::Value &value);
-
-	void emptyJsonProfile();
 
 	void setEmail(const string &mail);
 
@@ -49,9 +45,9 @@ public:
 
 	const string &getPassword() const;
 
-	Json::Value &profileToJSON();
+	Json::Value profileToJSON();
 
-	Json::Value &publicProfileToJSON();
+	Json::Value publicProfileToJSON();
 
 	~Profile();
 
