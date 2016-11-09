@@ -12,14 +12,14 @@ int dbController::connect(string dataBase)
     options.create_if_missing = true;
 
     leveldb::Status status = leveldb::DB::Open(options, dataBase.c_str(), &db);
-
+/*
     if (false == status.ok())
     {
         cerr << "Unable to open/create test database './"+dataBase+"'" << endl;
         cerr << status.ToString() << endl;
         return -1;
-    }
-	return 1;
+    }*/
+	return status.ok();
 }
 
 
@@ -27,7 +27,7 @@ void dbController::CloseDB(){
     // Close the database
     delete db;
 }
-
+/*
 string dbController::printDB(){
 
 
@@ -48,4 +48,4 @@ string dbController::printDB(){
 	delete it;
 	return error;
 }
-
+*/

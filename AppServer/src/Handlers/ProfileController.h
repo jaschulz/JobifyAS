@@ -17,7 +17,7 @@ public:
  
 	void setup();
 
-	void printDB(Request &request, JsonResponse &response);
+	//void printDB(Request &request, JsonResponse &response);
 
 	void editProfile(Request &request, JsonResponse &response);
 

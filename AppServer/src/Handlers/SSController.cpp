@@ -24,15 +24,13 @@ void SSController::getJobPositions(Request &request, JsonResponse &response) {
 
 
 std::string replaceSpace(std::string text) {
-	
-		std::cout <<"replace begin"<< endl;
 	std::string space = " ";
 	while(text.find(space) != string::npos){
 		text.replace(text.find(space),space.length(),"\%20");
 
 		std::cout << text<< endl;
 	}
-		std::cout <<"replace end"<< endl;
+//		std::cout <<"replace end"<< endl;
 	return text;
 }
 
@@ -143,7 +141,8 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 	
 	char charCategory[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/job_positions/categories/%s",charCategory)) {
-		string category(charCategory);
+		string category(charCategory);		
+		std::cout << "category"<<category << endl;
 		/*Json::Reader reader;
 		std::cout << category << endl;
 		std::string data = request.getData();
@@ -157,7 +156,10 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 			response["error"] = reader.getFormattedErrorMessages();
 			return;
 		}*/
+
+		cout<<"aca 1"<<endl;
 		SSHandler ss;
+		cout<<"aca 2"<<endl;
 		ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category,request,response);
 	} else {		
 			response.setCode(401);

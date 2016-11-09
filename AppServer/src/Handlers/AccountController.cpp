@@ -39,30 +39,28 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 		dbCredentials dbCont;
 		dbCont.connect("./accounts");
 		string error;
+		cout<<"1"<<endl;
 
 		if (dbCont.addNewUser(credentials.toJSON(),error)) {
 			Json::Value JsonBody;
 			dbUsers dbuser;
+		cout<<"2"<<endl;
 			dbuser.connect("./usersdb");
 			error = dbuser.editProfile(email,profile.publicProfileToJSON());
 			dbuser.CloseDB();
 
 			if (error.compare("") == 0) {
 				fillResponse(response,200);
-				//response.setCode(200);
-				//response.setHeader("Content-Type", "application/json; charset=utf-8");
-				response["token"] = generateToken(root.get("email", "").asString(),root.get("password", "").asString());
+				response["token"] = token;
 			}
 		} else {	
 			fillResponse(response, 401);
-			//response.setCode(401);
-			//response.setHeader("Content-Type", "application/json; charset=utf-8");
 			response["error"] = error;
 		}
 		dbCont.CloseDB();
 	}
 }
-
+/*
 void AccountController::printDB(Request &request, JsonResponse &response) {
 	dbCredentials dbCont;
 	dbCont.connect("./accounts");
@@ -79,7 +77,7 @@ void AccountController::printDB(Request &request, JsonResponse &response) {
 		response["error"] = error;
 	}
 }
-
+*/
 
 void AccountController::login(Request &request, JsonResponse &response) {
 
@@ -135,7 +133,6 @@ void AccountController::setup() {
 	addRouteResponse("POST", "/session", AccountController, login, JsonResponse);
 	addRouteResponse("POST", "/users", AccountController, registerUser,
 			JsonResponse);
-	addRouteResponse("GET", "/printAccounts", AccountController, printDB,
-			JsonResponse);
+	//addRouteResponse("GET", "/printAccounts", AccountController, printDB,JsonResponse);
 }
 

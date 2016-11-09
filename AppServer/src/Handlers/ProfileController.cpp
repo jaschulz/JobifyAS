@@ -16,7 +16,7 @@
 ProfileController::ProfileController() {
 
 }
-
+/*
 void ProfileController::printDB(Request &request, JsonResponse &response) {
 	dbCredentials dbCont;
 	dbCont.connect("./usersdb");
@@ -33,7 +33,7 @@ void ProfileController::printDB(Request &request, JsonResponse &response) {
 		response["error"] = error;
 	}
 }
-
+*/
 
 void ProfileController::editProfile(Request &request, JsonResponse &response) {
 	char email[50];
@@ -189,6 +189,6 @@ void ProfileController::setup() {
 	addRouteResponse("POST", "/users/{email}/contacts", ProfileController, addContact, JsonResponse);
 	addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/location", ProfileController, setLocation, JsonResponse);
-	addRouteResponse("GET", "/printProfiles", ProfileController, printDB,JsonResponse);
+	//addRouteResponse("GET", "/printProfiles", ProfileController, printDB,JsonResponse);
 }
 

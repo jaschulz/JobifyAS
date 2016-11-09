@@ -21,7 +21,7 @@ public:
 
 	void login(Request &request, JsonResponse &response);
 
-	void printDB(Request &request, JsonResponse &response);
+	//void printDB(Request &request, JsonResponse &response);
 
 	void setup();
 private:

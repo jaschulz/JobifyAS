@@ -40,8 +40,9 @@ void	SSHandler::handlePost(string url, Request &request, JsonResponse &response)
 	CURLcode ret;
 	CURL *hnd;
 	struct curl_slist *slist1;
-	std::string jsonstr = request.getData();
 
+	std::string jsonstr = request.getData();
+	slist1 = NULL;
 	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
 
 	hnd = curl_easy_init();
@@ -62,6 +63,7 @@ void	SSHandler::handlePost(string url, Request &request, JsonResponse &response)
 	if (ret != CURLE_OK) {
 		response["Error"] = curl_easy_strerror(ret);
 	} else {
+				cout<<"rta: " <<response_string<<endl;
 		Json::Reader reader2;
 		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
 		if (!parsingSuccessful) {
