@@ -46,8 +46,9 @@ void	SSHandler::handlePost(string url, Request &request, JsonResponse &response)
 	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
 
 	hnd = curl_easy_init();
+	curl_global_init(CURL_GLOBAL_ALL);
 
-	        std::string response_string;
+	std::string response_string;
 	curl_easy_setopt(hnd, CURLOPT_URL, url.c_str());
         curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, writeFunction);
         curl_easy_setopt(hnd, CURLOPT_WRITEDATA, &response_string);
@@ -87,6 +88,7 @@ void	SSHandler::handleDelete(string url, Request &request, JsonResponse &respons
 	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
 
 	hnd = curl_easy_init();
+	curl_global_init(CURL_GLOBAL_ALL);
 
 	std::string response_string;
 	curl_easy_setopt(hnd, CURLOPT_URL, url.c_str());

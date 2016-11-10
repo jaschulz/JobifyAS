@@ -179,6 +179,23 @@ void SSController::getCategories(Request &request, JsonResponse &response) {
 	ss.handleGet("https://still-falls-40635.herokuapp.com/categories",response);
 }
 
+void SSController::getFacebookData(Request &request, JsonResponse &response) {
+	Json::Reader reader;
+	std::string data = request.getData();
+			std::cout << data << endl;
+	Json::Value root;
+	if (!reader.parse(data.c_str(), root)) {
+		response.setCode(401);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["error"] = reader.getFormattedErrorMessages();
+		return;
+	}
+	string token = root["token"].asString();
+	string fbid = root["fbid"].asString();
+	SSHandler ss;
+	ss.handleGet("https://graph.facebook.com/v2.8/"+fbid+"?oauth_token="+token+"&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1478760408&oauth_nonce=RkMSvr&oauth_version=1.0&oauth_signature=Do6Ovkb1rmz1nB2p/VDYtIzFNII=&fields=about,birthday,email,first_name,gender,last_name,location",response);
+}
+
 void SSController::getSkills(Request &request, JsonResponse &response) {
 	SSHandler ss;
 	ss.handleGet("https://still-falls-40635.herokuapp.com/skills",response);
@@ -188,7 +205,7 @@ void SSController::addSkills(Request &request, JsonResponse &response) {
 	char charCategory[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%s",charCategory)) {
 		string category(charCategory);
-
+		std::cout << "category: "<<category<< endl;
 		SSHandler ss;
 		ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category,request,response);
 	} else {		
@@ -257,6 +274,7 @@ void SSController::setup() {
 			JsonResponse);
 	addRouteResponse("GET", "/skills/categories/{category}", SSController, filterSkillsByCategory,
 			JsonResponse);
+	addRouteResponse("GET", "/fbdata", SSController, getFacebookData, JsonResponse);
 
 }
 
