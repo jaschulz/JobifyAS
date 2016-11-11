@@ -35,8 +35,6 @@ public:
 
 	void getSkills(Request &request, JsonResponse &response);
 
-	void getFacebookData(Request &request, JsonResponse &response);
-
 	void addSkills(Request &request, JsonResponse &response);
 
 	void addCategory(Request &request, JsonResponse &response);

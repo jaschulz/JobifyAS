@@ -6,6 +6,7 @@
 #include <iostream>
 #include "AccountController.h"
 #include "SSHandler.h"
+#include "FBHandler.h"
 #include "../db/dbCredentials.h"
 #include "../db/dbController.h"
 #include "../db/dbUsers.h"
@@ -122,6 +123,27 @@ void AccountController::login(Request &request, JsonResponse &response) {
 
 }
 
+void AccountController::getFacebookData(Request &request, JsonResponse &response) {
+	Json::Reader reader;
+	std::string data = request.getData();
+			//std::cout << "header"<<request.getHeaderKeyValue("Authorization") << endl;
+	Json::Value root;
+	if (!reader.parse(data.c_str(), root)) {
+		response.setCode(401);
+		response.setHeader("Content-Type", "application/json; charset=utf-8");
+		response["error"] = reader.getFormattedErrorMessages();
+		return;
+	}
+	string token = root["token"].asString();
+	cout<<"token: "<<token<<endl;
+	string fbid = root["fbid"].asString();
+	cout<<"token: "<<fbid<<endl;
+	FBHandler ss;
+	ss.handleGet("https://graph.facebook.com/v2.8/"+fbid+"?fields=about,birthday,email,first_name,gender,last_name,location",response,token);
+	string locationId = response["location"]["id"].asString();
+	ss.handleGet("https://graph.facebook.com/v2.8/"+locationId+"?fields=location",response,token);
+}
+
 string AccountController::generateToken(const string &email, const string &password) const {
     time_t now = time(0);
     char *dt = ctime(&now);
@@ -134,5 +156,6 @@ void AccountController::setup() {
 	addRouteResponse("POST", "/users", AccountController, registerUser,
 			JsonResponse);
 	//addRouteResponse("GET", "/printAccounts", AccountController, printDB,JsonResponse);
+	addRouteResponse("GET", "/fbdata", AccountController, getFacebookData, JsonResponse);
 }
 

@@ -23,6 +23,8 @@ public:
 
 	//void printDB(Request &request, JsonResponse &response);
 
+	void getFacebookData(Request &request, JsonResponse &response);
+
 	void setup();
 private:
 	string generateToken(const string &email, const string &password) const;
