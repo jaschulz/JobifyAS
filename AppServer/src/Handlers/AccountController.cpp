@@ -126,7 +126,6 @@ void AccountController::login(Request &request, JsonResponse &response) {
 void AccountController::getFacebookData(Request &request, JsonResponse &response) {
 	Json::Reader reader;
 	std::string data = request.getData();
-			//std::cout << "header"<<request.getHeaderKeyValue("Authorization") << endl;
 	Json::Value root;
 	if (!reader.parse(data.c_str(), root)) {
 		response.setCode(401);

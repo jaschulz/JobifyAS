@@ -127,7 +127,7 @@ void SSController::modifyCategory(Request &request, JsonResponse &response) {
 	if (1 == sscanf(request.getUrl().c_str(),"/api/categories/%99[^/]",charName)) {
 		string name(charName);		
 		name = replaceSpace(name);
-		std::cout << "name - "<<name<< endl;
+		std::cout << "modifyCategory: name - "<<name<< endl;
 		SSHandler ss;
 		ss.handlePut("https://still-falls-40635.herokuapp.com/categories/" + name,request,response);	
 	} else {		
@@ -142,7 +142,7 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 	char charCategory[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/job_positions/categories/%s",charCategory)) {
 		string category(charCategory);		
-		std::cout << "category"<<category << endl;
+		std::cout << "addJobPositions -> category:"<<category << endl;
 		/*Json::Reader reader;
 		std::cout << category << endl;
 		std::string data = request.getData();
@@ -156,10 +156,7 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 			response["error"] = reader.getFormattedErrorMessages();
 			return;
 		}*/
-
-		cout<<"aca 1"<<endl;
 		SSHandler ss;
-		cout<<"aca 2"<<endl;
 		ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category,request,response);
 	} else {		
 			response.setCode(401);
@@ -188,9 +185,9 @@ void SSController::addSkills(Request &request, JsonResponse &response) {
 	char charCategory[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%s",charCategory)) {
 		string category(charCategory);
-		std::cout << "category: "<<category<< endl;
+		std::cout << "addSkills in cat: "<<category<< endl;
 		SSHandler ss;
-		ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category,request,response);
+		ss.handlePost("https://still-falls-40635.herokuapp.com/skills/categories/" + category,request,response);
 	} else {		
 			response.setCode(401);
 			response.setHeader("Content-Type", "application/json; charset=utf-8");
