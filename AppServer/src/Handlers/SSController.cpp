@@ -74,8 +74,8 @@ void SSController::deleteCategory(Request &request, JsonResponse &response) {
 	char charName[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/categories/%99[^/]",charName)) {
 		string name(charName);		
-		std::cout << " Name "<<name<< endl;
 		name = replaceSpace(name);
+		std::cout << "Name:"<<name<<"."<< endl;
 		SSHandler ss;
 		ss.handleDelete("https://still-falls-40635.herokuapp.com/categories/" + name,request,response);	
 	} else {		
@@ -127,7 +127,7 @@ void SSController::modifyCategory(Request &request, JsonResponse &response) {
 	if (1 == sscanf(request.getUrl().c_str(),"/api/categories/%99[^/]",charName)) {
 		string name(charName);		
 		name = replaceSpace(name);
-		std::cout << "modifyCategory: name - "<<name<< endl;
+		std::cout << "modifyCategory: name -"<<name<<"."<<endl;
 		SSHandler ss;
 		ss.handlePut("https://still-falls-40635.herokuapp.com/categories/" + name,request,response);	
 	} else {		
