@@ -13,20 +13,15 @@ class Credentials{
 
 private:
 	string email;
-	string password;
 	string token;
 public:
-	Credentials(const string &mail, const string &pass, const string &token);
+	Credentials(const string &mail, const string &token);
 
 	void setEmail(const string &mail);
 
 	const string &getEmail() const;
 
-	void setPassword(const string &pass);
-
-	const string &getPassword() const;
-
-	Json::Value toJSON();
+	virtual Json::Value toJSON() = 0;
 
 	~Credentials();
 

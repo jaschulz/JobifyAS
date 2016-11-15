@@ -12,7 +12,7 @@
 #include "../db/dbUsers.h"
 #include <curl/curl.h>
 #include "../Model/Profile.h"
-#include "../Model/Credentials.h"
+#include "../Model/jobifyCredentials.h"
 #include "../utils/utils.h"
 
 
@@ -35,7 +35,7 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 		string pass = root.get("password", "").asString();
 		string token = generateToken(email, pass);
 		Profile profile (email,pass);
-		Credentials credentials (email,pass,token);
+		jobifyCredentials credentials (email,pass,token);
 
 		dbCredentials dbCont;
 		dbCont.connect("./accounts");
@@ -80,6 +80,34 @@ void AccountController::printDB(Request &request, JsonResponse &response) {
 }
 */
 
+/*
+void AccountController::fbLogin(Request &request, JsonResponse &response) {
+
+	Json::Reader reader;
+
+	std::string data = request.getData();
+
+	Json::Value req;
+	Json::Value root;
+
+	if (reader.parse(data.c_str(), req)) {		
+		fillResponse(response, 401);
+		response["error"] = reader.getFormattedErrorMessages();
+	}
+
+	
+	string email = req.get("email", "").asString();
+	string fbToken = req.get("token", "").asString();
+	string fbid = req.get("fbid", "").asString();
+	FBHandler fbh;
+
+
+	ss.handleGet("https://graph.facebook.com/v2.8/"+fbid+"?fields=about,birthday,email,first_name,gender,last_name,location",response,token);
+	string locationId = response["location"]["id"].asString();
+	ss.handleGet("https://graph.facebook.com/v2.8/"+locationId+"?fields=location",response,token);
+}
+*/
+
 void AccountController::login(Request &request, JsonResponse &response) {
 
 	Json::Reader reader;
@@ -98,7 +126,7 @@ void AccountController::login(Request &request, JsonResponse &response) {
 	string email = req.get("email", "").asString();
 	string pass = req.get("password", "").asString();
 	string token = req.get("token", "").asString();
-	Credentials credentials(email, pass,token);
+	jobifyCredentialsCredentials credentials(email, pass,token);
 
 	dbCredentials dbCont;
 	dbCont.connect("./accounts");
@@ -156,5 +184,6 @@ void AccountController::setup() {
 			JsonResponse);
 	//addRouteResponse("GET", "/printAccounts", AccountController, printDB,JsonResponse);
 	addRouteResponse("GET", "/fbdata", AccountController, getFacebookData, JsonResponse);
+	addRouteResponse("POST", "/fblogin", AccountController, fbLogin, JsonResponse);
 }
 

@@ -4,9 +4,8 @@
 #include <string>
 #include <iostream>
 
-Credentials::Credentials(const string &mail, const string &pass, const string &token ) {
+Credentials::Credentials(const string &mail, const string &token ) {
 	this->email = mail;
-	this->password = utils::sha256(pass);
 	this->token = token;
 }
 
@@ -18,20 +17,13 @@ const string &Credentials::getEmail() const {
     return email;
 }
 
-void Credentials::setPassword(const string &pass) {
-    this->password = utils::sha256(pass);
+
+void Credentials::setToken(const string &token) {
+    this->token = token;
 }
 
-const string &Credentials::getPassword() const {
-    return password;
-}
-
-Json::Value Credentials::toJSON() {
-    Json::Value value;
-    value["email"] = email;
-    value["password"] = password;
-    value["token"] = token;
-    return value;
+const string &Credentials::getToken() const {
+    return token;
 }
 
 Credentials::~Credentials() {
