@@ -12,7 +12,6 @@ class Profile{
 
 private:
 	string email;
-	string password;
 	string first_name;
 	string last_name;
 	string about;
@@ -23,7 +22,7 @@ private:
 	vector<string> pendingContacts;
 
 public:
-	Profile(const string &mail, const string &pass);
+	Profile(const string &mail);
 
 	Profile(const string &mail, const double &latitude, const double &longitude);
 

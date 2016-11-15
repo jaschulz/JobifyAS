@@ -10,13 +10,13 @@ void CredentialsTest::setUp() {
 
 void CredentialsTest::getEmail() {
 	const string mail = "prueba@mail.com";
-	Credentials credential(mail,"aPassword","fakeToken");
+	jobifyCredentials credential(mail,"aPassword","fakeToken");
 	CPPUNIT_ASSERT_EQUAL(mail, credential.getEmail());
 }
 
 void CredentialsTest::checkPassword(){
 	const string password = utils::sha256("123456");
-	Credentials credential("prueba@mail.com","123456","fakeToken");
+	jobifyCredentials credential("prueba@mail.com","123456","fakeToken");
 	CPPUNIT_ASSERT_EQUAL(password, credential.getPassword());
 
 }
@@ -24,7 +24,7 @@ void CredentialsTest::checkPassword(){
 void CredentialsTest::validateToken(){
 	const string mail = "prueba@mail.com";
 	const string token = "fakeToken";
-	Credentials credential(mail,"123456",token);
+	jobifyCredentials credential(mail,"123456",token);
 	dbCredentials dbCont;
 	dbCont.connect("./accounts");
 	string error;

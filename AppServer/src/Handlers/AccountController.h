@@ -6,6 +6,8 @@
 #include <signal.h>
 #include "JobifyController.h"
 #include "../Model/Profile.h"
+#include "../Model/Credentials.h"
+
 
 using namespace std;
 using namespace Mongoose;
@@ -25,9 +27,13 @@ public:
 
 	void getFacebookData(Request &request, JsonResponse &response);
 
+	void fbLogin(Request &request, JsonResponse &response);
+
 	void setup();
 private:
 	string generateToken(const string &email, const string &password) const;
+
+	bool addNewUser(Credentials &credentials, string error);
 };
 
 #endif 

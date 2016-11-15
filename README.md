@@ -171,6 +171,10 @@ install.sh installs every dependency so that the AppServer can be built and run 
       <td>Parameters</td>
       <td><ul><li>email (string)</li><li>password (string)</li></td>
     </tr>
+    <tr>
+      <td>Parameters (Facebook login)</td>
+      <td><ul><li>facebook_token (string)</li></td>
+    </tr>
   </tbody>
 </table>
 >Response (HTTP 200 OK):

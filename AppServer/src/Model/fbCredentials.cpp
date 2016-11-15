@@ -12,7 +12,7 @@ void fbCredentials::setFbId(const string &fbid) {
 	this->fbId = fbid;
 }
 
-const string &fbCredentials::getPassword() const {
+const string &fbCredentials::getFbId() const {
     return fbId;
 }
 

@@ -1,4 +1,4 @@
-echo '{"fbid": "10207339104015450","token": "EAACEdEose0cBACgFldBU7O9ZCYaBPLErqvZC08l76uU8Eelj1xJLdfo3aiuP8h3ZAxEmH6usD8aHOxZBdxzfDU0hYjOoBvwKIgIUs9IlAVcskQtvvIp3Skg9ix35NVrQNlAM5FDLCIZCyCZCjcUsZCcxWSZChpoqK3Qn0o8KHhJE3wZDZD"}' | \
-curl -X GET -H 'Content-type: application/json' \
--H 'Accept: application/json' -d @- http://localhost:8081/api/fbdata
+echo '' | \
+curl -X POST -H 'Content-type: application/json' \
+-H 'Authorization: OAuth EAACEdEose0cBAMyRfr8n6lYmJb7mZCUorTtRpOkWZBTVYCJ641jCDQR5nTseUprZBXym21SXAjGJoIHcF8l5X1U1LU47XDkijVDHvchsC2r8SBKOzq3ZA3RrFdY7HvBqtQEo1vxH01kCxTONNc2pMVwl8QmsK1uF8DJS4vSvqwZDZD' -d @- http://localhost:8081/api/session
 

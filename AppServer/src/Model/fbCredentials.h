@@ -16,9 +16,11 @@ private:
 public:
 	fbCredentials(const string &mail, const string &fbId, const string &token);
 
-	void setFbId(const string &pass);
+	void setFbId(const string &fbid);
 
 	const string &getFbId() const;
+
+	Json::Value toJSON();
 
 	~fbCredentials();
 

@@ -12,10 +12,9 @@ using namespace Mongoose;
 
 class FBHandler {
 public:
-	void handleGet(string url,JsonResponse &response, std::string token);
+	JsonResponse  getBasicData(Request &request);
 
-private:
-	static size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data);
+	JsonResponse  getData(Request &request);
 };
 
 #endif 

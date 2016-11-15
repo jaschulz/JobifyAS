@@ -20,6 +20,8 @@ public:
 
 	const string &getPassword() const;
 
+	Json::Value toJSON();
+
 	~jobifyCredentials();
 
 };

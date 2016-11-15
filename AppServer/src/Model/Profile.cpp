@@ -3,7 +3,7 @@
 #include <iostream>
 #include "Location.h"
 
-Profile::Profile(const string &mail, const string &pass):location() {
+Profile::Profile(const string &mail):location() {
 	this->email = mail;
 	this->skills.empty();
 	this->contacts.empty();

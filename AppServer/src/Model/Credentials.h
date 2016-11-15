@@ -11,7 +11,7 @@ using namespace std;
 
 class Credentials{
 
-private:
+protected:
 	string email;
 	string token;
 public:
@@ -20,6 +20,10 @@ public:
 	void setEmail(const string &mail);
 
 	const string &getEmail() const;
+
+	void setToken(const string &token);
+
+	const string &getToken() const;
 
 	virtual Json::Value toJSON() = 0;
 

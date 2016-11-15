@@ -1,5 +1,5 @@
-#ifndef SSHANDLER_H
-#define SSHANDLER_H
+#ifndef CURLWRAPPER_H
+#define CURLWRAPPER_H
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -10,9 +10,9 @@
 using namespace std;
 using namespace Mongoose;
 
-class SSHandler {
+class CurlWrapper {
 public:
-	void handleGet(string url,JsonResponse &response);
+	void handleGet(string url, Request &request,JsonResponse &response);
 
 	void handlePost(string url, Request &request, JsonResponse &response);
 

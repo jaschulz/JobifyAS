@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "SSController.h"
-#include "SSHandler.h"
+#include "CurlWrapper.h"
 #include "../db/dbCredentials.h"
 #include "../db/dbController.h"
 #include "../db/dbUsers.h"
@@ -18,8 +18,8 @@ SSController::SSController() {
 
 
 void SSController::getJobPositions(Request &request, JsonResponse &response) {
-	SSHandler ss;
-	ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions",response);
+	CurlWrapper ss;
+	ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions",request,response);
 }
 
 
@@ -43,7 +43,7 @@ void SSController::deleteJobPosition(Request &request, JsonResponse &response) {
 		std::cout << category <<" - "<<name<< endl;
 		name = replaceSpace(name);
 		std::cout << category <<" - "<<name<< endl;
-		SSHandler ss;
+		CurlWrapper ss;
 		ss.handleDelete("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category + "/" + name,request,response);	
 	} else {		
 			response.setCode(401);
@@ -61,7 +61,7 @@ void SSController::deleteSkill(Request &request, JsonResponse &response) {
 		std::cout << category <<" - "<<name<< endl;
 		name = replaceSpace(name);
 		std::cout << category <<" - "<<name<< endl;
-		SSHandler ss;
+		CurlWrapper ss;
 		ss.handleDelete("https://still-falls-40635.herokuapp.com/skills/categories/" + category + "/" + name,request,response);	
 	} else {		
 			response.setCode(401);
@@ -76,7 +76,7 @@ void SSController::deleteCategory(Request &request, JsonResponse &response) {
 		string name(charName);		
 		name = replaceSpace(name);
 		std::cout << "Name:"<<name<<"."<< endl;
-		SSHandler ss;
+		CurlWrapper ss;
 		ss.handleDelete("https://still-falls-40635.herokuapp.com/categories/" + name,request,response);	
 	} else {		
 			response.setCode(401);
@@ -95,7 +95,7 @@ void SSController::modifyJobPosition(Request &request, JsonResponse &response) {
 		std::cout << category <<" - "<<name<< endl;
 		name = replaceSpace(name);
 		std::cout << category <<" - "<<name<< endl;
-		SSHandler ss;
+		CurlWrapper ss;
 		ss.handlePut("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category + "/" + name,request,response);	
 	} else {		
 			response.setCode(401);
@@ -113,7 +113,7 @@ void SSController::modifySkill(Request &request, JsonResponse &response) {
 		std::cout << category <<" - "<<name<< endl;
 		name = replaceSpace(name);
 		std::cout << category <<" - "<<name<< endl;
-		SSHandler ss;
+		CurlWrapper ss;
 		ss.handlePut("https://still-falls-40635.herokuapp.com/skills/categories/" + category + "/" + name,request,response);	
 	} else {		
 			response.setCode(401);
@@ -128,7 +128,7 @@ void SSController::modifyCategory(Request &request, JsonResponse &response) {
 		string name(charName);		
 		name = replaceSpace(name);
 		std::cout << "modifyCategory: name -"<<name<<"."<<endl;
-		SSHandler ss;
+		CurlWrapper ss;
 		ss.handlePut("https://still-falls-40635.herokuapp.com/categories/" + name,request,response);	
 	} else {		
 			response.setCode(401);
@@ -156,7 +156,7 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 			response["error"] = reader.getFormattedErrorMessages();
 			return;
 		}*/
-		SSHandler ss;
+		CurlWrapper ss;
 		ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + category,request,response);
 	} else {		
 			response.setCode(401);
@@ -166,19 +166,19 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 }
 
 void SSController::addCategory(Request &request, JsonResponse &response) {
-	SSHandler ss;
+	CurlWrapper ss;
 	ss.handlePost("https://still-falls-40635.herokuapp.com/categories",request,response);
 }
 
 
 void SSController::getCategories(Request &request, JsonResponse &response) {
-	SSHandler ss;
-	ss.handleGet("https://still-falls-40635.herokuapp.com/categories",response);
+	CurlWrapper ss;
+	ss.handleGet("https://still-falls-40635.herokuapp.com/categories",request,response);
 }
 
 void SSController::getSkills(Request &request, JsonResponse &response) {
-	SSHandler ss;
-	ss.handleGet("https://still-falls-40635.herokuapp.com/skills",response);
+	CurlWrapper ss;
+	ss.handleGet("https://still-falls-40635.herokuapp.com/skills",request,response);
 }
 
 void SSController::addSkills(Request &request, JsonResponse &response) {
@@ -186,7 +186,7 @@ void SSController::addSkills(Request &request, JsonResponse &response) {
 	if (1 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%s",charCategory)) {
 		string category(charCategory);
 		std::cout << "addSkills in cat: "<<category<< endl;
-		SSHandler ss;
+		CurlWrapper ss;
 		ss.handlePost("https://still-falls-40635.herokuapp.com/skills/categories/" + category,request,response);
 	} else {		
 			response.setCode(401);
@@ -200,8 +200,8 @@ void SSController::filterJobPositionsByCategory(Request &request,
 	char cat[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/job_positions/categories/%s",cat)) {
 		string category(cat);
-		SSHandler ss;
-		ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions/categories/"+category,response);
+		CurlWrapper ss;
+		ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions/categories/"+category,request,response);
 	} else {		
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -214,8 +214,8 @@ void SSController::filterSkillsByCategory(Request &request,
 	char cat[50];
 	if (1 == sscanf(request.getUrl().c_str(),"/api/skills/categories/%s",cat)) {
 		string category(cat);
-		SSHandler ss;
-		ss.handleGet("https://still-falls-40635.herokuapp.com/skills/categories/"+category,response);
+		CurlWrapper ss;
+		ss.handleGet("https://still-falls-40635.herokuapp.com/skills/categories/"+category, request,response);
 	} else {		
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");

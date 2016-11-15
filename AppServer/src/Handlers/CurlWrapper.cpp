@@ -1,23 +1,34 @@
 #include <unistd.h>
 #include <stdlib.h>
-#include "SSHandler.h"
+#include "CurlWrapper.h"
 #include <curl/curl.h>
 #include <stdio.h>
 	
 
-size_t SSHandler::writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data) {
+size_t CurlWrapper::writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data) {
     data->append((char*) ptr, size * nmemb);
     return size * nmemb;
 }
 
-void	SSHandler::handleGet(string url, JsonResponse &response){
+void	CurlWrapper::handleGet(string url, Request &request,JsonResponse &response){
 	CURL * curl_handle;
 	curl_handle = curl_easy_init();
 	curl_global_init(CURL_GLOBAL_ALL);
 
+
+	struct curl_slist *slist1;
+	slist1 = NULL;
+
+
+	if (!request.getHeaderKeyValue("Authorization").empty()){	
+		std::string auth = "Authorization: " + request.getHeaderKeyValue("Authorization");
+		slist1 = curl_slist_append(slist1, auth.c_str());	
+	}
+
 	curl_easy_setopt(curl_handle, CURLOPT_URL,url.c_str());
 
 	curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0L);
+	curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, slist1);
         std::string response_string;
         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, writeFunction);
         curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &response_string);
@@ -26,17 +37,22 @@ void	SSHandler::handleGet(string url, JsonResponse &response){
 		response["Error"] = curl_easy_strerror(res);
 
 	} else {
-	
+		cout<<"response_string: "<<response_string<<endl;
 		Json::Reader reader2;
 		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
 		if (!parsingSuccessful) {
 			response["error"] = reader2.getFormattedErrorMessages();
 
 		}
+		cout<<"else "<<endl;
 	}
+	curl_easy_cleanup(curl_handle);
+	curl_handle = NULL;
+	curl_slist_free_all(slist1);
+	slist1 = NULL; 
 }
 
-void	SSHandler::handlePost(string url, Request &request, JsonResponse &response){
+void	CurlWrapper::handlePost(string url, Request &request, JsonResponse &response){
 	CURLcode ret;
 	CURL *hnd;
 	struct curl_slist *slist1;
@@ -79,7 +95,7 @@ void	SSHandler::handlePost(string url, Request &request, JsonResponse &response)
 
 }
 
-void	SSHandler::handleDelete(string url, Request &request, JsonResponse &response){
+void	CurlWrapper::handleDelete(string url, Request &request, JsonResponse &response){
 	CURLcode ret;
 	CURL *hnd;
 	struct curl_slist *slist1;
@@ -122,7 +138,7 @@ void	SSHandler::handleDelete(string url, Request &request, JsonResponse &respons
 }
 
 
-void SSHandler::handlePut(string url, Request &request, JsonResponse &response){
+void CurlWrapper::handlePut(string url, Request &request, JsonResponse &response){
 	CURL * curl_handle;
 	curl_handle = curl_easy_init();
 	curl_global_init(CURL_GLOBAL_ALL);
@@ -131,8 +147,13 @@ void SSHandler::handlePut(string url, Request &request, JsonResponse &response){
 	struct curl_slist *slist1;
 	std::string jsonstr = request.getData();
 
+		std::cout << "url:"<<url<<"." << endl;
+
+		std::cout << "jsonstr:"<<jsonstr<<"." << endl;
+
 	slist1 = NULL;
 	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
+	slist1 = curl_slist_append(slist1, "Accept: application/json");
 
 	curl_easy_setopt(curl_handle, CURLOPT_URL,url.c_str());
 
@@ -149,12 +170,13 @@ void SSHandler::handlePut(string url, Request &request, JsonResponse &response){
 		response["Error"] = curl_easy_strerror(res);
 
 	} else {
-	
-		Json::Reader reader2;
-		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
-		if (!parsingSuccessful) {
-			response["error"] = reader2.getFormattedErrorMessages();
+		if (response_string.empty()) {
+			Json::Reader reader2;
+			bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
+			if (!parsingSuccessful) {
+				response["error"] = reader2.getFormattedErrorMessages();
 
+			}
 		}
 	}
 	curl_easy_cleanup(curl_handle);

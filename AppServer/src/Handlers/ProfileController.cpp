@@ -5,7 +5,6 @@
 #include <fstream>
 #include <iostream>
 #include "ProfileController.h"
-#include "SSHandler.h"
 #include "../db/dbCredentials.h"
 #include "../db/dbController.h"
 #include "../db/dbUsers.h"

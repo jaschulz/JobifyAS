@@ -2,7 +2,7 @@
 #define APPSERVER_CREDENTIALSTEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
-#include "../src/Model/Credentials.h"
+#include "../src/Model/jobifyCredentials.h"
 #include "../src/utils/utils.h"
 #include "../src/db/dbCredentials.h"
 
