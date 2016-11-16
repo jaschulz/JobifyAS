@@ -8,12 +8,10 @@ Profile::Profile(const string &mail):location() {
 	this->skills.empty();
 	this->contacts.empty();
 	this->pendingContacts.empty();
-	//emptyJsonProfile();
 }
 
 Profile::Profile(const string &mail, const double &latitude, const double &longitude):location(latitude,longitude) {
 	this->email = mail;
-	//emptyJsonProfile();
 }
 
 Profile::Profile(const string &mail,const string &firstName,const string &lastName, const double &latitude, const double &longitude):location(latitude,longitude) {
