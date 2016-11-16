@@ -26,6 +26,8 @@ public:
 
 	Profile(const string &mail, const double &latitude, const double &longitude);
 
+	Profile(const string &mail,const string &firstName,const string &lastName, const double &latitude, const double &longitude);
+
 	void jsonToProfile(const Json::Value &value);
 
 	void setEmail(const string &mail);

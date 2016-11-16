@@ -110,27 +110,24 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 	fbCredentials credentials(email, fbid,token);
 	string error;
 	if (addNewUser(credentials,error)) {
-		
-		Profile profile (email);
-		Json::Value JsonBody;
 		dbUsers dbuser;
 		JsonResponse fbData = fbh.getData(request);
+		string fname = fbData.get("first_name", "").asString();
+		string lname = fbData.get("last_name", "").asString();
+		string locationId = fbData["location"]["id"].asString();
+		JsonResponse fbLocationData = fbh.getLocationData(request, locationId);
+		double lat = fbLocationData["location"]["latitude"].asDouble();
+		double longitude = fbLocationData["location"]["longitude"].asDouble();
+		Profile profile (email,fname,lname,lat,longitude);
 		dbuser.connect("./usersdb");
-		error = dbuser.editProfile(email,profile.publicProfileToJSON());
+		Json::Value publicProfile = profile.publicProfileToJSON();
+		error = dbuser.editProfile(email,publicProfile);
 		dbuser.CloseDB();
 		if (error.compare("") == 0) {
 			fillResponse(response,200);
 			response["token"] = token;
+			response["user"] = publicProfile;
 		}
-	/*} else {	
-		fillResponse(response, 401);
-		response["error"] = error;
-*/
-	//fbCredentials credentials	
-
-	//string locationId = response["location"]["id"].asString();
-	//cout<<"email "<<email<<endl;
-	//fbh.handleGet("https://graph.facebook.com/v2.8/"+locationId+"?fields=location", request, response);
 	}
 }
 
@@ -146,37 +143,39 @@ void AccountController::login(Request &request, JsonResponse &response) {
 	if (reader.parse(data.c_str(), req)) {		
 		fillResponse(response, 401);
 		response["error"] = reader.getFormattedErrorMessages();
+		return;
 	}
 	if (!request.getHeaderKeyValue("Authorization").empty()){
 		fbLogin(request,response);
 	} else {
 	
-	string email = req.get("email", "").asString();
-	string pass = req.get("password", "").asString();
-	string token = req.get("token", "").asString();
-	jobifyCredentials credentials(email, pass,token);
+		string email = req.get("email", "").asString();
+		string pass = req.get("password", "").asString();
+		string token = generateToken(email,pass);
+		jobifyCredentials credentials(email, pass,token);
 
-	dbCredentials dbCont;
-	dbCont.connect("./accounts");
-	Json::Value jsonProfile = credentials.toJSON();
-	string error;
+		dbCredentials dbCont;
+		dbCont.connect("./accounts");
+		Json::Value jsonProfile = credentials.toJSON();
+		string error;
 
-	if (dbCont.verifyLogin(jsonProfile,error)) {
-		dbUsers dbuser;
-		dbuser.connect("./usersdb");
-		error = dbuser.getProfile(root);
-		dbuser.CloseDB();
-		if (error == "") {
-			fillResponse(response, 200);
-			response["token"] = generateToken(email,pass);
-			response["user"] = root;
-			return;
-		}
-	} 	
-	dbCont.CloseDB();
-	fillResponse(response, 401);
-	response["error"] = error;
-}
+		if (dbCont.verifyLogin(jsonProfile,error)) {
+			dbUsers dbuser;
+			dbuser.connect("./usersdb");
+			error = dbuser.getProfile(root);
+			dbuser.CloseDB();
+			dbCont.CloseDB();
+			if (error == "") {
+				fillResponse(response, 200);
+				response["token"] = token;
+				response["user"] = root;
+				return;
+			}
+		} 	
+		dbCont.CloseDB();
+		fillResponse(response, 401);
+		response["error"] = error;
+	}
 }
 
 void AccountController::getFacebookData(Request &request, JsonResponse &response) {

@@ -21,5 +21,11 @@ JsonResponse FBHandler::getData(Request &request ){
 	return response;
 }
 
+JsonResponse  FBHandler::getLocationData(Request &request, const string &locationid){
+	JsonResponse response;
+	CurlWrapper cw;
+	cw.handleGet("https://graph.facebook.com/v2.8/" + locationid + "?fields=location", request, response);	
+	return response;
+}
 
 

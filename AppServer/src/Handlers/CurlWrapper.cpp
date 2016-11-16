@@ -37,14 +37,12 @@ void	CurlWrapper::handleGet(string url, Request &request,JsonResponse &response)
 		response["Error"] = curl_easy_strerror(res);
 
 	} else {
-		cout<<"response_string: "<<response_string<<endl;
 		Json::Reader reader2;
 		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
 		if (!parsingSuccessful) {
 			response["error"] = reader2.getFormattedErrorMessages();
 
 		}
-		cout<<"else "<<endl;
 	}
 	curl_easy_cleanup(curl_handle);
 	curl_handle = NULL;

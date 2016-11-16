@@ -16,6 +16,14 @@ Profile::Profile(const string &mail, const double &latitude, const double &longi
 	//emptyJsonProfile();
 }
 
+Profile::Profile(const string &mail,const string &firstName,const string &lastName, const double &latitude, const double &longitude):location(latitude,longitude) {
+	this->email = mail;
+	this->first_name = firstName;
+	this->last_name = lastName;
+}
+
+
+
 void Profile::jsonToProfile(const Json::Value &value) {
 	this->email = value.get("email", "").asString();
 	this->first_name = value.get("first_name", "").asString();
