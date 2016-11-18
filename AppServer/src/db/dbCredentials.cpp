@@ -26,9 +26,9 @@ bool dbCredentials::addNewUser(Json::Value user, string &error){
 	return false;
 }
 
-bool dbCredentials::verifyLogin(Json::Value &user, string &error){
-	string username = user.get("email", "").asString();
-	string password = user.get("password", "").asString();
+bool dbCredentials::verifyLogin(jobifyCredentials &credentials, string &error){
+	string username = credentials.getEmail();
+	string password = credentials.getPassword();
 	string strJson;
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),username,&strJson);
 	Json::Value root;   

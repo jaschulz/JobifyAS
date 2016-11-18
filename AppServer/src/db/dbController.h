@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "leveldb/db.h"
+#include "../Model/jobifyCredentials.h"
 #include <jsoncpp/json/json.h>
 
 using namespace std;

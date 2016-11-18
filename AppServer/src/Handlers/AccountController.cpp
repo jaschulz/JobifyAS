@@ -45,7 +45,6 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 			Profile profile (email);
 			Json::Value JsonBody;
 			dbUsers dbuser;
-			//cout<<"2"<<endl;
 			dbuser.connect("./usersdb");
 			error = dbuser.editProfile(email,profile.publicProfileToJSON());
 			dbuser.CloseDB();
@@ -128,6 +127,8 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 			response["token"] = token;
 			response["user"] = publicProfile;
 		}
+	} else {
+		
 	}
 }
 
@@ -140,7 +141,7 @@ void AccountController::login(Request &request, JsonResponse &response) {
 	Json::Value req;
 	Json::Value root;
 
-	if (reader.parse(data.c_str(), req)) {		
+	if (!reader.parse(data.c_str(), root)) {		
 		fillResponse(response, 401);
 		response["error"] = reader.getFormattedErrorMessages();
 		return;
@@ -149,30 +150,29 @@ void AccountController::login(Request &request, JsonResponse &response) {
 		fbLogin(request,response);
 	} else {
 	
-		string email = req.get("email", "").asString();
-		string pass = req.get("password", "").asString();
+		string email = root.get("email", "").asString();
+		string pass = root.get("password", "").asString();
 		string token = generateToken(email,pass);
 		jobifyCredentials credentials(email, pass,token);
 
-		dbCredentials dbCont;
-		dbCont.connect("./accounts");
-		Json::Value jsonProfile = credentials.toJSON();
+		dbCredentials dbCred;
+		dbCred.connect("./accounts");
 		string error;
 
-		if (dbCont.verifyLogin(jsonProfile,error)) {
+		if (dbCred.verifyLogin(credentials,error)) {
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
-			error = dbuser.getProfile(root);
+			Json::Value jsonProfile = dbuser.getProfile(email);
 			dbuser.CloseDB();
-			dbCont.CloseDB();
+			dbCred.CloseDB();
 			if (error == "") {
 				fillResponse(response, 200);
 				response["token"] = token;
-				response["user"] = root;
+				response["user"] = jsonProfile["user"].toStyledString();
 				return;
 			}
 		} 	
-		dbCont.CloseDB();
+		dbCred.CloseDB();
 		fillResponse(response, 401);
 		response["error"] = error;
 	}

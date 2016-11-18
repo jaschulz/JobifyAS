@@ -6,6 +6,7 @@
 #include "leveldb/db.h"
 #include <jsoncpp/json/json.h>
 #include "dbController.h"
+#include "../Model/Location.h"
 
 using namespace std;
 
@@ -14,13 +15,13 @@ class dbUsers : public dbController {
 public:
 	string editProfile(string &key,Json::Value user);
 
-	string getProfile(Json::Value &user);
+	Json::Value getProfile(string &email);
 
-	string setLocation(string &key,Json::Value &user);
+	Json::Value setLocation(string &key, Location &location);
 
 	string addContact(string &key,Json::Value &user);
 
-	string getContacts(string &key,Json::Value &contacts);
+	Json::Value getContacts(string &key);
 private:
 	string putContact(string &user1,string &idNewContact);
 };

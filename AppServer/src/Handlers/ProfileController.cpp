@@ -43,8 +43,7 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 		error = "";
 		Json::Reader reader;
 		Json::Value JsonBody;
-		bool parsingSuccessful = reader.parse(data.c_str(), JsonBody); //parse process
-		if (parsingSuccessful) {
+		if (reader.parse(data.c_str(), JsonBody)) {
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
 			string key(email);
@@ -52,8 +51,6 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 			dbuser.CloseDB();
 			if (error == "") {
 				fillResponse(response,200);
-				//response.setCode(200);
-				//response.setHeader("Content-Type", "application/json; charset=utf-8");
 				response["user"] = JsonBody;
 				return;
 			} 
@@ -62,8 +59,6 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 		}
 	}
 	fillResponse(response,401);
-	//response.setCode(401);
-	//response.setHeader("Content-Type", "application/json; charset=utf-8");
 	response["error"] = error;
 }
 
@@ -73,23 +68,18 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 	string error = "Wrong number or type of parameters.";	
 	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^/]",email)) {
 		string mail(email);
-		Json::Value JsonBody;
-		JsonBody["email"] = mail;
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
-		error = dbuser.getProfile(JsonBody);
+		Json::Value JsonBody = dbuser.getProfile(mail);
+		error = JsonBody.get("error", "").asString();
 		dbuser.CloseDB();
 		if (error == "") {
 			fillResponse(response,200);
-			//response.setCode(200);
-			//response.setHeader("Content-Type", "application/json; charset=utf-8");
 			response["user"] = JsonBody;
 			return;
 		}
 	}
 	fillResponse(response,401);
-	//response.setCode(401);
-	//response.setHeader("Content-Type", "application/json; charset=utf-8");
 	response["error"] = error;	     
 }
 
@@ -101,19 +91,17 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 		Json::Value JsonBody;
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
-		error = dbuser.getContacts(mail,JsonBody);
+		JsonBody = dbuser.getContacts(mail);
+		cout<<"JsonBody: "<< JsonBody.toStyledString()<<endl;
+		error = JsonBody.get("error", "").asString();
 		dbuser.CloseDB();
 		if (error == "") {			
 			fillResponse(response,200);
-			//response.setCode(200);
-			//response.setHeader("Content-Type", "application/json; charset=utf-8");
-			response["contacts"] = JsonBody;
+			response["contacts"] = JsonBody["contacts"];
 			return;
 		}
 	}
 	fillResponse(response,401); 
-	//response.setCode(401);
-	//response.setHeader("Content-Type", "application/json; charset=utf-8");
 	response["error"] = error;        
 }
 
@@ -125,16 +113,16 @@ void ProfileController::setLocation(Request &request, JsonResponse &response) {
 		Json::Value JsonBody;
 		Json::Reader reader;
 		string error = "";
-		//bool parsingSuccessful = reader.parse(data.c_str(), JsonBody); //parse process
 		if (reader.parse(data.c_str(), JsonBody)) {			
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
-			error = dbuser.setLocation(mail,JsonBody);
+			double latitude = JsonBody["location"]["latitude"].asDouble();
+			double longitude = JsonBody["location"]["longitude"].asDouble();
+			Location location(latitude, longitude);
+			response["user"] = dbuser.setLocation(mail,location);
 			dbuser.CloseDB();
 			if (error == "") {			
 				fillResponse(response,200);
-				//response.setCode(200);
-				//response.setHeader("Content-Type", "application/json; charset=utf-8");
 				response["user"] = JsonBody;
 				return;
 			}
@@ -143,8 +131,6 @@ void ProfileController::setLocation(Request &request, JsonResponse &response) {
 		}
 	}
 	fillResponse(response,401); 
-	//response.setCode(401);
-	//response.setHeader("Content-Type", "application/json; charset=utf-8");
 	response["error"] = "Wrong number or type of parameters.";        
 }
 
@@ -156,7 +142,6 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 		Json::Value JsonBody;
 		Json::Reader reader;
 		string error = "";
-		//bool parsingSuccessful = reader.parse(data.c_str(), JsonBody); //parse process
 		if (reader.parse(data.c_str(), JsonBody)) {
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
@@ -164,8 +149,6 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 			dbuser.CloseDB();
 			if (error == "") {			
 				fillResponse(response,200);
-				//response.setCode(200);
-				//response.setHeader("Content-Type", "application/json; charset=utf-8");
 				response["user"] = JsonBody;
 				return;
 			}
@@ -174,15 +157,11 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 		}
 	} 
 	fillResponse(response,401); 
-	//response.setCode(401);
-	//response.setHeader("Content-Type", "application/json; charset=utf-8");
 	response["error"] = "Wrong number or type of parameters.";        
 }
 
 void ProfileController::setup() {
-	// Example of prefix, putting all the urls into "/api"
 	setPrefix("/api");
-
 	addRouteResponse("GET", "/users/{email}", ProfileController, getProfile, JsonResponse);
 	addRouteResponse("PUT", "/users/{email}", ProfileController, editProfile, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/contacts", ProfileController, addContact, JsonResponse);

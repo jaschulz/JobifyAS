@@ -15,7 +15,7 @@ class dbCredentials : public dbController {
 public:
 	bool addNewUser(Json::Value user, string &error);
 
-	bool verifyLogin(Json::Value &user, string &error);
+	bool verifyLogin(jobifyCredentials &credentials, string &error);
 
 	bool isValidToken(string email, string token);
 };

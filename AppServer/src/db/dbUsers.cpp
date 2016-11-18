@@ -17,6 +17,7 @@ string dbUsers::editProfile(string &key,Json::Value user){
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
 		if (st.ToString().compare("NotFound: ") == 0) {
+			cout<<"user: "<<user.toStyledString()<<endl;
 			db->Put(writeOptions, key, user.toStyledString());
 		} else {
 			error = "Failed1: " + st.ToString();
@@ -26,12 +27,13 @@ string dbUsers::editProfile(string &key,Json::Value user){
 		Json::Reader reader;
 		if ( !reader.parse( strJson.c_str(), root ) )
 		{
-			error = reader.getFormattedErrorMessages();;
+			error = reader.getFormattedErrorMessages();
 		} else {
 			for(Json::Value::iterator it = user.begin(); it !=user.end(); ++it)
 			{
 				Json::Value keyValue = it.key();
 				Json::Value value = (*it);
+				cout<<keyValue<<": "<<value<<endl;
 				root[keyValue.asString()] = value;
 			}
 			db->Put(writeOptions, key, root.toStyledString());
@@ -41,29 +43,26 @@ string dbUsers::editProfile(string &key,Json::Value user){
 	return error;
 }
 
-string dbUsers::setLocation(string &key,Json::Value &user){
+Json::Value dbUsers::setLocation(string &key,Location &location){
 	leveldb::WriteOptions writeOptions;
 	string strJson;
         string error = "";
+	Json::Value root;
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
 		error = "Failed: " + st.ToString();
-	} else {
-		Json::Value root;   
+	} else {   
 		Json::Reader reader;
-		//bool parsingSuccessful = reader.parse( strJson.c_str(), root );     //parse process
 		if (reader.parse( strJson.c_str(), root ))
 		{			
-			root["location"]["latitude"] = user["location"]["latitude"];
-			root["location"]["longitude"] = user["location"]["longitude"];
+			root["location"]["latitude"] = location.getLatitude();
+			root["location"]["longitude"] = location.getLongitude();
 			db->Put(writeOptions, key, root.toStyledString());
-			user = root;
-			return "";
 		} else {
-			error = reader.getFormattedErrorMessages();
+			root["error"] = reader.getFormattedErrorMessages();
 		}
 	}
-	return error;
+	return root;
 }
 
 
@@ -115,20 +114,7 @@ string dbUsers::addContact(string &key,Json::Value &user){
 	error = putContact(loggedUserJson,newContact);
 //		cout<<"addContact newContactJson: "<<newContactJson<<endl;
 	error = putContact(newContactJson,key);
-	return error;
-/*
-	Json::Value root;   
-	Json::Reader reader;
-	bool parsingSuccessful = reader.parse( loggedUser.c_str(), root );     //parse process
-	if ( !parsingSuccessful )
-	{
-		error = reader.getFormattedErrorMessages();;
-	}
-	Json::Value contactsArray = rootUser["contacts"];
-	contactsArray.append();
-	rootUser["contacts"] = contactsArray;
-	db->Put(writeOptions, key, root.toStyledString());
-	user = root;*/
+
 	return error;
 }
 /*
@@ -180,39 +166,41 @@ string dbUsers::addPendingContact(string &key,Json::Value &user){
 	return error;
 }*/
 
-string dbUsers::getContacts(string &key,Json::Value &contacts) {
+Json::Value  dbUsers::getContacts(string &key) {
+	Json::Value user;
+	Json::Value contacts;
 	string strJson;
         string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
-		error = "Failed1111: " + st.ToString();
+		user["error"] = "Failed: " + st.ToString();
 	} else {
 		Json::Value user;   
 		Json::Reader reader;
-		bool parsingSuccessful = reader.parse( strJson.c_str(), user );     //parse process
-		if ( !parsingSuccessful )
+		if ( !reader.parse( strJson.c_str(), user ) )
 		{
-			error = reader.getFormattedErrorMessages();
+			user["error"] = reader.getFormattedErrorMessages();
+			return user;
 		}
-		contacts = user["contacts"];
+		contacts["contacts"] = user["contacts"];
+		return contacts;
 	}
-	return error;
+	return user;
 }
 
-string dbUsers::getProfile(Json::Value &user) {
-	string email = user.get("email", "").asString();
+Json::Value dbUsers::getProfile(string &email) {
+	Json::Value user;
 	string strJson;
         string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),email,&strJson);
 	if (st.ok() != 1) {
-		error = "Failed: " + st.ToString();
+		user["error"] = "Failed: " + st.ToString();
 	} else {
-		Json::Value root;   
 		Json::Reader reader;
 		if ( ! reader.parse( strJson.c_str(), user ) )
 		{
-			error = reader.getFormattedErrorMessages();
+			user["error"] = reader.getFormattedErrorMessages();
 		}
 	}
-	return error;
+	return user;
 }
