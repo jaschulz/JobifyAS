@@ -33,7 +33,7 @@ public:
 private:
 	string generateToken(const string &email, const string &password) const;
 
-	bool addNewUser(Credentials &credentials, string error);
+	bool addNewUser(Credentials &credentials, string &error);
 };
 
 #endif 

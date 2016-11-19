@@ -10,18 +10,13 @@
 
 using namespace std;
 
-string dbUsers::editProfile(string &key,Json::Value user){
+string dbUsers::editProfile(string &key,Json::Value &user){
 	leveldb::WriteOptions writeOptions;
 	string strJson;
         string error = "";
-	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
+	leveldb::Status st = db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
-		if (st.ToString().compare("NotFound: ") == 0) {
-			cout<<"user: "<<user.toStyledString()<<endl;
-			db->Put(writeOptions, key, user.toStyledString());
-		} else {
-			error = "Failed1: " + st.ToString();
-		}
+		error = "Failed1: " + st.ToString();
 	} else {
 		Json::Value root;   
 		Json::Reader reader;
@@ -39,6 +34,15 @@ string dbUsers::editProfile(string &key,Json::Value user){
 			db->Put(writeOptions, key, root.toStyledString());
 			user = root;
 		}
+	}
+	return error;
+}
+
+string dbUsers::addProfile(string &key,Json::Value &user){
+	leveldb::Status st = db->Put(leveldb::WriteOptions(), key, user.toStyledString());
+        string error = "";
+	if (st.ok() != 1) {
+		error = "Failed: " + st.ToString();
 	}
 	return error;
 }
@@ -167,25 +171,24 @@ string dbUsers::addPendingContact(string &key,Json::Value &user){
 }*/
 
 Json::Value  dbUsers::getContacts(string &key) {
-	Json::Value user;
+	Json::Value result;
 	Json::Value contacts;
 	string strJson;
         string error = "";
 	leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&strJson);
 	if (st.ok() != 1) {
-		user["error"] = "Failed: " + st.ToString();
-	} else {
-		Json::Value user;   
+		result["error"] = "Failed: " + st.ToString();
+	} else {  
 		Json::Reader reader;
-		if ( !reader.parse( strJson.c_str(), user ) )
+		if ( !reader.parse( strJson.c_str(), result ) )
 		{
-			user["error"] = reader.getFormattedErrorMessages();
-			return user;
+			result["error"] = reader.getFormattedErrorMessages();
+			return result;
 		}
-		contacts["contacts"] = user["contacts"];
+		contacts["contacts"] = result["contacts"];
 		return contacts;
 	}
-	return user;
+	return result;
 }
 
 Json::Value dbUsers::getProfile(string &email) {
