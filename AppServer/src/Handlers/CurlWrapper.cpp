@@ -23,10 +23,7 @@ void	CurlWrapper::handleGet(string url, Request &request,JsonResponse &response)
 	if (!request.getHeaderKeyValue("Authorization").empty()){	
 		std::string auth = "Authorization: OAuth " + request.getHeaderKeyValue("Authorization");
 		slist1 = curl_slist_append(slist1, auth.c_str());	
-		cout<<"auth: "<< auth<<endl;
-	} else {
-		cout<<"SIN AUTH"<< endl;
-		}
+	}
 	curl_easy_setopt(curl_handle, CURLOPT_URL,url.c_str());
 
 	curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -40,8 +37,6 @@ void	CurlWrapper::handleGet(string url, Request &request,JsonResponse &response)
 
 	} else {
 		Json::Reader reader2;
-		
-		cout<<"response_string"<<response_string<< endl;
 		bool parsingSuccessful = reader2.parse(response_string.c_str(), response); //parse process
 		if (!parsingSuccessful) {
 			response["error"] = reader2.getFormattedErrorMessages();

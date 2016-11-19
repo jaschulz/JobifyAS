@@ -106,7 +106,6 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 	string email = fbBasicData.get("email", "").asString();
 	string fbid = fbBasicData.get("id", "").asString();
 	string token = generateToken(email,"");
-	cout<<"email: "<<email<<endl;
 	fbCredentials credentials(email, fbid,token);
 	string error;
 	if (addNewUser(credentials,error)) {
@@ -129,7 +128,14 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 			response["user"] = publicProfile;
 		}
 	} else {
-		
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");
+		Json::Value jsonProfile = dbuser.getProfile(email);
+		dbuser.CloseDB();			
+		fillResponse(response, 200);
+		response["token"] = token;
+		response["user"] = jsonProfile;
+		return;		
 	}
 }
 
@@ -165,7 +171,6 @@ void AccountController::login(Request &request, JsonResponse &response) {
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
 			Json::Value jsonProfile = dbuser.getProfile(email);
-			cout<<"jsonProfile: "<<jsonProfile.toStyledString()<<endl;
 			dbuser.CloseDB();
 			dbCred.CloseDB();
 			if (error == "") {
