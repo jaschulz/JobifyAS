@@ -108,7 +108,7 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 	string token = generateToken(email,"");
 	fbCredentials credentials(email, fbid,token);
 	string error;
-	if (addNewUser(credentials,error)) {
+	if (addNewUser(credentials,error)){
 		dbUsers dbuser;
 		JsonResponse fbData = fbh.getData(request);
 		string fname = fbData.get("first_name", "").asString();

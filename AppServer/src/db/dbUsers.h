@@ -15,6 +15,8 @@ class dbUsers : public dbController {
 public:
 	string editProfile(string &key,Json::Value &user);
 
+	Json::Value searchProfile(Json::Value &filter, string &error);
+
 	string addProfile(string &key,Json::Value &user);
 
 	Json::Value getProfile(string &email);

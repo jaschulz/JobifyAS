@@ -1,7 +1,7 @@
 #include <string>
 #include "dbUsers.h"
 #include "leveldb/db.h"
-
+#include "../utils/utils.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -36,6 +36,56 @@ string dbUsers::editProfile(string &key,Json::Value &user){
 		}
 	}
 	return error;
+}
+
+
+
+Json::Value dbUsers::searchProfile(Json::Value &filter, string &error){
+	leveldb::WriteOptions writeOptions;
+	const leveldb::Slice startSlice;
+	const leveldb::Slice endSlice;
+	string strJson;
+	Json::Value usersArray;
+	Json::Value result;
+    	leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
+	for (it->SeekToFirst(); it->Valid(); it->Next()) {               
+		// Read the record
+		if( !it->value().empty() )
+		{
+			leveldb::Slice keySlice = it->key();
+			leveldb::Slice dataSlice = it->value();
+			Json::Value userProfile;   
+			Json::Reader reader;
+			if ( !reader.parse( dataSlice.ToString().c_str(), userProfile ) )
+			{
+				error = reader.getFormattedErrorMessages();
+				return result;
+			} else {
+				string job_position = userProfile.get("job_position","" ).asString();
+				string email = userProfile.get("email", "").asString();
+				string last_name = userProfile.get("last_name", "").asString();
+				string filter_job_pos = filter.get("job_position",job_position).asString();
+				string user = filter.get("user",email).asString();
+				if (job_position == filter_job_pos && (email == user||user == last_name)) {
+					Json::Value skills = filter["skills"];
+					for(Json::Value::iterator it = skills.begin(); it !=skills.end(); ++it)
+					{
+						Json::Value keyValue = it.key();
+						Json::Value value = (*it);
+						if(utils::jsonContainsValue(userProfile["skills"],value.asString())){
+							usersArray.append(userProfile);
+							break;
+						}
+					}
+					
+				}
+			}
+		}
+	}
+	assert(it->status().ok());  // Check for any errors found during the scan
+	delete it;
+	result["users"] = usersArray;
+	return result;
 }
 
 string dbUsers::addProfile(string &key,Json::Value &user){
