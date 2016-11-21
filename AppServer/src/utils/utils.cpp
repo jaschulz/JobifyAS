@@ -29,11 +29,11 @@ double utils::deg2rad(double deg) {
 }
 
 //  This function converts radians to decimal degrees
-double utils::rad2deg(double rad) {
+/*double utils::rad2deg(double rad) {
   return (rad * 180 / pi);
-}
+}*/
 
-bool utils::jsonContainsValue(Json::Value json, std::string valueToFind) {
+bool utils::jsonContainsValue(Json::Value &json, std::string &valueToFind) {
 	for(Json::Value::iterator it = json.begin(); it !=json.end(); ++it){
 		Json::Value keyValue = it.key();
 		Json::Value value = (*it);

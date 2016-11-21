@@ -6,6 +6,14 @@ CredentialsTest::CredentialsTest() {
 }
 
 void CredentialsTest::setUp() {
+	const string mail = "prueba@mail.com";
+	const string token = "fakeToken";
+	string error;
+	jobifyCredentials credential(mail,"123456",token);
+	dbCredentials dbCred;
+	dbCred.connect("./testAccounts");
+	dbCred.addNewUser(credential.toJSON(),error);
+	dbCred.CloseDB();
 }
 
 void CredentialsTest::getEmail() {
@@ -21,17 +29,29 @@ void CredentialsTest::checkPassword(){
 
 }
 
+void CredentialsTest::verifyLogin(){
+	const string mail = "prueba@mail.com";
+	const string token = "fakeToken";
+	jobifyCredentials credential(mail,"123456",token);
+	dbCredentials dbCont;
+	dbCont.connect("./testAccounts");
+	string error;
+	bool loginOk = dbCont.verifyLogin(credential,error);
+	dbCont.CloseDB();
+	CPPUNIT_ASSERT(loginOk);
+}
+
 void CredentialsTest::validateToken(){
 	const string mail = "prueba@mail.com";
 	const string token = "fakeToken";
 	jobifyCredentials credential(mail,"123456",token);
 	dbCredentials dbCont;
-	dbCont.connect("./accounts");
-	string error;
-	dbCont.addNewUser(credential.toJSON(),error);
-	bool validToken = dbCont.isValidToken(mail, token);
+	dbCont.connect("./testAccounts");
+	CPPUNIT_ASSERT(dbCont.isValidToken(mail, token));
+	CPPUNIT_ASSERT(!dbCont.isValidToken(mail, "qwerty"));
+	//bool validToken = dbCont.isValidToken(mail, token);
 	dbCont.CloseDB();
-	CPPUNIT_ASSERT(validToken);
+	//CPPUNIT_ASSERT(validToken);
 }
 
 void CredentialsTest::tearDown() {

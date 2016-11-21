@@ -17,7 +17,6 @@ protected:
     leveldb::Options options;
 
 public:
-
 	int connect(string dataBase);
 	void CloseDB();
 	string printDB();

@@ -5,17 +5,20 @@ JobifyControllerTest::JobifyControllerTest() {
 }
 
 Request JobifyControllerTest::generateRequest(string method, string queryString) const {
-    mg_connection conn;
-    conn.request_method = method.c_str();
-    conn.num_headers = 0;
+
+
+    mg_connection connection;
+    //Only mock data, method it´s not important
+    connection.request_method = method.c_str();
+    connection.num_headers = 0;
     char content[] = "mock";
-    conn.content = content;
-    conn.content_len = 4;
-    conn.uri = "mock";
+    connection.content = content;
+    connection.content_len = 4;
+    connection.uri = "mock";
 
-    conn.query_string = queryString.c_str();
+    connection.query_string = queryString.c_str();
 
-    Request request(&conn);
+    Request request(&connection);
     return request;
 }
 

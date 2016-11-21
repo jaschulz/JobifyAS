@@ -14,6 +14,7 @@ CPPUNIT_TEST_SUITE(CredentialsTest);
         CPPUNIT_TEST(getEmail);
         CPPUNIT_TEST(checkPassword);
         CPPUNIT_TEST(validateToken);
+        CPPUNIT_TEST(verifyLogin);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -24,6 +25,8 @@ public:
     void checkPassword();
 
     void validateToken();
+
+void verifyLogin();
 
     virtual void setUp() override;
 

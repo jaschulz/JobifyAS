@@ -2,7 +2,7 @@
 #include "dbUsers.h"
 #include "leveldb/db.h"
 #include "../utils/utils.h"
-
+#include <algorithm> 
 #include <unistd.h>
 #include <stdlib.h>
 #include <fstream>
@@ -50,42 +50,56 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error){
     	leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
 	for (it->SeekToFirst(); it->Valid(); it->Next()) {               
 		// Read the record
+		cout<<"Read the record"<<endl;
 		if( !it->value().empty() )
 		{
 			leveldb::Slice keySlice = it->key();
 			leveldb::Slice dataSlice = it->value();
 			Json::Value userProfile;   
 			Json::Reader reader;
+		cout<<"dataSlice.ToString()"<<dataSlice.ToString()<<endl;
 			if ( !reader.parse( dataSlice.ToString().c_str(), userProfile ) )
 			{
 				error = reader.getFormattedErrorMessages();
+				delete it;					
+				cout<<"error ->"<<error<<endl;
 				return result;
 			} else {
 				string job_position = userProfile.get("job_position","" ).asString();
 				string email = userProfile.get("email", "").asString();
+				transform(email.begin(), email.end(), email.begin(), ::toupper);
 				string last_name = userProfile.get("last_name", "").asString();
+				transform(last_name.begin(), last_name.end(), last_name.begin(), ::toupper);
+				cout<<"job_position: "<<job_position<<endl;
+				cout<<"email: "<<email<<endl;
+				cout<<"last_name: "<<last_name<<endl;
 				string filter_job_pos = filter.get("job_position",job_position).asString();
 				string user = filter.get("user",email).asString();
-				if (job_position == filter_job_pos && (email == user||user == last_name)) {
-					Json::Value skills = filter["skills"];
-					for(Json::Value::iterator it = skills.begin(); it !=skills.end(); ++it)
-					{
-						Json::Value keyValue = it.key();
-						Json::Value value = (*it);
-						if(utils::jsonContainsValue(userProfile["skills"],value.asString())){
-							usersArray.append(userProfile);
-							break;
+				if (job_position.compare(filter_job_pos) == 0 && (email.find(user) != std::string::npos 
+				|| last_name.find(user) != std::string::npos)) {
+					if(filter["skills"].isNull()) {
+						usersArray.append(userProfile);
+										cout<<"skills.isNull ->"<<endl;
+					} else {
+						Json::Value skills = filter["skills"];
+						for(Json::Value::iterator it = skills.begin(); it !=skills.end(); ++it)
+						{
+							Json::Value keyValue = it.key();
+							Json::Value value = (*it);
+							string strValue = value.asString();
+							if(utils::jsonContainsValue(userProfile["skills"],strValue)){
+								usersArray.append(userProfile);
+								break;
+							}
 						}
 					}
-					
 				}
 			}
 		}
 	}
 	assert(it->status().ok());  // Check for any errors found during the scan
 	delete it;
-	result["users"] = usersArray;
-	return result;
+	return usersArray;
 }
 
 string dbUsers::addProfile(string &key,Json::Value &user){

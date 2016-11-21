@@ -16,6 +16,10 @@ JobifyController::JobifyController() {
     routeParams = new map<string, string>();
 }
 
+JobifyController::~JobifyController() {
+    delete(routeParams);
+}
+
 bool JobifyController::handles(string method, string url) {
 
     bool handle = false;

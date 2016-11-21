@@ -16,17 +16,18 @@ private:
 	string last_name;
 	string about;
 	Location location;
+	string job_position;
+	string pic;
 
 	vector<string> skills;
 	vector<string> contacts;
-	vector<string> pendingContacts;
+	vector<string> invitationsSent;
+	vector<string> invitationsReceived;
 
 public:
 	Profile(const string &mail);
 
-	Profile(const string &mail, const double &latitude, const double &longitude);
-
-	Profile(const string &mail,const string &firstName,const string &lastName, const double &latitude, const double &longitude);
+	Profile(const string &mail,const string &firstName,const string &lastName, const string &p_pic, const string &jposition, const double &latitude, const double &longitude);
 
 	void jsonToProfile(const Json::Value &value);
 
@@ -47,8 +48,6 @@ public:
 	const string &getPassword() const;
 
 	Json::Value profileToJSON();
-
-	Json::Value publicProfileToJSON();
 
 	~Profile();
 

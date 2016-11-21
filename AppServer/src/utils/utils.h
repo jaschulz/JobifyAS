@@ -12,7 +12,7 @@ static double deg2rad(double deg);
 
 static double rad2deg(double rad);
 
-static bool jsonContainsValue(Json::Value json, std::string valueToFind);
+static bool jsonContainsValue(Json::Value &json, std::string &valueToFind);
 
 };
 

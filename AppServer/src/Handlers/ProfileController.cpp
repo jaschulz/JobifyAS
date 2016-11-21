@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <regex>
+#include <algorithm> 
 #include <mongoose/JsonController.h>
 #include <fstream>
 #include <iostream>
@@ -160,6 +161,40 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 	response["error"] = "Wrong number or type of parameters.";        
 }
 
+void ProfileController::filterUsers(Request &request, JsonResponse &response) {
+	string job_pos = request.get("job_position","");
+	string skills = request.get("skills","");
+	string range = request.get("range","");
+	string user = request.get("user","");
+	int i = 0;
+	Json::Value filter;
+	if (!job_pos.empty()) {
+		filter["job_pos"] = job_pos;
+	}
+	if (!skills.empty()) {
+		filter["skills"] = skills;
+	}
+	if (!range.empty()) {
+		filter["range"] = range;
+	}
+	if (!user.empty()) {
+		transform(user.begin(), user.end(), user.begin(), ::toupper);
+		filter["user"] = user;
+	}
+	dbUsers dbuser;
+	dbuser.connect("./usersdb");
+	string error;
+	Json::Value users = dbuser.searchProfile(filter,error);
+	dbuser.CloseDB();
+	if (error == "") {
+		response["users"] = users;
+		return;
+	}
+	fillResponse(response,401); 
+	response["error"] = error;
+
+}
+
 void ProfileController::setup() {
 	setPrefix("/api");
 	addRouteResponse("GET", "/users/{email}", ProfileController, getProfile, JsonResponse);
@@ -167,6 +202,7 @@ void ProfileController::setup() {
 	addRouteResponse("POST", "/users/{email}/contacts", ProfileController, addContact, JsonResponse);
 	addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/location", ProfileController, setLocation, JsonResponse);
+	addRouteResponse("GET", "/users", ProfileController, filterUsers, JsonResponse);
 	//addRouteResponse("GET", "/printProfiles", ProfileController, printDB,JsonResponse);
 }
 

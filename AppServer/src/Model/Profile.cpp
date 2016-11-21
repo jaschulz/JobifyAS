@@ -7,17 +7,20 @@ Profile::Profile(const string &mail):location() {
 	this->email = mail;
 	this->skills.empty();
 	this->contacts.empty();
-	this->pendingContacts.empty();
+	this->invitationsSent.empty();
+	this->invitationsReceived.empty();
 }
 
-Profile::Profile(const string &mail, const double &latitude, const double &longitude):location(latitude,longitude) {
-	this->email = mail;
-}
-
-Profile::Profile(const string &mail,const string &firstName,const string &lastName, const double &latitude, const double &longitude):location(latitude,longitude) {
+Profile::Profile(const string &mail,const string &firstName,const string &lastName, const string &p_pic, const string &jposition, const double &latitude, const double &longitude):location(latitude,longitude) {
 	this->email = mail;
 	this->first_name = firstName;
 	this->last_name = lastName;
+	this->pic = p_pic;
+	this->job_position = jposition;	
+	this->skills.empty();
+	this->contacts.empty();
+	this->invitationsSent.empty();
+	this->invitationsReceived.empty();
 }
 
 
@@ -28,23 +31,20 @@ void Profile::jsonToProfile(const Json::Value &value) {
 	this->last_name = value.get("last_name", "").asString();
 }
 
-Json::Value Profile::profileToJSON() {	
-	Json::Value jsonProfile;
-	jsonProfile["email"] = email;
-	return jsonProfile;
-}
-
-Json::Value Profile::publicProfileToJSON() {
+Json::Value Profile::profileToJSON() {
 	Json::Value jsonProfile;
 	jsonProfile["email"] = email;
 	jsonProfile["first_name"] = first_name;
 	jsonProfile["last_name"] = last_name;
 	jsonProfile["about"] = about;
+	jsonProfile["pic"] = pic;
+	jsonProfile["job_position"] = job_position;
 	jsonProfile["location"]["latitude"] = location.getLatitude();
 	jsonProfile["location"]["longitude"] = location.getLongitude();
 	jsonProfile["skills"] = Json::arrayValue;
 	jsonProfile["contacts"] = Json::arrayValue;
-	jsonProfile["pendingContacts"] = Json::arrayValue;
+	jsonProfile["invitationsSent"] = Json::arrayValue;
+	jsonProfile["invitationsReceived"] = Json::arrayValue;
 	return jsonProfile;
 }
 

@@ -23,6 +23,8 @@ public:
 	
 	JobifyController();
  
+	~JobifyController();
+
 	virtual Response *process(Request &request) override;
 
 	virtual bool handles(string method, string url) override;

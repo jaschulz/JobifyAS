@@ -28,6 +28,8 @@ public:
 	void addContact(Request &request, JsonResponse &response);
 
 	void getContacts(Request &request, JsonResponse &response);
+
+	void filterUsers(Request &request, JsonResponse &response);
 };
 
 #endif 
