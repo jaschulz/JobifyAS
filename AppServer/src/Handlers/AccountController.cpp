@@ -25,30 +25,26 @@ AccountController::AccountController() {
 void AccountController::registerUser(Request &request, JsonResponse &response) {
 
 	std::string data = request.getData();
-
+	std::string error = "";
 	Json::Value root;
 
 	Json::Reader reader;
 	if (!reader.parse(data.c_str(), root)) {	
 		fillResponse(response,401);
-		response["error"] = reader.getFormattedErrorMessages();
+		response["error"] = "AccountController.registerUser" + reader.getFormattedErrorMessages();
 	} else {
 		string email = root.get("email", "").asString();
 		string pass = root.get("password", "").asString();
 		string token = generateToken(email, pass);
 		jobifyCredentials credentials (email,pass,token);
 
-		string error;
-		//cout<<"1"<<endl;
-
 		if (addNewUser(credentials,error)) {
-			Profile profile (email);
+			Profile profile(email);
 			Json::Value JsonBody = profile.profileToJSON();
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
 			error = dbuser.addProfile(email,JsonBody);
 			dbuser.CloseDB();
-
 			if (error.compare("") == 0) {
 				fillResponse(response,200);
 				response["token"] = token;
@@ -135,7 +131,6 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 		fillResponse(response, 200);
 		response["token"] = token;
 		response["user"] = jsonProfile;
-		return;		
 	}
 }
 

@@ -1,10 +1,11 @@
 #ifndef PROFILE_H
 #define PROFILE_H
 
+#include "Location.h"
+#include "../utils/utils.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <jsoncpp/json/json.h>
-#include "Location.h"
 
 using namespace std;
 
@@ -23,13 +24,14 @@ private:
 	vector<string> contacts;
 	vector<string> invitationsSent;
 	vector<string> invitationsReceived;
+	vector<string> recommendations;
 
 public:
 	Profile(const string &mail);
 
 	Profile(const string &mail,const string &firstName,const string &lastName, const string &p_pic, const string &jposition, const double &latitude, const double &longitude);
 
-	void jsonToProfile(const Json::Value &value);
+	Profile(const Json::Value &jsonProfile);
 
 	void setEmail(const string &mail);
 
@@ -54,6 +56,13 @@ public:
 	void fromJSON(Json::Value value);
 
 	Json::Value &profileGetUserJSON();
+
+	int getRecommendations();
+	
+	void addSentInvitation(string &receiver);
+
+	void addReceivedInvitation(string &sender);
+
 };
 
 

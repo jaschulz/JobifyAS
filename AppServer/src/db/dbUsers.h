@@ -1,12 +1,13 @@
 #ifndef DBUSERS_H
 #define DBUSERS_H
 
-#include <unistd.h>
-#include <stdlib.h>
 #include "leveldb/db.h"
-#include <jsoncpp/json/json.h>
 #include "dbController.h"
 #include "../Model/Location.h"
+#include "../Model/Profile.h"
+#include <jsoncpp/json/json.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -23,11 +24,31 @@ public:
 
 	Json::Value setLocation(string &key, Location &location);
 
-	string addContact(string &key,Json::Value &user);
+	//string addContact(string &key,Json::Value &user);
+
+	bool addContact(string &key,Json::Value &user, string &error, int code);
 
 	Json::Value getContacts(string &key);
+
+	bool manageContacts(Profile &sender, Profile &receiver, string &error,string contactLevel);
+
+	bool sendInvitation(Profile &sender, Profile &receiver, string &error, int &code);
+
+	bool addContact(string &key,Json::Value &user, string &error, int &code);
+
+	bool acceptInvitation(string &user, string &newContact, string &error);
+
+	bool moveToContacts(string &user, string &newContact, string &error);
+
 private:
 	string putContact(string &user1,string &idNewContact);
+
+	bool addSentInvitation(Profile &sender, Profile &receiver, string &error);
+
+	bool addReceivedInvitation(Profile &sender, Profile &receiver, string &error);
+
+	//bool validateUser(string &key, string &userJson,string &error, int &code);
+
 };
 
 #endif 

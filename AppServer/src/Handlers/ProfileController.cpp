@@ -93,7 +93,6 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
 		JsonBody = dbuser.getContacts(mail);
-		cout<<"JsonBody: "<< JsonBody.toStyledString()<<endl;
 		error = JsonBody.get("error", "").asString();
 		dbuser.CloseDB();
 		if (error == "") {			
@@ -137,28 +136,31 @@ void ProfileController::setLocation(Request &request, JsonResponse &response) {
 
 void ProfileController::addContact(Request &request, JsonResponse &response) {
 	char email[50];
+	int code = 401;
+	string error = "Wrong number or type of parameters.";
 	string data = request.getData();
 	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^/]/contacts",email)) {
 		string mail(email);
 		Json::Value JsonBody;
-		Json::Reader reader;
-		string error = "";
-		if (reader.parse(data.c_str(), JsonBody)) {
+		string	newContact = user.get("email","").asString();
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");	
+		Json::Value senderJson = dbuser.getProfile(mail);
+		Json::Value receiverJson = dbuser.getProfile(newContact);
+		if (senderJson["error"].isNull() && receiverJson["error"].isNull()){
+			Profile sender(senderJson);
+			Profile receiver(receiverJson);
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
-			error = dbuser.addContact(mail,JsonBody);
-			dbuser.CloseDB();
-			if (error == "") {			
-				fillResponse(response,200);
+			if (dbuser.sendInvitation(sender,receiver,error,code)) {		
+				dbuser.CloseDB();	
+				fillResponse(response,code);
 				response["user"] = JsonBody;
-				return;
 			}
-		} else {
-			error = reader.getFormattedErrorMessages();
+			dbuser.CloseDB();
 		}
-	} 
-	fillResponse(response,401); 
-	response["error"] = "Wrong number or type of parameters.";        
+		fillResponse(response,code); 
+		response["error"] = error;      
 }
 
 void ProfileController::filterUsers(Request &request, JsonResponse &response) {
@@ -166,7 +168,6 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 	string skills = request.get("skills","");
 	string range = request.get("range","");
 	string user = request.get("user","");
-	int i = 0;
 	Json::Value filter;
 	if (!job_pos.empty()) {
 		filter["job_pos"] = job_pos;

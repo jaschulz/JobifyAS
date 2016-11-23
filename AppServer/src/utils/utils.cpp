@@ -43,3 +43,11 @@ bool utils::jsonContainsValue(Json::Value &json, std::string &valueToFind) {
 	} 
 	return false;
 }
+
+static void jsonArrayToVector(Json::Value array, std::vector<std::string> &v) {
+	for(Json::Value::iterator it = array.begin(); it !=array.end(); ++it){
+		Json::Value keyValue = it.key();
+		Json::Value value = (*it);
+		v.push_back(value.asString());
+	} 
+}
