@@ -189,9 +189,10 @@ string dbUsers::addContact(string &key,Json::Value &user){
 bool dbUsers::addSentInvitation(Profile &sender, Profile &receiver, string &error){
 	string key = sender.getEmail();
 	sender.addSentInvitation(receiver.getEmail()); 
-	leveldb::Status st = db->Put(writeOptions, key, sender.profileToJSON().toStyledString());
+	cout<<"addSentInvitation" <<sender.profileToJSON().toStyledString()<<endl;
+	leveldb::Status st = db->Put(leveldb::WriteOptions(), key, sender.profileToJSON().toStyledString());
 	if (st.ok() != 1) {
-		error = trace + st.ToString();
+		error = st.ToString();
 		return false;
 	} 
 	return true;
@@ -200,16 +201,16 @@ bool dbUsers::addSentInvitation(Profile &sender, Profile &receiver, string &erro
 bool dbUsers::addReceivedInvitation(Profile &sender, Profile &receiver, string &error){
 	string key = receiver.getEmail();
 	receiver.addReceivedInvitation(sender.getEmail()); 
-	leveldb::Status st = db->Put(writeOptions, key, receiver.profileToJSON().toStyledString());
+	leveldb::Status st = db->Put(leveldb::WriteOptions(), key, receiver.profileToJSON().toStyledString());
 	if (st.ok() != 1) {
-		error = trace + st.ToString();
+		error = st.ToString();
 		return false;
 	} 
 	return true;
 }
 
 bool dbUsers::manageContacts(Profile &sender, Profile &receiver, string &error,string contactLevel){
-	Json::Value root;   
+/*	Json::Value root;   
 	leveldb::WriteOptions writeOptions;
 	Json::Reader reader;
 	error = "";
@@ -230,7 +231,7 @@ bool dbUsers::manageContacts(Profile &sender, Profile &receiver, string &error,s
 	if (st.ok() != 1) {
 		error = trace + st.ToString();
 		return false;
-	} 
+	} */
 	return true;
 }
 /*
@@ -251,40 +252,19 @@ bool dbUsers::validateUser(string &key, Json::Value &userJson, string &error){
 }*/
 
 bool dbUsers::sendInvitation(Profile &sender, Profile &receiver, string &error, int &code){
-	leveldb::WriteOptions writeOptions;
+	
+				cout<<"send Invitation"<<endl;
         error = "";	
-	//string	newContact = user.get("email","").asString();
 	code = 201;
-//	cout<<"newContact: "<<newContact<<endl;
-//	cout<<"key: "<<key<<endl;
-	/*leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&loggedUserJson);
-	if (st.ok() != 1) {
-		code = 404;
-		error = "Failed: " + st.ToString();
-		return false;
-	} 
-	st =  db->Get(leveldb::ReadOptions(),newContact,&newContactJson);
-	if (st.ok() != 1) {
-		code = 404;
-		error = "Failed: " + st.ToString();
-		return false;
-	}
-	string newContactJson;
-	string loggedUserJson;
-	if (validateUser(key,loggedUserJson, error, code) || validateUser(newContact, newContactJson, error, code)) {
-		return false;
-	}*/
-	if(!addSentInvitation(sender,receiver,error) || !addReceivedInvitation(receiver,sender,error)){
+				cout<<"anres if"<<endl;
+	if(!addSentInvitation(sender,receiver,error) || !addReceivedInvitation(sender,receiver,error)){
 		code = 404;
 		return false;
 	}
-//	cout<<"loggedUserJson: "<<loggedUserJson<<endl;
-//	error = putContact(loggedUserJson,newContact);
-//		cout<<"addContact newContactJson: "<<newContactJson<<endl;
-//	error = putContact(newContactJson,key);
+				cout<<"despues if"<<endl;
 	return true;
 }
-
+/*
 bool dbUsers::acceptInvitation(string &user, string &newContact, string &error){
 	return moveContact(user, newContact, error,"invitationsReceived");
 }
@@ -292,40 +272,24 @@ bool dbUsers::acceptInvitation(string &user, string &newContact, string &error){
 bool dbUsers::moveToContacts(string &user, string &newContact, string &error){
 	return moveContact(user, newContact, error,"invitationsSent");
 }
+*/
 
-bool dbUsers::moveContact(string &user, string &newContact, string &error, string source){
-	Json::Value root;   
-	Json::Reader reader;
-	error = "";
-	string trace = "dbUsers::moveContact - ";
-	if ( !reader.parse( user.c_str(), root ) ) {
-		error = trace + reader.getFormattedErrorMessages();
-		return false;
-	}
-	if(utils::jsonContainsValue(root[source],newContact)){
-		root["contacts"].append(newContact);
-		//TODO DELETE newContact from root[source]
-		return true;
-	}
-	return false;
+bool dbUsers::moveContact(std::vector<std::string> &source, std::vector<std::string> &destination, string value){
+	return utils::moveFromVectorToVector(source, destination,value);	
 }
 
-bool dbUsers::addContact(string &key,Json::Value &user, string &error, int code){
-	leveldb::WriteOptions writeOptions;
-	string loggedUserJson;
+bool dbUsers::acceptInvitation(Profile &sender, Profile &invitee, string &error, int code){
         error = "";	
-	string newContactJson;
-	string	newContact = user.get("email","").asString();
-	code = 201;
-//	cout<<"newContact: "<<newContact<<endl;
-//	cout<<"key: "<<key<<endl;
-	/*if (validateUser(key, loggedUserJson,error, code) || validateUser(newContact,newContactJson, error, code)) {
-		return false;
-	}*/
-	if(!acceptInvitation(loggedUserJson,newContact,error) || !moveToContacts(newContactJson,key,error)){
+	if(!moveContact(sender.getInvitationsSent(),sender.getContacts(),invitee.getEmail())){
 		code = 404;
 		return false;
-	}
+	}	
+	if(!moveContact(invitee.getInvitationsReceived(),invitee.getContacts(),sender.getEmail())){
+		code = 404;
+		moveContact(sender.getContacts(),sender.getInvitationsSent(),invitee.getEmail());
+		return false;
+	}	
+	code = 201;
 	return true;
 }
 

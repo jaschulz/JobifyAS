@@ -44,10 +44,33 @@ bool utils::jsonContainsValue(Json::Value &json, std::string &valueToFind) {
 	return false;
 }
 
-static void jsonArrayToVector(Json::Value array, std::vector<std::string> &v) {
+Json::Value utils::vectorToJsonArray(std::vector<std::string> &v, std::string key){
+	Json::Value array;
+	for (unsigned int i = 0; i < v.size(); i++) {
+		Json::Value val;
+		val[key] = v[i];
+		array.append(val);
+	}
+	return array;
+}
+
+std::vector<std::string> utils::jsonArrayToVector(Json::Value array) {
+	std::vector<std::string> v;
+	v.empty();
 	for(Json::Value::iterator it = array.begin(); it !=array.end(); ++it){
 		Json::Value keyValue = it.key();
 		Json::Value value = (*it);
 		v.push_back(value.asString());
 	} 
+	return v;
+}
+
+bool utils::moveFromVectorToVector(std::vector<std::string> &source, std::vector<std::string> &destination, std::string value){
+	for (unsigned int i = 0; i < source.size(); i++) {
+		if(source[i]==value) {
+			destination.push_back(value);
+			return true;
+		}
+	}
+	return false;
 }

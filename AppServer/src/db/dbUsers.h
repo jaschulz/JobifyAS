@@ -36,9 +36,12 @@ public:
 
 	bool addContact(string &key,Json::Value &user, string &error, int &code);
 
-	bool acceptInvitation(string &user, string &newContact, string &error);
-
+	bool acceptInvitation(Profile &sender, Profile &invitee, string &error, int code);
+/*
 	bool moveToContacts(string &user, string &newContact, string &error);
+
+	bool moveContact(string &user, string &newContact, string &error, string source);*/
+	bool moveContact(std::vector<std::string> &source, std::vector<std::string> &destination, string value);
 
 private:
 	string putContact(string &user1,string &idNewContact);

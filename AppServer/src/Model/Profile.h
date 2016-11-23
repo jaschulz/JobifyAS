@@ -57,12 +57,21 @@ public:
 
 	Json::Value &profileGetUserJSON();
 
-	int getRecommendations();
+	int getRecommendationsCount();
 	
-	void addSentInvitation(string &receiver);
+	void addSentInvitation(const string &receiver);
 
-	void addReceivedInvitation(string &sender);
+	void addReceivedInvitation(const string &sender);
 
+	vector<string> &getSkills();
+
+	vector<string> &getContacts();
+
+	vector<string> &getInvitationsSent();
+
+	vector<string> &getInvitationsReceived();
+
+	vector<string> &getRecommendations();
 };
 
 

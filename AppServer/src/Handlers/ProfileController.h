@@ -30,6 +30,8 @@ public:
 	void getContacts(Request &request, JsonResponse &response);
 
 	void filterUsers(Request &request, JsonResponse &response);
+
+	void acceptInvitation(Request &request, JsonResponse &response);
 };
 
 #endif 

@@ -15,7 +15,11 @@ static double rad2deg(double rad);
 
 static bool jsonContainsValue(Json::Value &json, std::string &valueToFind);
 
-static void jsonArrayToVector(Json::Value array, std::vector<std::string> &v);
+static std::vector<std::string> jsonArrayToVector(Json::Value array);
+
+static Json::Value vectorToJsonArray(std::vector<std::string> &v, std::string key);
+
+static bool moveFromVectorToVector(std::vector<std::string> &source, std::vector<std::string> &destination, std::string value);
 
 };
 

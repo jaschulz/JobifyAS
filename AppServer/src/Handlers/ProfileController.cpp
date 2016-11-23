@@ -142,25 +142,70 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^/]/contacts",email)) {
 		string mail(email);
 		Json::Value JsonBody;
-		string	newContact = user.get("email","").asString();
-		dbUsers dbuser;
-		dbuser.connect("./usersdb");	
-		Json::Value senderJson = dbuser.getProfile(mail);
-		Json::Value receiverJson = dbuser.getProfile(newContact);
-		if (senderJson["error"].isNull() && receiverJson["error"].isNull()){
-			Profile sender(senderJson);
-			Profile receiver(receiverJson);
+		Json::Reader reader;
+		string error = "";
+		if (reader.parse(data.c_str(), JsonBody)) {			
+			int i = 0;
+			string	newContact = JsonBody.get("email","").asString();	
 			dbUsers dbuser;
-			dbuser.connect("./usersdb");
-			if (dbuser.sendInvitation(sender,receiver,error,code)) {		
-				dbuser.CloseDB();	
-				fillResponse(response,code);
-				response["user"] = JsonBody;
+			dbuser.connect("./usersdb");	
+			Json::Value senderJson = dbuser.getProfile(mail);
+			Json::Value receiverJson = dbuser.getProfile(newContact);
+			if (senderJson["error"].isNull() && receiverJson["error"].isNull()){
+				Profile sender(senderJson);
+				Profile receiver(receiverJson);	
+				if (dbuser.sendInvitation(sender,receiver,error,code)) {		
+					dbuser.CloseDB();	
+					fillResponse(response,code);
+					response["user"] = JsonBody;				
+					return;
+				}
 			}
-			dbuser.CloseDB();
+			error = senderJson["error"].asString() + " - " + receiverJson["error"].asString();
+			dbuser.CloseDB();   
+		} else {
+			error = reader.getFormattedErrorMessages();
 		}
-		fillResponse(response,code); 
-		response["error"] = error;      
+	}
+	fillResponse(response,code); 
+	response["error"] = error;   
+}
+
+void ProfileController::acceptInvitation(Request &request, JsonResponse &response) {
+	char email[50];
+	int code = 401;
+	string error = "Wrong number or type of parameters.";
+	string data = request.getData();
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^/]/invitation",email)) {
+		string mail(email);
+		Json::Value JsonBody;
+		Json::Reader reader;
+		string error = "";
+		if (reader.parse(data.c_str(), JsonBody)) {			
+			int i = 0;
+			string	newContact = JsonBody.get("email","").asString();	
+			dbUsers dbuser;
+			dbuser.connect("./usersdb");	
+			Json::Value receiverJson = dbuser.getProfile(mail);
+			Json::Value senderJson = dbuser.getProfile(newContact);
+			if (senderJson["error"].isNull() && receiverJson["error"].isNull()){
+				Profile sender(senderJson);
+				Profile receiver(receiverJson);	
+				if (dbuser.acceptInvitation(sender,receiver,error,code)) {		
+					dbuser.CloseDB();	
+					fillResponse(response,code);
+					response["user"] = JsonBody;				
+					return;
+				}
+			}
+			error = senderJson["error"].asString() + " - " + receiverJson["error"].asString();
+			dbuser.CloseDB();   
+		} else {
+			error = reader.getFormattedErrorMessages();
+		}
+	}
+	fillResponse(response,code); 
+	response["error"] = error;   
 }
 
 void ProfileController::filterUsers(Request &request, JsonResponse &response) {
@@ -201,6 +246,7 @@ void ProfileController::setup() {
 	addRouteResponse("GET", "/users/{email}", ProfileController, getProfile, JsonResponse);
 	addRouteResponse("PUT", "/users/{email}", ProfileController, editProfile, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/contacts", ProfileController, addContact, JsonResponse);
+	addRouteResponse("POST", "/users/{email}/invitation", ProfileController, acceptInvitation, JsonResponse);
 	addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/location", ProfileController, setLocation, JsonResponse);
 	addRouteResponse("GET", "/users", ProfileController, filterUsers, JsonResponse);
