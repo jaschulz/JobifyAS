@@ -4,6 +4,7 @@
 #include "Location.h"
 #include "../utils/utils.h"
 #include <unistd.h>
+#include <set>
 #include <stdlib.h>
 #include <jsoncpp/json/json.h>
 
@@ -20,20 +21,20 @@ private:
 	string job_position;
 	string pic;
 
-	vector<string> skills;
-	vector<string> contacts;
-	vector<string> invitationsSent;
-	vector<string> invitationsReceived;
-	vector<string> recommendations;
+	set<string> skills;
+	set<string> contacts;
+	set<string> invitationsSent;
+	set<string> invitationsReceived;
+	set<string> recommendations;
 
 public:
 	Profile(const string &mail);
 
-	Profile(const string &mail,const string &firstName,const string &lastName, const string &p_pic, const string &jposition, const double &latitude, const double &longitude);
+	Profile(const string &mail,const string &firstName,const string &lastName,  string &p_pic,  string &jposition,  double &latitude,  double &longitude);
 
 	Profile(const Json::Value &jsonProfile);
 
-	void setEmail(const string &mail);
+	void setEmail(string &mail);
 
 	const string &getEmail() const;
 
@@ -65,15 +66,15 @@ public:
 
 	void addReceivedInvitation(const string &sender);
 
-	vector<string> &getSkills();
+	set<string> &getSkills();
 
-	vector<string> &getContacts();
+	set<string> &getContacts();
 
-	vector<string> &getInvitationsSent();
+	set<string> &getInvitationsSent();
 
-	vector<string> &getInvitationsReceived();
+	set<string> &getInvitationsReceived();
 
-	vector<string> &getRecommendations();
+	set<string> &getRecommendations();
 };
 
 

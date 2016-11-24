@@ -41,7 +41,7 @@ public:
 	bool moveToContacts(string &user, string &newContact, string &error);
 
 	bool moveContact(string &user, string &newContact, string &error, string source);*/
-	bool moveContact(std::vector<std::string> &source, std::vector<std::string> &destination, string value);
+	bool moveContact(std::set<std::string> &source, std::set<std::string> &destination, string value);
 
 	void recommendUser(Profile &sender, Profile &receiver);
 

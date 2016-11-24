@@ -2,6 +2,7 @@
 #define UTILS_H
 #include <string>	
 #include <jsoncpp/json/json.h>
+#include <set>
 
 
 class utils
@@ -15,11 +16,13 @@ static double rad2deg(double rad);
 
 static bool jsonContainsValue(Json::Value &json, std::string &valueToFind);
 
-static std::vector<std::string> jsonArrayToVector(Json::Value array);
+static bool setContainsValue(std::set<std::string> &v, std::string value);
 
-static Json::Value vectorToJsonArray(std::vector<std::string> &v, std::string key);
+static void jsonArrayToSet(Json::Value array, std::set<std::string> &v);
 
-static bool moveFromVectorToVector(std::vector<std::string> &source, std::vector<std::string> &destination, std::string value);
+static Json::Value setToJsonArray(std::set<std::string> &v);
+
+static bool moveFromSetToSet(std::set<std::string> &source, std::set<std::string> &destination, std::string value);
 
 };
 

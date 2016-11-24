@@ -5,40 +5,34 @@
 
 Profile::Profile(const string &mail):location() {
 	this->email = mail;
-	this->skills.empty();
-	this->contacts.empty();
-	this->invitationsSent.empty();
-	this->invitationsReceived.empty();
-	this->recommendations.empty();
 }
 
-Profile::Profile(const string &mail,const string &firstName,const string &lastName, const string &p_pic, const string &jposition, const double &latitude, const double &longitude):location(latitude,longitude) {
+Profile::Profile(const string &mail,const string &firstName,const string &lastName,  string &p_pic,  string &jposition, double &latitude, double &longitude):location(latitude,longitude) {
 	this->email = mail;
 	this->first_name = firstName;
 	this->last_name = lastName;
 	this->pic = p_pic;
 	this->job_position = jposition;	
-	this->skills.empty();
-	this->contacts.empty();
-	this->invitationsSent.empty();
-	this->invitationsReceived.empty();
-	this->recommendations.empty();
 }
 
 
 
-Profile::Profile(const Json::Value &jsonProfile):location(jsonProfile["location"]["latitude"].asDouble(),jsonProfile["location"]["longitude"].asDouble()) {
+Profile::Profile(const Json::Value &jsonProfile):location() {
 	this->email = jsonProfile.get("email", "").asString();
 	this->first_name = jsonProfile.get("first_name", "").asString();
 	this->last_name = jsonProfile.get("last_name", "").asString();
 	this->about = jsonProfile.get("last_name", "").asString();
 	this->pic = jsonProfile.get("pic", "").asString();
 	this->job_position = jsonProfile.get("job_position", "").asString();
-	this->skills = utils::jsonArrayToVector(jsonProfile["skills"]);
-	this->contacts = utils::jsonArrayToVector(jsonProfile["contacts"]);
-	this->invitationsSent =	utils::jsonArrayToVector(jsonProfile["invitationsSent"]);
-	this->invitationsReceived = utils::jsonArrayToVector(jsonProfile["invitationsReceived"]);
-	this->recommendations = utils::jsonArrayToVector(jsonProfile["recommendations"]["users"]);
+	utils::jsonArrayToSet(jsonProfile["skills"],skills);
+	utils::jsonArrayToSet(jsonProfile["contacts"],contacts);
+	utils::jsonArrayToSet(jsonProfile["invitationsSent"], invitationsSent);
+	utils::jsonArrayToSet(jsonProfile["invitationsReceived"], invitationsReceived);
+	utils::jsonArrayToSet(jsonProfile["recommendations"]["users"], recommendations);
+	double lat = jsonProfile["location"]["latitude"].asDouble();
+	double lon = jsonProfile["location"]["longitude"].asDouble();
+	location.setLatitude(lat);
+	location.setLongitude(lon);
 	cout<<"PERFIL CREADO CORRECTAMENTE"<<endl;
 }
 
@@ -52,16 +46,16 @@ Json::Value Profile::profileToJSON() {
 	jsonProfile["job_position"] = job_position;
 	jsonProfile["location"]["latitude"] = location.getLatitude();
 	jsonProfile["location"]["longitude"] = location.getLongitude();
-	jsonProfile["skills"] = utils::vectorToJsonArray(skills,"name");
-	jsonProfile["contacts"] = utils::vectorToJsonArray(contacts,"email");
-	jsonProfile["invitationsSent"] = utils::vectorToJsonArray(invitationsSent,"email");
-	jsonProfile["invitationsReceived"] = utils::vectorToJsonArray(invitationsReceived,"email");
+	jsonProfile["skills"] = utils::setToJsonArray(skills);
+	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
+	jsonProfile["invitationsSent"] = utils::setToJsonArray(invitationsSent);
+	jsonProfile["invitationsReceived"] = utils::setToJsonArray(invitationsReceived);
 	jsonProfile["recommendations"]["count"] = getRecommendationsCount();
-	jsonProfile["recommendations"]["users"] = utils::vectorToJsonArray(recommendations,"email");
+	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(recommendations);
 	return jsonProfile;
 }
 
-void Profile::setEmail(const string &mail) {
+void Profile::setEmail( string &mail) {
     email = mail;
 }
 
@@ -78,34 +72,34 @@ Profile::~Profile() {
 
 void Profile::addRecommendation(const string &email){
 	cout<<"antes:"<<recommendations.size()<<endl;
-	recommendations.push_back(email);
+	recommendations.insert(email);
 	cout<<"despues:"<<recommendations.size()<<endl;
 }
 
 void Profile::addSentInvitation(const string &receiver) {
-	invitationsSent.push_back(receiver);
+	invitationsSent.insert(receiver);
 }
 
 void Profile::addReceivedInvitation(const string &sender) {
-	invitationsReceived.push_back(sender);
+	invitationsReceived.insert(sender);
 }
 
-	vector<string> &Profile::getSkills(){
+	set<string> &Profile::getSkills(){
 		return skills;
 	}
 
-	vector<string> &Profile::getContacts(){
+	set<string> &Profile::getContacts(){
 		return contacts;
 	}
 
-	vector<string> &Profile::getInvitationsSent(){
+	set<string> &Profile::getInvitationsSent(){
 		return invitationsSent;
 	}
 
-	vector<string> &Profile::getInvitationsReceived(){
+	set<string> &Profile::getInvitationsReceived(){
 		return invitationsReceived;
 	}
 
-	vector<string> &Profile::getRecommendations(){
+	set<string> &Profile::getRecommendations(){
 		return recommendations;
 	}

@@ -40,8 +40,7 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 
 		if (addNewUser(credentials,error)) {
 			Profile profile(email);
-			Json::Value JsonBody;
-			JsonBody["email"] = email;//profile.profileToJSON();
+			Json::Value JsonBody = profile.profileToJSON();
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
 			error = dbuser.addProfile(email,JsonBody);
@@ -114,7 +113,9 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 		JsonResponse fbLocationData = fbh.getLocationData(request, locationId);
 		double lat = fbLocationData["location"]["latitude"].asDouble();
 		double longitude = fbLocationData["location"]["longitude"].asDouble();
-		Profile profile (email,fname,lname,"","",lat,longitude);
+		string pic = "";
+		string jp  = "";
+		Profile profile (email,fname,lname,pic,jp,lat,longitude);
 		dbuser.connect("./usersdb");
 		Json::Value publicProfile = profile.profileToJSON();
 		error = dbuser.addProfile(email,publicProfile);

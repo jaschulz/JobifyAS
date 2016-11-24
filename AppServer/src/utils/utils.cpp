@@ -44,33 +44,35 @@ bool utils::jsonContainsValue(Json::Value &json, std::string &valueToFind) {
 	return false;
 }
 
-Json::Value utils::vectorToJsonArray(std::vector<std::string> &v, std::string key){
+Json::Value utils::setToJsonArray(std::set<std::string> &v){
 	Json::Value array;
-	for (unsigned int i = 0; i < v.size(); i++) {
-		Json::Value val;
-		val[key] = v[i];
-		array.append(val);
+	array = Json::arrayValue;
+	std::set<std::string>::iterator it;
+	for (it=v.begin(); it!=v.end(); ++it) {
+		array.append(*it);
 	}
 	return array;
 }
 
-std::vector<std::string> utils::jsonArrayToVector(Json::Value array) {
-	std::vector<std::string> v;
-	v.empty();
-	for(Json::Value::iterator it = array.begin(); it !=array.end(); ++it){
-		Json::Value keyValue = it.key();
-		Json::Value value = (*it);
-		v.push_back(value.asString());
-	} 
-	return v;
-}
-
-bool utils::moveFromVectorToVector(std::vector<std::string> &source, std::vector<std::string> &destination, std::string value){
-	for (unsigned int i = 0; i < source.size(); i++) {
-		if(source[i]==value) {
-			destination.push_back(value);
-			return true;
-		}
+bool utils::setContainsValue(std::set<std::string> &v, std::string value) {
+	if(v.find(value) != v.end()) {
+		return true;
 	}
 	return false;
+}
+
+void utils::jsonArrayToSet(Json::Value array, std::set<std::string> &v) {
+	for(Json::Value::iterator it = array.begin(); it !=array.end(); ++it){
+		std::string value = it->asString();
+		v.insert(value);
+	}
+}
+
+bool utils::moveFromSetToSet(std::set<std::string> &source, std::set<std::string> &destination, std::string value){
+		if(setContainsValue(source, value)) {
+			destination.insert(value);
+			source.erase(value);
+			return true;
+		}
+		return false;
 }

@@ -6,7 +6,7 @@
 #include <cmath> 
 #define earthRadiusKm 6371.0
 
-Location::Location(const double &lat, const double &lon) {
+Location::Location( double &lat,  double &lon) {
 	this->latitude = lat;
 	this->longitude = lon;
 }
@@ -34,7 +34,7 @@ double Location::distanceTo(Location l) {
   return 2.0 * earthRadiusKm * asin(sqrt(u * u + cos(lat1r) * cos(lat2r) * v * v));
 }
 
-void Location::setLatitude(const double &lat) {
+void Location::setLatitude( double &lat) {
 	latitude = lat;
 }
 
@@ -43,7 +43,7 @@ double Location::getLatitude() {
 }
 
 
-void Location::setLongitude(const double &l) {
+void Location::setLongitude( double &l) {
 	longitude = l;
 }
 

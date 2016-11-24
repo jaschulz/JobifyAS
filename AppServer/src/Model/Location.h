@@ -14,17 +14,17 @@ private:
 	double longitude;
 
 public:
-	Location(const double &lat, const double &lon);
+	Location(double &lat,double &lon);
 
 	Location();
 
 	double distanceTo(Location l);
 
-	void setLatitude(const double &lat);
+	void setLatitude(double &lat);
 
 	double getLatitude();
 
-	void setLongitude(const double &l);
+	void setLongitude(double &l);
 
 	double getLongitude();
 

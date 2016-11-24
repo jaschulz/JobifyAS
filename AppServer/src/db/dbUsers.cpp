@@ -188,8 +188,37 @@ string dbUsers::addContact(string &key,Json::Value &user){
 
 bool dbUsers::addSentInvitation(Profile &sender, Profile &receiver, string &error){
 	string key = sender.getEmail();
-	sender.addSentInvitation(receiver.getEmail()); 
-	cout<<"addSentInvitation" <<sender.profileToJSON().toStyledString()<<endl;
+	string rec_mail = receiver.getEmail();
+	//TODO Validar que no se encuentre ni entre los contactos, ni en las invitaciones recibidas o enviadas
+	if(utils::setContainsValue(sender.getInvitationsSent(),rec_mail)){
+		error = "An invitation to " +rec_mail+ "has already been sent.";
+		return false;
+	}
+	if(utils::setContainsValue(sender.getContacts(),rec_mail)){
+		error = rec_mail+ " is already a contact.";
+		return false;
+	}
+	if(utils::setContainsValue(sender.getInvitationsReceived(),rec_mail)){
+		if(!moveContact(sender.getInvitationsReceived(),sender.getContacts(),rec_mail)){
+			return false;
+		}
+		if(!moveContact(receiver.getInvitationsSent(),receiver.getContacts(),sender.getEmail())){
+			moveContact(sender.getContacts(),sender.getInvitationsReceived(),rec_mail);
+			return false;
+		}
+		leveldb::Status st = db->Put(leveldb::WriteOptions(), sender.getEmail(), sender.profileToJSON().toStyledString());
+		if (st.ok() != 1) {
+			error = st.ToString();
+			return false;
+		}
+		st = db->Put(leveldb::WriteOptions(), receiver.getEmail(), receiver.profileToJSON().toStyledString());
+		if (st.ok() != 1) {
+			error = st.ToString();
+			return false;
+		}
+		return true;
+	}
+	sender.addSentInvitation(rec_mail);
 	leveldb::Status st = db->Put(leveldb::WriteOptions(), key, sender.profileToJSON().toStyledString());
 	if (st.ok() != 1) {
 		error = st.ToString();
@@ -200,7 +229,8 @@ bool dbUsers::addSentInvitation(Profile &sender, Profile &receiver, string &erro
 
 bool dbUsers::addReceivedInvitation(Profile &sender, Profile &receiver, string &error){
 	string key = receiver.getEmail();
-	receiver.addReceivedInvitation(sender.getEmail()); 
+	string s_mail = sender.getEmail();
+	receiver.addReceivedInvitation(s_mail);
 	leveldb::Status st = db->Put(leveldb::WriteOptions(), key, receiver.profileToJSON().toStyledString());
 	if (st.ok() != 1) {
 		error = st.ToString();
@@ -252,16 +282,14 @@ bool dbUsers::validateUser(string &key, Json::Value &userJson, string &error){
 }*/
 
 bool dbUsers::sendInvitation(Profile &sender, Profile &receiver, string &error, int &code){
-	
-				cout<<"send Invitation"<<endl;
-        error = "";	
+	error = "";
 	code = 201;
-				cout<<"anres if"<<endl;
+	//			cout<<"anres if"<<endl;
 	if(!addSentInvitation(sender,receiver,error) || !addReceivedInvitation(sender,receiver,error)){
 		code = 404;
 		return false;
 	}
-				cout<<"despues if"<<endl;
+		//		cout<<"despues if"<<endl;
 	return true;
 }
 /*
@@ -274,23 +302,32 @@ bool dbUsers::moveToContacts(string &user, string &newContact, string &error){
 }
 */
 
-bool dbUsers::moveContact(std::vector<std::string> &source, std::vector<std::string> &destination, string value){
-	return utils::moveFromVectorToVector(source, destination,value);	
+bool dbUsers::moveContact(std::set<std::string> &source, std::set<std::string> &destination, string value){
+	cout<<" acceptInvitation 1"<<endl;
+	return utils::moveFromSetToSet(source, destination,value);
 }
 
 bool dbUsers::acceptInvitation(Profile &sender, Profile &invitee, string &error, int code){
         error = "";	
 	if(!moveContact(sender.getInvitationsSent(),sender.getContacts(),invitee.getEmail())){
-		cout<<" acceptInvitation 1"<<endl;
 		code = 404;
 		return false;
 	}	
 	if(!moveContact(invitee.getInvitationsReceived(),invitee.getContacts(),sender.getEmail())){
 		code = 404;
-		cout<<" acceptInvitation 2"<<endl;
 		moveContact(sender.getContacts(),sender.getInvitationsSent(),invitee.getEmail());
 		return false;
-	}	
+	}
+	leveldb::Status st = db->Put(leveldb::WriteOptions(), sender.getEmail(), sender.profileToJSON().toStyledString());
+	if (st.ok() != 1) {
+		error = st.ToString();
+		return false;
+	}
+	st = db->Put(leveldb::WriteOptions(), invitee.getEmail(), invitee.profileToJSON().toStyledString());
+	if (st.ok() != 1) {
+		error = st.ToString();
+		return false;
+	}
 	code = 201;
 	return true;
 }
@@ -299,6 +336,8 @@ void dbUsers::recommendUser(Profile &sender, Profile &receiver){
 	
 					cout<<"who recommends:"<<sender.getEmail()<<endl;
 	receiver.addRecommendation(sender.getEmail());
+	leveldb::Status st = db->Put(leveldb::WriteOptions(), receiver.getEmail(), receiver.profileToJSON().toStyledString());
+
 }
 
 Json::Value  dbUsers::getContacts(string &key) {
