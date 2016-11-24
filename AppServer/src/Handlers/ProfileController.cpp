@@ -171,6 +171,45 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 	response["error"] = error;   
 }
 
+void ProfileController::recommendUser(Request &request, JsonResponse &response) {
+	char email[50];
+	int code = 401;
+	string error = "Wrong number or type of parameters.";
+	string data = request.getData();
+	if (1 == sscanf(request.getUrl().c_str(),"/api/users/%99[^/]/recommendation",email)) {
+		string mail(email);
+			cout<<"mail:"<<mail<<endl;
+		Json::Value JsonBody;
+		Json::Reader reader;
+		string error = "";
+		if (reader.parse(data.c_str(), JsonBody)) {			
+			int i = 0;
+			string	recommendedUser = JsonBody.get("email","").asString();	
+					cout<<"recommendedUser:"<<recommendedUser<<endl;
+			dbUsers dbuser;
+			dbuser.connect("./usersdb");	
+			Json::Value senderJson = dbuser.getProfile(mail);
+			Json::Value receiverJson = dbuser.getProfile(recommendedUser);
+			if (senderJson["error"].isNull() && receiverJson["error"].isNull()){
+				cout<<"senderJson: "<<senderJson.toStyledString();
+				Profile sender(senderJson);
+				Profile receiver(receiverJson);	
+				dbuser.recommendUser(sender,receiver);
+				dbuser.CloseDB();	
+				fillResponse(response,201);
+				response["user"] = JsonBody;		
+				return;
+			}
+			error = senderJson["error"].asString() + " - " + receiverJson["error"].asString();
+			dbuser.CloseDB();   
+		} else {
+			error = reader.getFormattedErrorMessages();
+		}
+	}
+	fillResponse(response,code); 
+	response["error"] = error;   
+}
+
 void ProfileController::acceptInvitation(Request &request, JsonResponse &response) {
 	char email[50];
 	int code = 401;
@@ -249,6 +288,7 @@ void ProfileController::setup() {
 	addRouteResponse("POST", "/users/{email}/invitation", ProfileController, acceptInvitation, JsonResponse);
 	addRouteResponse("GET", "/users/{email}/contacts", ProfileController, getContacts, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/location", ProfileController, setLocation, JsonResponse);
+	addRouteResponse("POST", "/users/{email}/recommendation", ProfileController, recommendUser, JsonResponse);
 	addRouteResponse("GET", "/users", ProfileController, filterUsers, JsonResponse);
 	//addRouteResponse("GET", "/printProfiles", ProfileController, printDB,JsonResponse);
 }

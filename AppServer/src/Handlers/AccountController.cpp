@@ -40,7 +40,8 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 
 		if (addNewUser(credentials,error)) {
 			Profile profile(email);
-			Json::Value JsonBody = profile.profileToJSON();
+			Json::Value JsonBody;
+			JsonBody["email"] = email;//profile.profileToJSON();
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
 			error = dbuser.addProfile(email,JsonBody);

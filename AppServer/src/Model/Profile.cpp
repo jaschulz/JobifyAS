@@ -27,7 +27,7 @@ Profile::Profile(const string &mail,const string &firstName,const string &lastNa
 
 
 
-Profile::Profile(const Json::Value &jsonProfile):location(jsonProfile["location"]["latitude"].asDouble(),jsonProfile["location"]["latitude"].asDouble()) {
+Profile::Profile(const Json::Value &jsonProfile):location(jsonProfile["location"]["latitude"].asDouble(),jsonProfile["location"]["longitude"].asDouble()) {
 	this->email = jsonProfile.get("email", "").asString();
 	this->first_name = jsonProfile.get("first_name", "").asString();
 	this->last_name = jsonProfile.get("last_name", "").asString();
@@ -39,6 +39,7 @@ Profile::Profile(const Json::Value &jsonProfile):location(jsonProfile["location"
 	this->invitationsSent =	utils::jsonArrayToVector(jsonProfile["invitationsSent"]);
 	this->invitationsReceived = utils::jsonArrayToVector(jsonProfile["invitationsReceived"]);
 	this->recommendations = utils::jsonArrayToVector(jsonProfile["recommendations"]["users"]);
+	cout<<"PERFIL CREADO CORRECTAMENTE"<<endl;
 }
 
 Json::Value Profile::profileToJSON() {
@@ -73,6 +74,12 @@ int Profile::getRecommendationsCount() {
 }
 
 Profile::~Profile() {
+}
+
+void Profile::addRecommendation(const string &email){
+	cout<<"antes:"<<recommendations.size()<<endl;
+	recommendations.push_back(email);
+	cout<<"despues:"<<recommendations.size()<<endl;
 }
 
 void Profile::addSentInvitation(const string &receiver) {

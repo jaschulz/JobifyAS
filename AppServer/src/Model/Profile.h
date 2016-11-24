@@ -53,6 +53,8 @@ public:
 
 	~Profile();
 
+	void addRecommendation(const string &email);
+
 	void fromJSON(Json::Value value);
 
 	Json::Value &profileGetUserJSON();

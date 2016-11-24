@@ -43,6 +43,8 @@ public:
 	bool moveContact(string &user, string &newContact, string &error, string source);*/
 	bool moveContact(std::vector<std::string> &source, std::vector<std::string> &destination, string value);
 
+	void recommendUser(Profile &sender, Profile &receiver);
+
 private:
 	string putContact(string &user1,string &idNewContact);
 

@@ -281,16 +281,24 @@ bool dbUsers::moveContact(std::vector<std::string> &source, std::vector<std::str
 bool dbUsers::acceptInvitation(Profile &sender, Profile &invitee, string &error, int code){
         error = "";	
 	if(!moveContact(sender.getInvitationsSent(),sender.getContacts(),invitee.getEmail())){
+		cout<<" acceptInvitation 1"<<endl;
 		code = 404;
 		return false;
 	}	
 	if(!moveContact(invitee.getInvitationsReceived(),invitee.getContacts(),sender.getEmail())){
 		code = 404;
+		cout<<" acceptInvitation 2"<<endl;
 		moveContact(sender.getContacts(),sender.getInvitationsSent(),invitee.getEmail());
 		return false;
 	}	
 	code = 201;
 	return true;
+}
+
+void dbUsers::recommendUser(Profile &sender, Profile &receiver){
+	
+					cout<<"who recommends:"<<sender.getEmail()<<endl;
+	receiver.addRecommendation(sender.getEmail());
 }
 
 Json::Value  dbUsers::getContacts(string &key) {

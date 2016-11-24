@@ -32,6 +32,8 @@ public:
 	void filterUsers(Request &request, JsonResponse &response);
 
 	void acceptInvitation(Request &request, JsonResponse &response);
+
+	void recommendUser(Request &request, JsonResponse &response);
 };
 
 #endif 
