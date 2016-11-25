@@ -191,7 +191,7 @@ bool dbUsers::addSentInvitation(Profile &sender, Profile &receiver, string &erro
 	string rec_mail = receiver.getEmail();
 	//TODO Validar que no se encuentre ni entre los contactos, ni en las invitaciones recibidas o enviadas
 	if(utils::setContainsValue(sender.getInvitationsSent(),rec_mail)){
-		error = "An invitation to " +rec_mail+ "has already been sent.";
+		error = "An invitation to " +rec_mail+ " has already been sent.";
 		return false;
 	}
 	if(utils::setContainsValue(sender.getContacts(),rec_mail)){

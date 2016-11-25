@@ -4,25 +4,24 @@
 #include <jsoncpp/json/json.h>
 #include <set>
 
-
-class utils
-{
+class utils {
 public:
-static std::string sha256(const std::string str);
+	static std::string sha256(const std::string str);
 
-static double deg2rad(double deg);
+	static double deg2rad(double deg);
 
-static double rad2deg(double rad);
+	static double rad2deg(double rad);
 
-static bool jsonContainsValue(Json::Value &json, std::string &valueToFind);
+	static bool jsonContainsValue(Json::Value &json, std::string &valueToFind);
 
-static bool setContainsValue(std::set<std::string> &v, std::string value);
+	static bool setContainsValue(std::set<std::string> &v, std::string value);
 
-static void jsonArrayToSet(Json::Value array, std::set<std::string> &v);
+	static void jsonArrayToSet(Json::Value array, std::set<std::string> &v);
 
-static Json::Value setToJsonArray(std::set<std::string> &v);
+	static Json::Value setToJsonArray(std::set<std::string> &v);
 
-static bool moveFromSetToSet(std::set<std::string> &source, std::set<std::string> &destination, std::string value);
+	static bool moveFromSetToSet(std::set<std::string> &source,
+			std::set<std::string> &destination, std::string value);
 
 };
 
