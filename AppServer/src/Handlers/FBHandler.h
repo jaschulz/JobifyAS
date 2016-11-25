@@ -12,11 +12,11 @@ using namespace Mongoose;
 
 class FBHandler {
 public:
-	JsonResponse  getBasicData(Request &request);
+	JsonResponse getBasicData(Request &request);
 
-	JsonResponse  getData(Request &request);
+	JsonResponse getData(Request &request);
 
-	JsonResponse  getLocationData(Request &request, const string &locationid);
+	JsonResponse getLocationData(Request &request, const string &locationid);
 };
 
 #endif 

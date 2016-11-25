@@ -6,36 +6,32 @@
 #include "../src/utils/utils.h"
 #include "../src/db/dbCredentials.h"
 
-
 using namespace CPPUNIT_NS;
 
-class CredentialsTest : public TestFixture {
-CPPUNIT_TEST_SUITE(CredentialsTest);
-        CPPUNIT_TEST(getEmail);
-        CPPUNIT_TEST(checkPassword);
-        CPPUNIT_TEST(validateToken);
-        CPPUNIT_TEST(verifyLogin);
-    CPPUNIT_TEST_SUITE_END();
+class CredentialsTest: public TestFixture {
+	CPPUNIT_TEST_SUITE (CredentialsTest);
+	CPPUNIT_TEST (getEmail);
+	CPPUNIT_TEST (checkPassword);
+	CPPUNIT_TEST (validateToken);
+	CPPUNIT_TEST (verifyLogin);CPPUNIT_TEST_SUITE_END();
 
 public:
-    CredentialsTest();
+	CredentialsTest();
 
-    void getEmail();
+	void getEmail();
 
-    void checkPassword();
+	void checkPassword();
 
-    void validateToken();
+	void validateToken();
 
-void verifyLogin();
+	void verifyLogin();
 
-    virtual void setUp() override;
+	virtual void setUp() override;
 
-    virtual void tearDown() override;
+	virtual void tearDown() override;
 
-    virtual ~CredentialsTest();
-
+	virtual ~CredentialsTest();
 
 };
-
 
 #endif

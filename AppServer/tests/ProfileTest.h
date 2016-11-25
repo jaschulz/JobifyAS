@@ -6,37 +6,35 @@
 
 using namespace CPPUNIT_NS;
 
-class ProfileTest : public TestFixture {
-CPPUNIT_TEST_SUITE(ProfileTest);
-        CPPUNIT_TEST(getEmail);
-        CPPUNIT_TEST(profileToJSON);
-        CPPUNIT_TEST(addRecommendation);
-        CPPUNIT_TEST(manageInvitations);
-        CPPUNIT_TEST(verifySkills);
-        CPPUNIT_TEST(correctProfileConversion);
-    CPPUNIT_TEST_SUITE_END();
+class ProfileTest: public TestFixture {
+	CPPUNIT_TEST_SUITE (ProfileTest);
+	CPPUNIT_TEST (getEmail);
+	CPPUNIT_TEST (profileToJSON);
+	CPPUNIT_TEST (addRecommendation);
+	CPPUNIT_TEST (manageInvitations);
+	CPPUNIT_TEST (verifySkills);
+	CPPUNIT_TEST (correctProfileConversion);CPPUNIT_TEST_SUITE_END();
 
 public:
-    ProfileTest();
+	ProfileTest();
 
-    void getEmail();
+	void getEmail();
 
-    void profileToJSON();
+	void profileToJSON();
 
-    void addRecommendation();
+	void addRecommendation();
 
-    void manageInvitations();
+	void manageInvitations();
 
-    void verifySkills();
+	void verifySkills();
 
-    void correctProfileConversion();
+	void correctProfileConversion();
 
-    virtual void setUp() override;
+	virtual void setUp() override;
 
-    virtual void tearDown() override;
+	virtual void tearDown() override;
 
-    virtual ~ProfileTest();
+	virtual ~ProfileTest();
 };
-
 
 #endif

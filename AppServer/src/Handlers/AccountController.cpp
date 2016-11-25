@@ -95,7 +95,7 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 	FBHandler fbh;
 
 	JsonResponse fbBasicData = fbh.getBasicData(request);
-	cout<<fbBasicData.toStyledString()<<endl;
+	cout << fbBasicData.toStyledString() << endl;
 	string email = fbBasicData.get("email", "").asString();
 	string fbid = fbBasicData.get("id", "").asString();
 	string token = generateToken(email, "");

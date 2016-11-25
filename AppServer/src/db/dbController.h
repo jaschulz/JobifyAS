@@ -13,8 +13,8 @@ using namespace std;
 class dbController {
 
 protected:
-    leveldb::DB* db;
-    leveldb::Options options;
+	leveldb::DB* db;
+	leveldb::Options options;
 
 public:
 	int connect(string dataBase);

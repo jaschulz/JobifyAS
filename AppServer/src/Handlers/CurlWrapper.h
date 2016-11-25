@@ -12,7 +12,7 @@ using namespace Mongoose;
 
 class CurlWrapper {
 public:
-	void handleGet(string url, Request &request,JsonResponse &response);
+	void handleGet(string url, Request &request, JsonResponse &response);
 
 	void handlePost(string url, Request &request, JsonResponse &response);
 
@@ -21,7 +21,8 @@ public:
 	void handlePut(string url, Request &request, JsonResponse &response);
 
 private:
-	static size_t writeFunction(void *ptr, size_t size, size_t nmemb, std::string* data);
+	static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
+			std::string* data);
 };
 
 #endif 

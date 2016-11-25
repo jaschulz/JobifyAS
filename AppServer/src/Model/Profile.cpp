@@ -3,32 +3,37 @@
 #include <iostream>
 #include "Location.h"
 
-Profile::Profile(const string &mail):location() {
+Profile::Profile(const string &mail) :
+		location() {
 	this->email = mail;
 }
 
-Profile::Profile(const string &mail,const string &firstName,const string &lastName,  string &p_pic,  string &jposition, double &latitude, double &longitude):location(latitude,longitude) {
+Profile::Profile(const string &mail, const string &firstName,
+		const string &lastName, string &p_pic, string &jposition,
+		double &latitude, double &longitude) :
+		location(latitude, longitude) {
 	this->email = mail;
 	this->first_name = firstName;
 	this->last_name = lastName;
 	this->pic = p_pic;
-	this->job_position = jposition;	
+	this->job_position = jposition;
 }
 
-
-
-Profile::Profile(const Json::Value &jsonProfile):location() {
+Profile::Profile(const Json::Value &jsonProfile) :
+		location() {
 	this->email = jsonProfile.get("email", "").asString();
 	this->first_name = jsonProfile.get("first_name", "").asString();
 	this->last_name = jsonProfile.get("last_name", "").asString();
 	this->about = jsonProfile.get("last_name", "").asString();
 	this->pic = jsonProfile.get("pic", "").asString();
 	this->job_position = jsonProfile.get("job_position", "").asString();
-	utils::jsonArrayToSet(jsonProfile["skills"],skills);
-	utils::jsonArrayToSet(jsonProfile["contacts"],contacts);
+	utils::jsonArrayToSet(jsonProfile["skills"], skills);
+	utils::jsonArrayToSet(jsonProfile["contacts"], contacts);
 	utils::jsonArrayToSet(jsonProfile["invitationsSent"], invitationsSent);
-	utils::jsonArrayToSet(jsonProfile["invitationsReceived"], invitationsReceived);
-	utils::jsonArrayToSet(jsonProfile["recommendations"]["users"], recommendations);
+	utils::jsonArrayToSet(jsonProfile["invitationsReceived"],
+			invitationsReceived);
+	utils::jsonArrayToSet(jsonProfile["recommendations"]["users"],
+			recommendations);
 	double lat = jsonProfile["location"]["latitude"].asDouble();
 	double lon = jsonProfile["location"]["longitude"].asDouble();
 	location.setLatitude(lat);
@@ -49,9 +54,11 @@ Json::Value Profile::profileToJSON() {
 	jsonProfile["skills"] = utils::setToJsonArray(skills);
 	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
 	jsonProfile["invitationsSent"] = utils::setToJsonArray(invitationsSent);
-	jsonProfile["invitationsReceived"] = utils::setToJsonArray(invitationsReceived);
+	jsonProfile["invitationsReceived"] = utils::setToJsonArray(
+			invitationsReceived);
 	jsonProfile["recommendations"]["count"] = getRecommendationsCount();
-	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(recommendations);
+	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(
+			recommendations);
 	return jsonProfile;
 }
 
@@ -72,12 +79,12 @@ Json::Value Profile::publicProfileToJSON() {
 	return jsonProfile;
 }
 
-void Profile::setEmail( string &mail) {
-    email = mail;
+void Profile::setEmail(string &mail) {
+	email = mail;
 }
 
 const string &Profile::getEmail() const {
-    return email;
+	return email;
 }
 
 int Profile::getRecommendationsCount() {
@@ -87,7 +94,7 @@ int Profile::getRecommendationsCount() {
 Profile::~Profile() {
 }
 
-void Profile::addRecommendation(const string &email){
+void Profile::addRecommendation(const string &email) {
 	recommendations.insert(email);
 }
 
@@ -99,22 +106,22 @@ void Profile::addReceivedInvitation(const string &sender) {
 	invitationsReceived.insert(sender);
 }
 
-	set<string> &Profile::getSkills(){
-		return skills;
-	}
+set<string> &Profile::getSkills() {
+	return skills;
+}
 
-	set<string> &Profile::getContacts(){
-		return contacts;
-	}
+set<string> &Profile::getContacts() {
+	return contacts;
+}
 
-	set<string> &Profile::getInvitationsSent(){
-		return invitationsSent;
-	}
+set<string> &Profile::getInvitationsSent() {
+	return invitationsSent;
+}
 
-	set<string> &Profile::getInvitationsReceived(){
-		return invitationsReceived;
-	}
+set<string> &Profile::getInvitationsReceived() {
+	return invitationsReceived;
+}
 
-	set<string> &Profile::getRecommendations(){
-		return recommendations;
-	}
+set<string> &Profile::getRecommendations() {
+	return recommendations;
+}

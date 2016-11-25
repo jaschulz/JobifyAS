@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class Credentials{
+class Credentials {
 
 protected:
 	string email;

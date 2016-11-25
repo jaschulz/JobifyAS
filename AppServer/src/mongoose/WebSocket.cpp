@@ -5,99 +5,87 @@
 
 using namespace std;
 
-namespace Mongoose
-{
-    WebSocket::WebSocket(struct mg_connection *connection_)
-        : connection(connection_), closed(false), request(connection_), data(""), id(-1)
-    {
-    }
+namespace Mongoose {
+WebSocket::WebSocket(struct mg_connection *connection_) :
+		connection(connection_), closed(false), request(connection_), data(""), id(
+				-1) {
+}
 
-    void WebSocket::setId(int id_)
-    {
-        id = id_;
-    }
+void WebSocket::setId(int id_) {
+	id = id_;
+}
 
-    int WebSocket::getId()
-    {
-        return id;
-    }
+int WebSocket::getId() {
+	return id;
+}
 
-    void WebSocket::appendData(string data_)
-    {
-        data += data_;
-    }
+void WebSocket::appendData(string data_) {
+	data += data_;
+}
 
-    string WebSocket::flushData()
-    {
-        string oldData = "";
-        data.swap(oldData);
+string WebSocket::flushData() {
+	string oldData = "";
+	data.swap(oldData);
 
-        return oldData;
-    }
+	return oldData;
+}
 
-    Request &WebSocket::getRequest()
-    {
-        return request;
-    }
+Request &WebSocket::getRequest() {
+	return request;
+}
 
-    void WebSocket::send(string data, int opcode)
-    {
-        if (isClosed()) {
-            return;
-        }
+void WebSocket::send(string data, int opcode) {
+	if (isClosed()) {
+		return;
+	}
 
-        mutex.lock();
-        if (!mg_websocket_write(connection, opcode, data.c_str(), data.size())) {
-            closed = true;
-        }
-        mutex.unlock();
-    }
+	mutex.lock();
+	if (!mg_websocket_write(connection, opcode, data.c_str(), data.size())) {
+		closed = true;
+	}
+	mutex.unlock();
+}
 
-    void WebSocket::notifyContainers()
-    {
-        vector<WebSockets *>::iterator it;
+void WebSocket::notifyContainers() {
+	vector<WebSockets *>::iterator it;
 
-        mutex.lock();
-        for (it=containers.begin(); it!=containers.end(); it++) {
-            (*it)->remove(this);
-        }
-        mutex.unlock();
-    }
+	mutex.lock();
+	for (it = containers.begin(); it != containers.end(); it++) {
+		(*it)->remove(this);
+	}
+	mutex.unlock();
+}
 
-    void WebSocket::close()
-    {
-        closed = true;
-    }
+void WebSocket::close() {
+	closed = true;
+}
 
-    bool WebSocket::isClosed()
-    {
-        return closed;
-    }
+bool WebSocket::isClosed() {
+	return closed;
+}
 
-    void WebSocket::addContainer(WebSockets *websockets)
-    {
-        mutex.lock();
-        containers.push_back(websockets);
-        mutex.unlock();
-    }
+void WebSocket::addContainer(WebSockets *websockets) {
+	mutex.lock();
+	containers.push_back(websockets);
+	mutex.unlock();
+}
 
-    void WebSocket::removeContainer(WebSockets *websockets)
-    {
-        mutex.lock();
-        vector<WebSockets *>::iterator it;
+void WebSocket::removeContainer(WebSockets *websockets) {
+	mutex.lock();
+	vector<WebSockets *>::iterator it;
 
-        for (it=containers.begin(); it!=containers.end(); it++) {
-            if (*it == websockets) {
-                containers.erase(it);
-                break;
-            }
-        }
-        mutex.unlock();
-    }
+	for (it = containers.begin(); it != containers.end(); it++) {
+		if (*it == websockets) {
+			containers.erase(it);
+			break;
+		}
+	}
+	mutex.unlock();
+}
 
-    struct mg_connection *WebSocket::getConnection()
-    {
-        return connection;
-    }
-};
+struct mg_connection *WebSocket::getConnection() {
+	return connection;
+}
+}
+;
 

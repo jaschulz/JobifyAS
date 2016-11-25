@@ -14,7 +14,8 @@ class jobifyCredentials: public Credentials {
 private:
 	string password;
 public:
-	jobifyCredentials(const string &mail, const string &pass, const string &token);
+	jobifyCredentials(const string &mail, const string &pass,
+			const string &token);
 
 	void setPassword(const string &pass);
 

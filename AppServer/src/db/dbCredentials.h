@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class dbCredentials : public dbController {
+class dbCredentials: public dbController {
 
 public:
 	bool addNewUser(Json::Value user, string &error);

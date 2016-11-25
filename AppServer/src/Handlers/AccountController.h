@@ -8,7 +8,6 @@
 #include "../Model/Profile.h"
 #include "../Model/Credentials.h"
 
-
 using namespace std;
 using namespace Mongoose;
 

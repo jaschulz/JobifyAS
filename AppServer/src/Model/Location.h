@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class Location{
+class Location {
 
 private:
 	double latitude;
@@ -14,7 +14,7 @@ private:
 	double longitude;
 
 public:
-	Location(double &lat,double &lon);
+	Location(double &lat, double &lon);
 
 	Location();
 
@@ -30,6 +30,5 @@ public:
 
 	~Location();
 };
-
 
 #endif //APPSERVER_USER_H

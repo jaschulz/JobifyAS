@@ -6,24 +6,21 @@
 
 using namespace CPPUNIT_NS;
 
-class LocationTest : public TestFixture {
-CPPUNIT_TEST_SUITE(LocationTest);
-        CPPUNIT_TEST(checkDistance);
-    CPPUNIT_TEST_SUITE_END();
+class LocationTest: public TestFixture {
+	CPPUNIT_TEST_SUITE (LocationTest);
+	CPPUNIT_TEST (checkDistance);CPPUNIT_TEST_SUITE_END();
 
 public:
-    LocationTest();
+	LocationTest();
 
-    void checkDistance();
+	void checkDistance();
 
-    virtual void setUp() override;
+	virtual void setUp() override;
 
-    virtual void tearDown() override;
+	virtual void tearDown() override;
 
-    virtual ~LocationTest();
-
+	virtual ~LocationTest();
 
 };
-
 
 #endif

@@ -31,31 +31,32 @@ extern "C" {
 
 // This structure contains information about HTTP request.
 struct mg_connection {
-  const char *request_method; // "GET", "POST", etc
-  const char *uri;            // URL-decoded URI
-  const char *http_version;   // E.g. "1.0", "1.1"
-  const char *query_string;   // URL part after '?', not including '?', or NULL
+	const char *request_method; // "GET", "POST", etc
+	const char *uri;            // URL-decoded URI
+	const char *http_version;   // E.g. "1.0", "1.1"
+	const char *query_string;  // URL part after '?', not including '?', or NULL
 
-  char remote_ip[48];         // Max IPv6 string length is 45 characters
-  int remote_port;            // Client's port
+	char remote_ip[48];         // Max IPv6 string length is 45 characters
+	int remote_port;            // Client's port
 
-  int num_headers;            // Number of HTTP headers
-  struct mg_header {
-    const char *name;         // HTTP header name
-    const char *value;        // HTTP header value
-  } http_headers[30];
+	int num_headers;            // Number of HTTP headers
+	struct mg_header {
+		const char *name;         // HTTP header name
+		const char *value;        // HTTP header value
+	} http_headers[30];
 
-  char *content;              // POST (or websocket message) data, or NULL
-  int content_len;            // content length
+	char *content;              // POST (or websocket message) data, or NULL
+	int content_len;            // content length
 
-  int is_websocket;           // Connection is a websocket connection
-  int status_code;            // HTTP status code for HTTP error handler
-  unsigned char wsbits;       // First byte of the websocket frame
-  void *server_param;         // Parameter passed to mg_add_uri_handler()
-  void *connection_param;     // Placeholder for connection-specific data
+	int is_websocket;           // Connection is a websocket connection
+	int status_code;            // HTTP status code for HTTP error handler
+	unsigned char wsbits;       // First byte of the websocket frame
+	void *server_param;         // Parameter passed to mg_add_uri_handler()
+	void *connection_param;     // Placeholder for connection-specific data
 };
 
-struct mg_server; // Opaque structure describing server instance
+struct mg_server;
+// Opaque structure describing server instance
 typedef int (*mg_handler_t)(struct mg_connection *);
 
 // Server management functions
@@ -77,23 +78,21 @@ void mg_send_header(struct mg_connection *, const char *name, const char *val);
 void mg_send_data(struct mg_connection *, const void *data, int data_len);
 void mg_printf_data(struct mg_connection *, const char *format, ...);
 
-int mg_websocket_write(struct mg_connection *, int opcode,
-                       const char *data, size_t data_len);
+int mg_websocket_write(struct mg_connection *, int opcode, const char *data,
+		size_t data_len);
 
 // Deprecated in favor of mg_send_* interface
 int mg_write(struct mg_connection *, const void *buf, int len);
 int mg_printf(struct mg_connection *conn, const char *fmt, ...);
 
-
 const char *mg_get_header(const struct mg_connection *, const char *name);
 const char *mg_get_mime_type(const char *file_name);
 int mg_get_var(const struct mg_connection *conn, const char *var_name,
-               char *buf, size_t buf_len);
+		char *buf, size_t buf_len);
 int mg_parse_header(const char *hdr, const char *var_name, char *buf, size_t);
-int mg_parse_multipart(const char *buf, int buf_len,
-                       char *var_name, int var_name_len,
-                       char *file_name, int file_name_len,
-                       const char **data, int *data_len);
+int mg_parse_multipart(const char *buf, int buf_len, char *var_name,
+		int var_name_len, char *file_name, int file_name_len, const char **data,
+		int *data_len);
 
 // Utility functions
 void *mg_start_thread(void *(*func)(void *), void *param);

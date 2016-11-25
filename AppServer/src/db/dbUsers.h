@@ -12,16 +12,16 @@
 
 using namespace std;
 
-class dbUsers : public dbController {
+class dbUsers: public dbController {
 
 public:
-	string editProfile(string &key,Json::Value &user);
+	string editProfile(string &key, Json::Value &user);
 
 	Json::Value searchProfile(Json::Value &filter, string &error);
 
 	std::list<Profile> getMostPopularUsers(Json::Value &filter, string &error);
 
-	string addProfile(string &key,Json::Value &user);
+	string addProfile(string &key, Json::Value &user);
 
 	Json::Value getProfile(string &email);
 
@@ -29,31 +29,36 @@ public:
 
 	//string addContact(string &key,Json::Value &user);
 
-	bool addContact(string &key,Json::Value &user, string &error, int code);
+	bool addContact(string &key, Json::Value &user, string &error, int code);
 
 	Json::Value getContacts(string &key);
 
-	bool manageContacts(Profile &sender, Profile &receiver, string &error,string contactLevel);
+	bool manageContacts(Profile &sender, Profile &receiver, string &error,
+			string contactLevel);
 
-	bool sendInvitation(Profile &sender, Profile &receiver, string &error, int &code);
+	bool sendInvitation(Profile &sender, Profile &receiver, string &error,
+			int &code);
 
-	bool addContact(string &key,Json::Value &user, string &error, int &code);
+	bool addContact(string &key, Json::Value &user, string &error, int &code);
 
-	bool acceptInvitation(Profile &sender, Profile &invitee, string &error, int code);
-/*
-	bool moveToContacts(string &user, string &newContact, string &error);
+	bool acceptInvitation(Profile &sender, Profile &invitee, string &error,
+			int code);
+	/*
+	 bool moveToContacts(string &user, string &newContact, string &error);
 
-	bool moveContact(string &user, string &newContact, string &error, string source);*/
-	bool moveContact(std::set<std::string> &source, std::set<std::string> &destination, string value);
+	 bool moveContact(string &user, string &newContact, string &error, string source);*/
+	bool moveContact(std::set<std::string> &source,
+			std::set<std::string> &destination, string value);
 
 	void recommendUser(Profile &sender, Profile &receiver);
 
 private:
-	string putContact(string &user1,string &idNewContact);
+	string putContact(string &user1, string &idNewContact);
 
 	bool addSentInvitation(Profile &sender, Profile &receiver, string &error);
 
-	bool addReceivedInvitation(Profile &sender, Profile &receiver, string &error);
+	bool addReceivedInvitation(Profile &sender, Profile &receiver,
+			string &error);
 
 	//bool validateUser(string &key, string &userJson,string &error, int &code);
 

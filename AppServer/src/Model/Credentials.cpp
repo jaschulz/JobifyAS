@@ -4,26 +4,25 @@
 #include <string>
 #include <iostream>
 
-Credentials::Credentials(const string &mail, const string &token ) {
+Credentials::Credentials(const string &mail, const string &token) {
 	this->email = mail;
 	this->token = token;
 }
 
 void Credentials::setEmail(const string &mail) {
-    email = mail;
+	email = mail;
 }
 
 const string &Credentials::getEmail() const {
-    return email;
+	return email;
 }
 
-
 void Credentials::setToken(const string &token) {
-    this->token = token;
+	this->token = token;
 }
 
 const string &Credentials::getToken() const {
-    return token;
+	return token;
 }
 
 Credentials::~Credentials() {

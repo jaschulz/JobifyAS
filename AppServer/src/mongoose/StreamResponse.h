@@ -12,18 +12,16 @@ using namespace std;
 /**
  * A stream response to a request
  */
-namespace Mongoose
-{
-    class StreamResponse : public ostringstream, public Response
-    {
-        public:
-            /**
-             * Gets the response body
-             *
-             * @return string the response body
-             */
-            virtual string getBody();
-    };
+namespace Mongoose {
+class StreamResponse: public ostringstream, public Response {
+public:
+	/**
+	 * Gets the response body
+	 *
+	 * @return string the response body
+	 */
+	virtual string getBody();
+};
 }
 
 #endif

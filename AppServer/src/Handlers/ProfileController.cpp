@@ -296,7 +296,7 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 
 }
 
-bool compare_recommendations(Profile p1, Profile p2){
+bool compare_recommendations(Profile p1, Profile p2) {
 	return p1.getRecommendationsCount() > p2.getRecommendationsCount();
 }
 
@@ -328,7 +328,7 @@ void ProfileController::rankUsers(Request &request, JsonResponse &response) {
 	if (error == "") {
 		users.sort(compare_recommendations);
 		std::list<Profile>::iterator it;
-		for (it = users.begin(); it != users.end(); ++it){
+		for (it = users.begin(); it != users.end(); ++it) {
 			ranking.append(it->profileToJSON());
 		}
 		response["users"] = ranking;

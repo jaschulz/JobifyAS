@@ -5,14 +5,12 @@
 
 using namespace std;
 
-namespace Mongoose
-{
-    class Utils
-    {
-        public:
-            static string htmlEntities(string data);
-            static void sleep(int ms);
-    };
+namespace Mongoose {
+class Utils {
+public:
+	static string htmlEntities(string data);
+	static void sleep(int ms);
+};
 }
 
 #endif

@@ -7,24 +7,23 @@
 
 using namespace CPPUNIT_NS;
 
-class AccountControllerTest : public TestFixture, JobifyControllerTest {
-CPPUNIT_TEST_SUITE(AccountControllerTest);
-        CPPUNIT_TEST(successfulLogin);             
-    CPPUNIT_TEST_SUITE_END();
+class AccountControllerTest: public TestFixture, JobifyControllerTest {
+	CPPUNIT_TEST_SUITE (AccountControllerTest);
+	CPPUNIT_TEST (successfulLogin);CPPUNIT_TEST_SUITE_END();
 
 private:
-    AccountController accountController;
+	AccountController accountController;
 
 public:
-    AccountControllerTest();
+	AccountControllerTest();
 
-    virtual void setUp();
+	virtual void setUp();
 
-    void successfulLogin();
+	void successfulLogin();
 
-    virtual void tearDown();
+	virtual void tearDown();
 
-    virtual ~AccountControllerTest();
+	virtual ~AccountControllerTest();
 
 };
 

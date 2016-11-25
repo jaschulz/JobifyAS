@@ -13,16 +13,17 @@ class JobifyController: public JsonController {
 
 protected:
 
-	map<string,string> *routeParams;
+	map<string, string> *routeParams;
 
 	string replaceRouteParams(string key) const;
 
-	void parseRouteParams(const string &key, const string &currentRequest) const;
+	void parseRouteParams(const string &key,
+			const string &currentRequest) const;
 
 public:
-	
+
 	JobifyController();
- 
+
 	~JobifyController();
 
 	virtual Response *process(Request &request) override;
@@ -33,7 +34,7 @@ public:
 
 	void registerUser(Request &request, JsonResponse &response);
 
-	string  requestToJson(Request &request, Json::Value &root);
+	string requestToJson(Request &request, Json::Value &root);
 
 	bool isValidToken(string email, string token);
 };

@@ -12,16 +12,15 @@ class JobifyControllerTest {
 
 public:
 
-    JobifyControllerTest();
+	JobifyControllerTest();
 
-    Request makeDummyBodyRequest(string data, string method) const;
+	Request makeDummyBodyRequest(string data, string method) const;
 
-    Request generateRequest(string method, string queryString) const;
+	Request generateRequest(string method, string queryString) const;
 
-    Request makeDummyRequest(string method, string queryString) const;
+	Request makeDummyRequest(string method, string queryString) const;
 
-    virtual ~JobifyControllerTest();
+	virtual ~JobifyControllerTest();
 };
-
 
 #endif

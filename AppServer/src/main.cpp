@@ -10,7 +10,6 @@
 using namespace std;
 using namespace Mongoose;
 
-
 volatile static bool running = true;
 
 void handle_signal(int sig) {
@@ -21,9 +20,9 @@ void handle_signal(int sig) {
 }
 
 int main() {
-	srand(time(NULL));
+	srand (time(NULL));
 
-	signal(SIGINT, handle_signal);
+signal	(SIGINT, handle_signal);
 
 	ProfileController pController;
 	AccountController aController;

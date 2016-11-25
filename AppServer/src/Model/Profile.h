@@ -10,7 +10,7 @@
 
 using namespace std;
 
-class Profile{
+class Profile {
 
 private:
 	string email;
@@ -30,7 +30,9 @@ private:
 public:
 	Profile(const string &mail);
 
-	Profile(const string &mail,const string &firstName,const string &lastName,  string &p_pic,  string &jposition,  double &latitude,  double &longitude);
+	Profile(const string &mail, const string &firstName, const string &lastName,
+			string &p_pic, string &jposition, double &latitude,
+			double &longitude);
 
 	Profile(const Json::Value &jsonProfile);
 
@@ -59,7 +61,7 @@ public:
 	Json::Value &profileGetUserJSON();
 
 	int getRecommendationsCount();
-	
+
 	void addSentInvitation(const string &receiver);
 
 	void addReceivedInvitation(const string &sender);
@@ -74,6 +76,5 @@ public:
 
 	set<string> &getRecommendations();
 };
-
 
 #endif //APPSERVER_USER_H

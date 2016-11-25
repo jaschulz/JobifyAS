@@ -21,103 +21,100 @@ using namespace Json;
  * Request is a wrapper for the clients requests
  */
 namespace Mongoose {
-    class Request {
-    public:
-        Request(struct mg_connection *connection);
+class Request {
+public:
+	Request(struct mg_connection *connection);
 
-        /**
-         * Sends a given response to the client
-         *
-         * @param Response a response for this request
-         */
-        void writeResponse(Response *response);
+	/**
+	 * Sends a given response to the client
+	 *
+	 * @param Response a response for this request
+	 */
+	void writeResponse(Response *response);
 
-        /**
-         * Check if the variable given by key is present in GET or POST data
-         *
-         * @param string the name of the variable
-         *
-         * @return bool true if the param is present, false else
-         */
-        bool hasVariable(string key);
+	/**
+	 * Check if the variable given by key is present in GET or POST data
+	 *
+	 * @param string the name of the variable
+	 *
+	 * @return bool true if the param is present, false else
+	 */
+	bool hasVariable(string key);
 
-        /**
-         * Get All variable present in GET or POST data
-         *
-         * @brief getAllVariable
-         * @return map<string, string> with all variables
-         */
-        map<string, string> getAllVariable();
+	/**
+	 * Get All variable present in GET or POST data
+	 *
+	 * @brief getAllVariable
+	 * @return map<string, string> with all variables
+	 */
+	map<string, string> getAllVariable();
 
-        /**
-         * Get the value for a certain variable
-         *
-         * @param string the name of the variable
-         * @param string the fallback value if the variable doesn't exists
-         *
-         * @return string the value of the variable if it exists, fallback else
-         */
-        string get(string key, string fallback = "");
+	/**
+	 * Get the value for a certain variable
+	 *
+	 * @param string the name of the variable
+	 * @param string the fallback value if the variable doesn't exists
+	 *
+	 * @return string the value of the variable if it exists, fallback else
+	 */
+	string get(string key, string fallback = "");
 
-        /**
-         * Checks if the given cookie exists
-         *
-         * @param string the name of the cookie
-         *
-         * @return bool true if the given cookie is set
-         */
-        bool hasCookie(string key);
+	/**
+	 * Checks if the given cookie exists
+	 *
+	 * @param string the name of the cookie
+	 *
+	 * @return bool true if the given cookie is set
+	 */
+	bool hasCookie(string key);
 
-        /**
-         * Try to get the cookie value
-         *
-         * @param string the name of the cookie
-         * @param string the fallback value
-         *
-         * @retun the value of the cookie if it exists, fallback else
-         */
-        string getCookie(string key, string fallback = "");
+	/**
+	 * Try to get the cookie value
+	 *
+	 * @param string the name of the cookie
+	 * @param string the fallback value
+	 *
+	 * @retun the value of the cookie if it exists, fallback else
+	 */
+	string getCookie(string key, string fallback = "");
 
+	string getHeaderKeyValue(const std::string &header_key);
 
-        string getHeaderKeyValue(const std::string &header_key);
+	/**
+	 * Handle uploads to the target directory
+	 *
+	 * @param string the target directory
+	 * @param path the posted file path
+	 */
+	void handleUploads();
 
+	string getUrl();
 
-        /**
-         * Handle uploads to the target directory
-         *
-         * @param string the target directory
-         * @param path the posted file path
-         */
-        void handleUploads();
+	string getMethod();
 
-        string getUrl();
+	string getData();
 
-        string getMethod();
+	void setData(const string &data);
 
-        string getData();
+	const Value & getBody() const;
 
+	void setBody(const Value &body);
 
-        void setData(const string &data);
+	bool readVariable(const char *data, string key, string &output);
 
-        const Value & getBody() const;
+	/**
+	 * Files uploaded in this request
+	 */
+	vector<UploadFile> uploadFiles;
 
-        void setBody(const Value &body);
-
-        bool readVariable(const char *data, string key, string &output);
-
-        /**
-         * Files uploaded in this request
-         */
-        vector<UploadFile> uploadFiles;
-
-    protected:
-        string method;
-        string url;
-        string data;
-        //Json body
-        Value body;
-        struct mg_connection *connection;
-    };
+protected:
+	string method;
+	string url;
+	string data;
+	//Json body
+	Value body;
+	struct mg_connection *connection;
+};
 }
 
 #endif
