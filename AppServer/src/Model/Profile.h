@@ -46,11 +46,9 @@ public:
 
 	const string &getLastName() const;
 
-	void setPassword(const string &pass);
-
-	const string &getPassword() const;
-
 	Json::Value profileToJSON();
+
+	Json::Value publicProfileToJSON();
 
 	~Profile();
 

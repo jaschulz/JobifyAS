@@ -11,7 +11,7 @@ void  AccountControllerTest::setUp() {
 }
 
 void AccountControllerTest::successfulLogin() {
-    string data = "{\"email\":\"js5810@hotmail.com\",\"password\":\"123456\"}";
+    string data = "{\"email\":\"kiedis@hotmail.com\",\"password\":\"123456\"}";
     Request request = makeDummyBodyRequest(data, "POST");
 		
     RequestHandler<AccountController, JsonResponse> requestHandler(&accountController, &AccountController::login);

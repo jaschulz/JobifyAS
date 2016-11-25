@@ -14,7 +14,7 @@ Request JobifyControllerTest::generateRequest(string method, string queryString)
     char content[] = "mock";
     connection.content = content;
     connection.content_len = 4;
-    connection.uri = "mock";
+    connection.uri = "http://localhost:8081/api/users";
 
     connection.query_string = queryString.c_str();
 

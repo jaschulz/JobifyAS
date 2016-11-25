@@ -3,6 +3,7 @@
 #include <string>	
 #include <jsoncpp/json/json.h>
 #include <set>
+#include "../Model/Profile.h"
 
 class utils {
 public:
@@ -22,6 +23,8 @@ public:
 
 	static bool moveFromSetToSet(std::set<std::string> &source,
 			std::set<std::string> &destination, std::string value);
+
+	//static bool compare_recommendations(Profile p1, Profile p2);
 
 };
 

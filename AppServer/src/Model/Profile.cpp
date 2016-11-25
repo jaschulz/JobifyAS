@@ -33,7 +33,7 @@ Profile::Profile(const Json::Value &jsonProfile):location() {
 	double lon = jsonProfile["location"]["longitude"].asDouble();
 	location.setLatitude(lat);
 	location.setLongitude(lon);
-	cout<<"PERFIL CREADO CORRECTAMENTE"<<endl;
+	//cout<<"PERFIL CREADO CORRECTAMENTE"<<endl;
 }
 
 Json::Value Profile::profileToJSON() {
@@ -55,6 +55,23 @@ Json::Value Profile::profileToJSON() {
 	return jsonProfile;
 }
 
+Json::Value Profile::publicProfileToJSON() {
+	Json::Value jsonProfile;
+	jsonProfile["email"] = email;
+	jsonProfile["first_name"] = first_name;
+	jsonProfile["last_name"] = last_name;
+	jsonProfile["about"] = about;
+	jsonProfile["pic"] = pic;
+	jsonProfile["skills"] = utils::setToJsonArray(skills);
+	jsonProfile["job_position"] = job_position;
+	jsonProfile["location"]["latitude"] = location.getLatitude();
+	jsonProfile["location"]["longitude"] = location.getLongitude();
+	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
+	//jsonProfile["recommendations"]["count"] = getRecommendationsCount();
+	//jsonProfile["recommendations"]["users"] = utils::setToJsonArray(recommendations);
+	return jsonProfile;
+}
+
 void Profile::setEmail( string &mail) {
     email = mail;
 }
@@ -71,9 +88,7 @@ Profile::~Profile() {
 }
 
 void Profile::addRecommendation(const string &email){
-	cout<<"antes:"<<recommendations.size()<<endl;
 	recommendations.insert(email);
-	cout<<"despues:"<<recommendations.size()<<endl;
 }
 
 void Profile::addSentInvitation(const string &receiver) {

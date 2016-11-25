@@ -296,6 +296,49 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 
 }
 
+bool compare_recommendations(Profile p1, Profile p2){
+	return p1.getRecommendationsCount() > p2.getRecommendationsCount();
+}
+
+void ProfileController::rankUsers(Request &request, JsonResponse &response) {
+	string job_pos = request.get("job_position", "");
+	string skills = request.get("skills", "");
+	Json::Value filter;
+	/*string range = request.get("range", "");
+	 string user = request.get("user", "");
+	 if (!job_pos.empty()) {
+	 filter["job_pos"] = job_pos;
+	 }
+	 if (!skills.empty()) {
+	 filter["skills"] = skills;
+	 }
+	 if (!range.empty()) {
+	 filter["range"] = range;
+	 }
+	 if (!user.empty()) {
+	 transform(user.begin(), user.end(), user.begin(), ::toupper);
+	 filter["user"] = user;
+	 }*/
+	dbUsers dbuser;
+	dbuser.connect("./usersdb");
+	string error;
+	Json::Value ranking;
+	std::list<Profile> users = dbuser.getMostPopularUsers(filter, error);
+	dbuser.CloseDB();
+	if (error == "") {
+		users.sort(compare_recommendations);
+		std::list<Profile>::iterator it;
+		for (it = users.begin(); it != users.end(); ++it){
+			ranking.append(it->profileToJSON());
+		}
+		response["users"] = ranking;
+		return;
+	}
+	fillResponse(response, 401);
+	response["error"] = error;
+
+}
+
 void ProfileController::setup() {
 	setPrefix("/api");
 	addRouteResponse("GET", "/users/{email}", ProfileController, getProfile,
@@ -313,6 +356,8 @@ void ProfileController::setup() {
 	addRouteResponse("POST", "/users/{email}/recommendation", ProfileController,
 			recommendUser, JsonResponse);
 	addRouteResponse("GET", "/users", ProfileController, filterUsers,
+			JsonResponse);
+	addRouteResponse("GET", "/ranking", ProfileController, rankUsers,
 			JsonResponse);
 	//addRouteResponse("GET", "/printProfiles", ProfileController, printDB,JsonResponse);
 }

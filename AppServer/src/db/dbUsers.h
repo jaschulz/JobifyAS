@@ -8,6 +8,7 @@
 #include <jsoncpp/json/json.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <list>
 
 using namespace std;
 
@@ -17,6 +18,8 @@ public:
 	string editProfile(string &key,Json::Value &user);
 
 	Json::Value searchProfile(Json::Value &filter, string &error);
+
+	std::list<Profile> getMostPopularUsers(Json::Value &filter, string &error);
 
 	string addProfile(string &key,Json::Value &user);
 

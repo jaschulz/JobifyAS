@@ -75,3 +75,8 @@ bool utils::moveFromSetToSet(std::set<std::string> &source,
 	}
 	return false;
 }
+/*
+bool utils::compare_recommendations(Profile p1, Profile p2){
+	return p1.getRecommendationsCount() > p2.getRecommendationsCount();
+}
+*/

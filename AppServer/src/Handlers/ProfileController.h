@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include "JobifyController.h"
+#include <list>
 
 using namespace std;
 using namespace Mongoose;
@@ -12,9 +13,9 @@ using namespace Mongoose;
 class ProfileController: public JobifyController {
 
 public:
-	
+
 	ProfileController();
- 
+
 	void setup();
 
 	//void printDB(Request &request, JsonResponse &response);
@@ -30,6 +31,8 @@ public:
 	void getContacts(Request &request, JsonResponse &response);
 
 	void filterUsers(Request &request, JsonResponse &response);
+
+	void rankUsers(Request &request, JsonResponse &response);
 
 	void acceptInvitation(Request &request, JsonResponse &response);
 
