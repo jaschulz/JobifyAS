@@ -302,23 +302,16 @@ bool compare_recommendations(Profile p1, Profile p2) {
 
 void ProfileController::rankUsers(Request &request, JsonResponse &response) {
 	string job_pos = request.get("job_position", "");
-	string skills = request.get("skills", "");
+	string skill = request.get("skill", "");
+	cout << "skill: " << skill << endl;
+	cout << "job_pos: " << job_pos << endl;
 	Json::Value filter;
-	/*string range = request.get("range", "");
-	 string user = request.get("user", "");
-	 if (!job_pos.empty()) {
-	 filter["job_pos"] = job_pos;
-	 }
-	 if (!skills.empty()) {
-	 filter["skills"] = skills;
-	 }
-	 if (!range.empty()) {
-	 filter["range"] = range;
-	 }
-	 if (!user.empty()) {
-	 transform(user.begin(), user.end(), user.begin(), ::toupper);
-	 filter["user"] = user;
-	 }*/
+	if (!job_pos.empty()) {
+		filter["job_position"] = job_pos;
+	}
+	if (!skill.empty()) {
+		filter["skill"] = skill;
+	}
 	dbUsers dbuser;
 	dbuser.connect("./usersdb");
 	string error;

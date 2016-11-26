@@ -87,6 +87,15 @@ const string &Profile::getEmail() const {
 	return email;
 }
 
+void Profile::setJobPosition(string &jobPosition){
+	job_position = jobPosition;
+}
+
+const string &Profile::getJobPosition() const{
+	return job_position;
+}
+
+
 int Profile::getRecommendationsCount() {
 	return recommendations.size();
 }

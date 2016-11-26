@@ -48,6 +48,10 @@ public:
 
 	const string &getLastName() const;
 
+	void setJobPosition(string &jobPosition);
+
+	const string &getJobPosition() const;
+
 	Json::Value profileToJSON();
 
 	Json::Value publicProfileToJSON();

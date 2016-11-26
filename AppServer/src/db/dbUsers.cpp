@@ -124,7 +124,20 @@ std::list<Profile> dbUsers::getMostPopularUsers(Json::Value &filter,
 				return profiles;
 			} else {
 				Profile profile(userProfile);
-				profiles.push_back(profile);
+				string job_position = filter.get("job_positon", profile.getJobPosition()).asString();
+				cout<<"job_positon: "<<job_position<<endl;
+				cout<<"profile.getJobPosition(): "<<profile.getJobPosition()<<endl;
+				string skill = filter.get("skill", "").asString();
+				cout<<"skill: "<<skill<<endl;
+				//TODO tener en cuenta la skill
+				bool hasSkill = false;
+				if (skill != "") {
+					cout<<"skill !=: "<<skill<<endl;
+					hasSkill = utils::setContainsValue(profile.getSkills(),skill);
+				}
+				if (job_position == profile.getJobPosition() && hasSkill) {
+					profiles.push_back(profile);
+				}
 			}
 		}
 	}
