@@ -46,8 +46,9 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 		if (reader.parse(data.c_str(), JsonBody)) {
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
-			string key(email);
-			error = dbuser.editProfile(key, JsonBody);
+			Profile profile(JsonBody);
+			//string key(email);
+			error = dbuser.editProfile(profile);//key, JsonBody);
 			dbuser.CloseDB();
 			if (error == "") {
 				fillResponse(response, 200);
@@ -269,6 +270,7 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 	string range = request.get("range", "");
 	string user = request.get("user", "");
 	Json::Value filter;
+	//TODO verificar token, y sacar la location del usuario a partir de eso.
 	if (!job_pos.empty()) {
 		filter["job_pos"] = job_pos;
 	}

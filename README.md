@@ -31,7 +31,7 @@ install.sh installs every dependency so that the AppServer can be built and run 
 #### User
 >```
 >{
->    id: integer,
+>    email: string,
 >    first_name: string,
 >    last_name: string,
 >    about: string,
@@ -47,7 +47,7 @@ install.sh installs every dependency so that the AppServer can be built and run 
 #### Contact
 >```
 >{
->    user_id: integer,
+>    email: string,
 >    first_name: string,
 >    last_name: string,
 >    profile_pic: string (url),
@@ -58,7 +58,6 @@ install.sh installs every dependency so that the AppServer can be built and run 
 #### Skill
 >```
 >{
->    id: integer,
 >    name: string,
 >    description: string,
 >    category: string
@@ -85,7 +84,6 @@ install.sh installs every dependency so that the AppServer can be built and run 
 #### Job position
 >```
 >{
->    id: integer,
 >    name: string,
 >    description: string,
 >    category: string
@@ -216,6 +214,7 @@ install.sh installs every dependency so that the AppServer can be built and run 
 >```
 >{
 >    user: USER
+>    relationship: string (contact/invitation Sent/invitation Received/None)
 >}
 >```
 
@@ -281,6 +280,7 @@ install.sh installs every dependency so that the AppServer can be built and run 
          <li>range (double)</li>
          <li>skills (list of skills)</li>
          <li>job_position (job position)</li>
+         <li>user (string, substring of user's email or last name) </li>
         </ul>
       </td>
     </tr>

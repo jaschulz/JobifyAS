@@ -79,6 +79,24 @@ Json::Value Profile::publicProfileToJSON() {
 	return jsonProfile;
 }
 
+Json::Value Profile::editableProfileToJSON() {
+	Json::Value jsonProfile;
+	jsonProfile["email"] = email;
+	jsonProfile["first_name"] = first_name;
+	jsonProfile["last_name"] = last_name;
+	jsonProfile["about"] = about;
+	jsonProfile["pic"] = pic;
+	jsonProfile["skills"] = utils::setToJsonArray(skills);
+	jsonProfile["job_position"] = job_position;
+	jsonProfile["location"]["latitude"] = location.getLatitude();
+	jsonProfile["location"]["longitude"] = location.getLongitude();
+	return jsonProfile;
+}
+
+Location &Profile::getLocation(){
+	return location;
+}
+
 void Profile::setEmail(string &mail) {
 	email = mail;
 }
@@ -87,6 +105,9 @@ const string &Profile::getEmail() const {
 	return email;
 }
 
+const string &Profile::getLastName() const {
+	return last_name;
+}
 void Profile::setJobPosition(string &jobPosition){
 	job_position = jobPosition;
 }

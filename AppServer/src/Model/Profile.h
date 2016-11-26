@@ -62,7 +62,9 @@ public:
 
 	void fromJSON(Json::Value value);
 
-	Json::Value &profileGetUserJSON();
+	Json::Value editableProfileToJSON();
+
+	Location &getLocation();
 
 	int getRecommendationsCount();
 

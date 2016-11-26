@@ -10,11 +10,14 @@
 
 using namespace std;
 
-string dbUsers::editProfile(string &key, Json::Value &user) {
+#define MAX_DISTANCE 21000
+
+string dbUsers::editProfile(Profile &profile) {//string &key, Json::Value &user) {
 	leveldb::WriteOptions writeOptions;
 	string strJson;
 	string error = "";
-	leveldb::Status st = db->Get(leveldb::ReadOptions(), key, &strJson);
+	string email = profile.getEmail();
+	leveldb::Status st = db->Get(leveldb::ReadOptions(), email, &strJson);
 	if (st.ok() != 1) {
 		error = "Failed1: " + st.ToString();
 	} else {
@@ -23,6 +26,7 @@ string dbUsers::editProfile(string &key, Json::Value &user) {
 		if (!reader.parse(strJson.c_str(), root)) {
 			error = reader.getFormattedErrorMessages();
 		} else {
+			Json::Value user = profile.editableProfileToJSON();
 			for (Json::Value::iterator it = user.begin(); it != user.end();
 					++it) {
 				Json::Value keyValue = it.key();
@@ -30,7 +34,7 @@ string dbUsers::editProfile(string &key, Json::Value &user) {
 				cout << keyValue << ": " << value << endl;
 				root[keyValue.asString()] = value;
 			}
-			db->Put(writeOptions, key, root.toStyledString());
+			db->Put(writeOptions, email, root.toStyledString());
 			user = root;
 		}
 	}
@@ -59,22 +63,17 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 				cout << "error ->" << error << endl;
 				return result;
 			} else {
-				string job_position =
-						userProfile.get("job_position", "").asString();
-				string email = userProfile.get("email", "").asString();
-				transform(email.begin(), email.end(), email.begin(), ::toupper);
-				string last_name = userProfile.get("last_name", "").asString();
-				transform(last_name.begin(), last_name.end(), last_name.begin(),
-						::toupper);
-				cout << "job_position: " << job_position << endl;
-				cout << "email: " << email << endl;
-				cout << "last_name: " << last_name << endl;
-				string filter_job_pos =
-						filter.get("job_position", job_position).asString();
-				string user = filter.get("user", email).asString();
-				if (job_position.compare(filter_job_pos) == 0
-						&& (email.find(user) != std::string::npos
-								|| last_name.find(user) != std::string::npos)) {
+				Profile profile(userProfile);
+				string filter_job_pos = filter.get("job_position", profile.getJobPosition()).asString();
+				string user = filter.get("user", profile.getEmail()).asString();
+				double latitude = filter["Location"].get("latitude",profile.getLocation().getLatitude()).asDouble();
+				double longitude = filter["Location"].get("longitude",profile.getLocation().getLongitude()).asDouble();
+				double range = filter.get("range",MAX_DISTANCE).asDouble();
+				Location location(latitude,longitude);
+				if (profile.getJobPosition().compare(filter_job_pos) == 0
+						&& (profile.getEmail().find(user) != std::string::npos
+								|| profile.getLastName().find(user) != std::string::npos)
+								&& location.distanceTo(profile.getLocation()) < range) {
 					if (filter["skills"].isNull()) {
 						usersArray.append(userProfile);
 						cout << "skills.isNull ->" << endl;
@@ -85,8 +84,7 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 							Json::Value keyValue = it.key();
 							Json::Value value = (*it);
 							string strValue = value.asString();
-							if (utils::jsonContainsValue(userProfile["skills"],
-									strValue)) {
+							if (utils::setContainsValue(profile.getSkills(),strValue)){
 								usersArray.append(userProfile);
 								break;
 							}
