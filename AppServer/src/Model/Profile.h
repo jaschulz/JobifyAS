@@ -26,6 +26,7 @@ private:
 	set<string> invitationsSent;
 	set<string> invitationsReceived;
 	set<string> recommendations;
+	//map<Experience>
 
 public:
 	Profile(const string &mail);

@@ -60,6 +60,7 @@ bool AccountController::addNewUser(Credentials &credentials, string &error) {
 	dbCredentials dbCred;
 	dbCred.connect("./accounts");
 	bool isCreated = dbCred.addNewUser(credentials.toJSON(), error);
+	cout<<"addNewUser -> error: "<<error<<endl;
 	dbCred.CloseDB();
 	return isCreated;
 }
@@ -96,40 +97,53 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 
 	JsonResponse fbBasicData = fbh.getBasicData(request);
 	cout << fbBasicData.toStyledString() << endl;
-	string email = fbBasicData.get("email", "").asString();
-	string fbid = fbBasicData.get("id", "").asString();
-	string token = generateToken(email, "");
-	fbCredentials credentials(email, fbid, token);
-	string error;
-	if (addNewUser(credentials, error)) {
-		dbUsers dbuser;
-		JsonResponse fbData = fbh.getData(request);
-		string fname = fbData.get("first_name", "").asString();
-		string lname = fbData.get("last_name", "").asString();
-		string locationId = fbData["location"]["id"].asString();
-		JsonResponse fbLocationData = fbh.getLocationData(request, locationId);
-		double lat = fbLocationData["location"]["latitude"].asDouble();
-		double longitude = fbLocationData["location"]["longitude"].asDouble();
-		string pic = "";
-		string jp = "";
-		Profile profile(email, fname, lname, pic, jp, lat, longitude);
-		dbuser.connect("./usersdb");
-		Json::Value publicProfile = profile.profileToJSON();
-		error = dbuser.addProfile(email, publicProfile);
-		dbuser.CloseDB();
-		if (error.compare("") == 0) {
+	if (fbBasicData["error"].isNull()) {
+		string email = fbBasicData.get("email", "").asString();
+		string fbid = fbBasicData.get("id", "").asString();
+		string token = generateToken(email, "");
+		fbCredentials credentials(email, fbid, token);
+		string error;
+		if (addNewUser(credentials, error)) {
+			dbUsers dbuser;
+			JsonResponse fbData = fbh.getData(request);
+			if (fbData["error"].isNull()) {
+				string fname = fbData.get("first_name", "").asString();
+				string lname = fbData.get("last_name", "").asString();
+				string locationId = fbData["location"]["id"].asString();
+				JsonResponse fbLocationData = fbh.getLocationData(request, locationId);
+				if (fbLocationData["error"].isNull()) {
+					double lat = fbLocationData["location"]["latitude"].asDouble();
+					double longitude = fbLocationData["location"]["longitude"].asDouble();
+					string pic = "";
+					string jp = "";
+					Profile profile(email, fname, lname, pic, jp, lat, longitude);
+					dbuser.connect("./usersdb");
+					Json::Value publicProfile = profile.profileToJSON();
+					error = dbuser.addProfile(email, publicProfile);
+					dbuser.CloseDB();
+					if (error.compare("") == 0) {
+						fillResponse(response, 200);
+						response["token"] = token;
+						response["user"] = publicProfile;
+					}
+				} else {
+					response["error"] = fbLocationData["error"]["message"];
+				}
+			} 		else {
+				response["error"] = fbData["error"]["message"];
+			}
+		} else {
+			dbUsers dbuser;
+			dbuser.connect("./usersdb");
+			Json::Value jsonProfile = dbuser.getProfile(email);
+			dbuser.CloseDB();
 			fillResponse(response, 200);
 			response["token"] = token;
-			response["user"] = publicProfile;
+			response["user"] = jsonProfile;
 		}
-	} else {
-		dbUsers dbuser;
-		dbuser.connect("./usersdb");
-		Json::Value jsonProfile = dbuser.getProfile(email);
-		dbuser.CloseDB();
-		fillResponse(response, 200);
-		response["token"] = token;
-		response["user"] = jsonProfile;
+
+	} 		else {
+		response["error"] = fbBasicData["error"]["message"];
 	}
 }
 
@@ -178,19 +192,13 @@ void AccountController::login(Request &request, JsonResponse &response) {
 		response["error"] = error;
 	}
 }
-
+/*
 void AccountController::getFacebookData(Request &request,
 		JsonResponse &response) {
 	Json::Reader reader;
 	std::string data = request.getData();
 	Json::Value root;
-	/*if (!reader.parse(data.c_str(), root)) {
-	 response.setCode(401);
-	 response.setHeader("Content-Type", "application/json; charset=utf-8");
-	 response["error"] = "getFacebookData: " + reader.getFormattedErrorMessages();
-	 return;
-	 }*/
-	cout << "header: " << request.getHeaderKeyValue("Authorization") << endl;
+ "header: " << request.getHeaderKeyValue("Authorization") << endl;
 	string token = root["token"].asString();
 	string fbid = root["fbid"].asString();
 	CurlWrapper ss;
@@ -202,7 +210,7 @@ void AccountController::getFacebookData(Request &request,
 	ss.handleGet(
 			"https://graph.facebook.com/v2.8/" + locationId
 					+ "?fields=location", request, response);
-}
+}*/
 
 string AccountController::generateToken(const string &email,
 		const string &password) const {
@@ -217,7 +225,6 @@ void AccountController::setup() {
 	addRouteResponse("POST", "/users", AccountController, registerUser,
 			JsonResponse);
 	//addRouteResponse("GET", "/printAccounts", AccountController, printDB,JsonResponse);
-	addRouteResponse("GET", "/fbdata", AccountController, getFacebookData,
-			JsonResponse);
+	//addRouteResponse("GET", "/fbdata", AccountController, getFacebookData, JsonResponse);
 }
 

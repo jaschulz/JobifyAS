@@ -12,9 +12,9 @@ using namespace Mongoose;
 
 class CurlWrapper {
 public:
-	void handleGet(string url, Request &request, JsonResponse &response);
+	void handleGet(string url, std::string authValue, JsonResponse &response);
 
-	void handlePost(string url, Request &request, JsonResponse &response);
+	void handlePost(string url, string jsonData, JsonResponse &response);
 
 	void handleDelete(string url, Request &request, JsonResponse &response);
 

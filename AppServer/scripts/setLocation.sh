@@ -1,3 +1,3 @@
-echo '{"location": {"latitude":"-1","longitude":"-32"}}' | \
+echo '{"location": {"latitude":-34.6073866,"longitude":-58.3795773}}' | \
 curl -X POST -H 'Content-type: application/json' \
--H 'Accept: application/json' -d @- http://localhost:8081/api/users/js5810@hotmail.com/location
+-H 'Accept: application/json' -d @- http://localhost:8081/api/users/user1@hotmail.com/location

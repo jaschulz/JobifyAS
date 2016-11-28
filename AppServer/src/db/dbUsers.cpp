@@ -2,6 +2,7 @@
 #include "leveldb/db.h"
 #include "../utils/utils.h"
 #include <string>
+#include <cmath>
 #include <algorithm> 
 #include <unistd.h>
 #include <stdlib.h>
@@ -65,15 +66,26 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 			} else {
 				Profile profile(userProfile);
 				string filter_job_pos = filter.get("job_position", profile.getJobPosition()).asString();
+				cout << "filter_job_pos ->" << filter_job_pos << endl;
 				string user = filter.get("user", profile.getEmail()).asString();
+				cout << "user ->" << user << endl;
 				double latitude = filter["Location"].get("latitude",profile.getLocation().getLatitude()).asDouble();
+				cout << "latitude ->" << latitude << endl;
 				double longitude = filter["Location"].get("longitude",profile.getLocation().getLongitude()).asDouble();
+				cout << "longitude ->" << longitude << endl;
 				double range = filter.get("range",MAX_DISTANCE).asDouble();
+				cout << "range ->" << range << endl;
 				Location location(latitude,longitude);
+				bool withinRange = true;
+				double userLatitude = profile.getLocation().getLatitude();
+				double userLongitude = profile.getLocation().getLongitude();
+				if (!isnan(userLatitude) && !isnan(userLongitude)) {
+					withinRange = (location.distanceTo(profile.getLocation()) < range);
+				}
 				if (profile.getJobPosition().compare(filter_job_pos) == 0
 						&& (profile.getEmail().find(user) != std::string::npos
 								|| profile.getLastName().find(user) != std::string::npos)
-								&& location.distanceTo(profile.getLocation()) < range) {
+								&& withinRange) {
 					if (filter["skills"].isNull()) {
 						usersArray.append(userProfile);
 						cout << "skills.isNull ->" << endl;

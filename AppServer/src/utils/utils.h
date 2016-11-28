@@ -24,6 +24,8 @@ public:
 	static bool moveFromSetToSet(std::set<std::string> &source,
 			std::set<std::string> &destination, std::string value);
 
+	static Json::Value reduceJsonArrayToIds(Json::Value array, std::string id);
+
 	//static bool compare_recommendations(Profile p1, Profile p2);
 
 };

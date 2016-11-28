@@ -1,10 +1,10 @@
 #include "Profile.h"
 #include <string>
+#include <cmath>
 #include <iostream>
 #include "Location.h"
 
-Profile::Profile(const string &mail) :
-		location() {
+Profile::Profile(const string &mail):location() {
 	this->email = mail;
 }
 
@@ -21,6 +21,8 @@ Profile::Profile(const string &mail, const string &firstName,
 
 Profile::Profile(const Json::Value &jsonProfile) :
 		location() {
+
+	//cout<<"INICION CREACION PERFIL"<<endl;
 	this->email = jsonProfile.get("email", "").asString();
 	this->first_name = jsonProfile.get("first_name", "").asString();
 	this->last_name = jsonProfile.get("last_name", "").asString();
@@ -34,10 +36,12 @@ Profile::Profile(const Json::Value &jsonProfile) :
 			invitationsReceived);
 	utils::jsonArrayToSet(jsonProfile["recommendations"]["users"],
 			recommendations);
-	double lat = jsonProfile["location"]["latitude"].asDouble();
-	double lon = jsonProfile["location"]["longitude"].asDouble();
-	location.setLatitude(lat);
-	location.setLongitude(lon);
+	if (!jsonProfile["location"]["latitude"].isNull() && !jsonProfile["location"]["longitude"].isNull()) {
+		double lat = jsonProfile["location"]["latitude"].asDouble();
+		double lon = jsonProfile["location"]["longitude"].asDouble();
+		location.setLatitude(lat);
+		location.setLongitude(lon);
+	}
 	//cout<<"PERFIL CREADO CORRECTAMENTE"<<endl;
 }
 
@@ -49,6 +53,8 @@ Json::Value Profile::profileToJSON() {
 	jsonProfile["about"] = about;
 	jsonProfile["pic"] = pic;
 	jsonProfile["job_position"] = job_position;
+	//double latitude = location.getLatitude();
+	//double longitude = location.getLongitude();
 	jsonProfile["location"]["latitude"] = location.getLatitude();
 	jsonProfile["location"]["longitude"] = location.getLongitude();
 	jsonProfile["skills"] = utils::setToJsonArray(skills);
@@ -71,8 +77,12 @@ Json::Value Profile::publicProfileToJSON() {
 	jsonProfile["pic"] = pic;
 	jsonProfile["skills"] = utils::setToJsonArray(skills);
 	jsonProfile["job_position"] = job_position;
-	jsonProfile["location"]["latitude"] = location.getLatitude();
-	jsonProfile["location"]["longitude"] = location.getLongitude();
+	//double latitude = location.getLatitude();
+	//double longitude = location.getLongitude();
+	if (&location != NULL) {
+		jsonProfile["location"]["latitude"] = location.getLatitude();
+		jsonProfile["location"]["longitude"] = location.getLongitude();
+	}
 	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
 	//jsonProfile["recommendations"]["count"] = getRecommendationsCount();
 	//jsonProfile["recommendations"]["users"] = utils::setToJsonArray(recommendations);

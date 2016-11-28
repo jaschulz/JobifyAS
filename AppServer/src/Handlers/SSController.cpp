@@ -17,9 +17,13 @@ SSController::SSController() {
 }
 
 void SSController::getJobPositions(Request &request, JsonResponse &response) {
+	getJobPositions(response);
+}
+
+void SSController::getJobPositions(JsonResponse &response) {
 	CurlWrapper ss;
 	ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions",
-			request, response);
+			"", response);
 }
 
 std::string replaceSpace(std::string text) {
@@ -171,23 +175,10 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 					"/api/job_positions/categories/%s", charCategory)) {
 		string category(charCategory);
 		std::cout << "addJobPositions -> category:" << category << endl;
-		/*Json::Reader reader;
-		 std::cout << category << endl;
-		 std::string data = request.getData();
-		 std::cout << data << endl;
-		 Json::Value root;
-
-		 bool parsingSuccessful = reader.parse(data.c_str(), root); //parse process
-		 if (!parsingSuccessful) {
-		 response.setCode(401);
-		 response.setHeader("Content-Type", "application/json; charset=utf-8");
-		 response["error"] = reader.getFormattedErrorMessages();
-		 return;
-		 }*/
 		CurlWrapper ss;
 		ss.handlePost(
 				"https://still-falls-40635.herokuapp.com/job_positions/categories/"
-						+ category, request, response);
+						+ category, request.getData(), response);
 	} else {
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -197,19 +188,33 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 
 void SSController::addCategory(Request &request, JsonResponse &response) {
 	CurlWrapper ss;
-	ss.handlePost("https://still-falls-40635.herokuapp.com/categories", request,
+	ss.handlePost("https://still-falls-40635.herokuapp.com/categories", request.getData(),
+			response);
+}
+
+void SSController::addCategory(Json::Value newCat, JsonResponse &response) {
+	CurlWrapper ss;
+	ss.handlePost("https://still-falls-40635.herokuapp.com/categories", newCat.asString(),
 			response);
 }
 
 void SSController::getCategories(Request &request, JsonResponse &response) {
-	CurlWrapper ss;
-	ss.handleGet("https://still-falls-40635.herokuapp.com/categories", request,
-			response);
+	getCategories(response);
 }
 
 void SSController::getSkills(Request &request, JsonResponse &response) {
+	getSkills(response);
+}
+
+void SSController::getCategories(JsonResponse &response) {
 	CurlWrapper ss;
-	ss.handleGet("https://still-falls-40635.herokuapp.com/skills", request,
+	ss.handleGet("https://still-falls-40635.herokuapp.com/categories", "",
+			response);
+}
+
+void SSController::getSkills(JsonResponse &response) {
+	CurlWrapper ss;
+	ss.handleGet("https://still-falls-40635.herokuapp.com/skills", "",
 			response);
 }
 
@@ -223,12 +228,21 @@ void SSController::addSkills(Request &request, JsonResponse &response) {
 		CurlWrapper ss;
 		ss.handlePost(
 				"https://still-falls-40635.herokuapp.com/skills/categories/"
-						+ category, request, response);
+						+ category, request.getData(), response);
 	} else {
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
 		response["error"] = "Wrong number or type of parameters.";
 	}
+}
+
+
+void SSController::addSkills(Json::Value newSkill, JsonResponse &response) {
+
+		CurlWrapper ss;
+		ss.handlePost(
+				"https://still-falls-40635.herokuapp.com/skills/categories/"
+						+ newSkill.get("category","").asString(), newSkill.asString(), response);
 }
 
 void SSController::filterJobPositionsByCategory(Request &request,
@@ -241,7 +255,7 @@ void SSController::filterJobPositionsByCategory(Request &request,
 		CurlWrapper ss;
 		ss.handleGet(
 				"https://still-falls-40635.herokuapp.com/job_positions/categories/"
-						+ category, request, response);
+						+ category, "", response);
 	} else {
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -259,12 +273,54 @@ void SSController::filterSkillsByCategory(Request &request,
 		CurlWrapper ss;
 		ss.handleGet(
 				"https://still-falls-40635.herokuapp.com/skills/categories/"
-						+ category, request, response);
+						+ category, "", response);
 	} else {
 		response.setCode(401);
 		response.setHeader("Content-Type", "application/json; charset=utf-8");
 		response["error"] = "Wrong number or type of parameters.";
 	}
+}
+
+std::map <string, Entity> SSController::getMap(Json::Value array){
+	std::map <string, Entity> entityMap;
+	for(Json::Value::iterator it = array.begin(); it !=array.end(); ++it){
+		Json::Value value = (*it);
+		std::string name = value.get("name","").asString();
+		std::string cat = value.get("category","").asString();
+		std::string desc = value.get("description","").asString();
+		Entity objEntity(name, desc, cat);
+		entityMap[name] = objEntity;
+	}
+	return entityMap;
+}
+
+std::map <string, Entity> SSController::getSkillsMap(){
+	JsonResponse response;
+	getSkills(response);
+	Json::Value array = response["skills"];
+	return getMap(array);
+}
+
+std::map <string, Entity> SSController::getJPMap(){
+	JsonResponse response;
+	getJobPositions(response);
+	Json::Value array = response["job_positions"];
+	return getMap(array);
+}
+
+std::map <string, Category> SSController::getCategoriesMap(){
+	JsonResponse response;
+	getCategories(response);
+	Json::Value array = response["categories"];
+	std::map <string, Category> categoriesMap;
+	for(Json::Value::iterator it = array.begin(); it !=array.end(); ++it){
+		Json::Value value = (*it);
+		std::string name = value.get("name","").asString();
+		std::string desc = value.get("description","").asString();
+		Category category(name, desc);
+		categoriesMap[name] = category;
+	}
+	return categoriesMap;
 }
 
 void SSController::setup() {

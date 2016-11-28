@@ -4,8 +4,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
-#include "JobifyController.h"
 #include <list>
+#include "../Model/Entity.h"
+#include "../Model/Category.h"
+#include "JobifyController.h"
 
 using namespace std;
 using namespace Mongoose;
@@ -19,6 +21,14 @@ public:
 	void setup();
 
 	//void printDB(Request &request, JsonResponse &response);
+
+	bool validateCategory(Entity entity, std::map<string, Category> CategoriesMap);
+
+	bool validateSkills(std::map<string, Category> CategoriesMap, Json::Value skillsJson, std::string &error);
+
+	bool validateJP(std::map<string, Category> CategoriesMap, Json::Value jpJson, std::string &error);
+
+	bool validateInput(Json::Value Body, std::string &error);
 
 	void editProfile(Request &request, JsonResponse &response);
 

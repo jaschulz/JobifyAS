@@ -206,7 +206,7 @@ install.sh installs every dependency so that the AppServer can be built and run 
     </tr>
     <tr>
         <td>Requires token?</td>
-        <td>No</td>
+        <td>Yes</td>
     </tr>
   </tbody>
 </table>

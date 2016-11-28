@@ -75,6 +75,15 @@ bool utils::moveFromSetToSet(std::set<std::string> &source,
 	}
 	return false;
 }
+
+Json::Value utils::reduceJsonArrayToIds(Json::Value array, std::string id){
+	Json::Value reducedArray;
+	for (Json::Value::iterator it = array.begin(); it != array.end(); ++it) {
+		Json::Value value = (*it);
+		reducedArray.append(value[id]);
+	}
+	return reducedArray;
+}
 /*
  bool utils::compare_recommendations(Profile p1, Profile p2){
  return p1.getRecommendationsCount() > p2.getRecommendationsCount();

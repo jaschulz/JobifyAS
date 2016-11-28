@@ -12,6 +12,7 @@ Location::Location(double &lat, double &lon) {
 }
 
 Location::Location() {
+	cout<<latitude<<" - "<<longitude<<endl;
 }
 
 Location::~Location() {
@@ -25,8 +26,8 @@ double Location::distanceTo(Location l) {
 	double lat1r, lon1r, lat2r, lon2r, u, v;
 	lat1r = utils::deg2rad(latitude);
 	lon1r = utils::deg2rad(longitude);
-	lat2r = utils::deg2rad(l.latitude);
-	lon2r = utils::deg2rad(l.longitude);
+	lat2r = utils::deg2rad(l.getLatitude());
+	lon2r = utils::deg2rad(l.getLongitude());
 	u = sin((lat2r - lat1r) / 2);
 	v = sin((lon2r - lon1r) / 2);
 	return 2.0 * earthRadiusKm

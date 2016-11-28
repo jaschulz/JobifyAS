@@ -10,7 +10,7 @@ size_t CurlWrapper::writeFunction(void *ptr, size_t size, size_t nmemb,
 	return size * nmemb;
 }
 
-void CurlWrapper::handleGet(string url, Request &request,
+void CurlWrapper::handleGet(string url, std::string authValue,
 		JsonResponse &response) {
 	CURL * curl_handle;
 	curl_handle = curl_easy_init();
@@ -19,9 +19,8 @@ void CurlWrapper::handleGet(string url, Request &request,
 	struct curl_slist *slist1;
 	slist1 = NULL;
 
-	if (!request.getHeaderKeyValue("Authorization").empty()) {
-		std::string auth = "Authorization: OAuth "
-				+ request.getHeaderKeyValue("Authorization");
+	if (!authValue.empty()) {
+		std::string auth = "Authorization: OAuth " + authValue;
 		cout << "auth: " << auth << endl;
 		slist1 = curl_slist_append(slist1, auth.c_str());
 	}
@@ -38,9 +37,8 @@ void CurlWrapper::handleGet(string url, Request &request,
 
 	} else {
 		Json::Reader reader2;
-		bool parsingSuccessful = reader2.parse(response_string.c_str(),
-				response); //parse process
-		if (!parsingSuccessful) {
+		if (!reader2.parse(response_string.c_str(),
+				response)) {
 			response["error"] = reader2.getFormattedErrorMessages();
 
 		}
@@ -51,13 +49,12 @@ void CurlWrapper::handleGet(string url, Request &request,
 	slist1 = NULL;
 }
 
-void CurlWrapper::handlePost(string url, Request &request,
-		JsonResponse &response) {
+void CurlWrapper::handlePost(string url, string jsonData, JsonResponse &response) {
 	CURLcode ret;
 	CURL *hnd;
 	struct curl_slist *slist1;
 
-	std::string jsonstr = request.getData();
+	//std::string jsonstr = request.getData();
 	slist1 = NULL;
 	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
 
@@ -69,7 +66,7 @@ void CurlWrapper::handlePost(string url, Request &request,
 	curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, writeFunction);
 	curl_easy_setopt(hnd, CURLOPT_WRITEDATA, &response_string);
 	curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);
-	curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, jsonstr.c_str());
+	curl_easy_setopt(hnd, CURLOPT_POSTFIELDS, jsonData.c_str());
 	curl_easy_setopt(hnd, CURLOPT_USERAGENT, "curl/7.38.0");
 	curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, slist1);
 	curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
@@ -149,9 +146,9 @@ void CurlWrapper::handlePut(string url, Request &request,
 	struct curl_slist *slist1;
 	std::string jsonstr = request.getData();
 
-	std::cout << "url:" << url << "." << endl;
+	//std::cout << "url:" << url << "." << endl;
 
-	std::cout << "jsonstr:" << jsonstr << "." << endl;
+	//std::cout << "jsonstr:" << jsonstr << "." << endl;
 
 	slist1 = NULL;
 	slist1 = curl_slist_append(slist1, "Content-Type: application/json");
@@ -174,9 +171,8 @@ void CurlWrapper::handlePut(string url, Request &request,
 	} else {
 		if (response_string.empty()) {
 			Json::Reader reader2;
-			bool parsingSuccessful = reader2.parse(response_string.c_str(),
-					response); //parse process
-			if (!parsingSuccessful) {
+			if (!reader2.parse(response_string.c_str(),
+					response)) {
 				response["error"] = reader2.getFormattedErrorMessages();
 
 			}
