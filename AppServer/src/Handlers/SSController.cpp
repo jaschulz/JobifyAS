@@ -186,6 +186,12 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 	}
 }
 
+void SSController::addJobPositions(Json::Value newJP, JsonResponse &response) {
+	CurlWrapper ss;
+	ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + newJP.get("category","").asString(),
+			newJP.toStyledString(), response);
+}
+
 void SSController::addCategory(Request &request, JsonResponse &response) {
 	CurlWrapper ss;
 	ss.handlePost("https://still-falls-40635.herokuapp.com/categories", request.getData(),
@@ -194,7 +200,7 @@ void SSController::addCategory(Request &request, JsonResponse &response) {
 
 void SSController::addCategory(Json::Value newCat, JsonResponse &response) {
 	CurlWrapper ss;
-	ss.handlePost("https://still-falls-40635.herokuapp.com/categories", newCat.asString(),
+	ss.handlePost("https://still-falls-40635.herokuapp.com/categories", newCat.toStyledString(),
 			response);
 }
 
@@ -240,9 +246,11 @@ void SSController::addSkills(Request &request, JsonResponse &response) {
 void SSController::addSkills(Json::Value newSkill, JsonResponse &response) {
 
 		CurlWrapper ss;
+		cout<<"1"<<newSkill.get("category","").asString()<<endl;
+		//cout<<"2"<<newSkill.asString()<<endl;
 		ss.handlePost(
 				"https://still-falls-40635.herokuapp.com/skills/categories/"
-						+ newSkill.get("category","").asString(), newSkill.asString(), response);
+						+ newSkill.get("category","").asString(), newSkill.toStyledString(), response);
 }
 
 void SSController::filterJobPositionsByCategory(Request &request,

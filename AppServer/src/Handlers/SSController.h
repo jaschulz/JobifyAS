@@ -35,6 +35,8 @@ public:
 
 	void addJobPositions(Request &request, JsonResponse &response);
 
+	void addJobPositions(Json::Value newJP, JsonResponse &response);
+
 	void getCategories(Request &request, JsonResponse &response);
 
 	void getSkills(Request &request, JsonResponse &response);

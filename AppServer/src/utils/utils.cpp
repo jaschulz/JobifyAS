@@ -84,6 +84,7 @@ Json::Value utils::reduceJsonArrayToIds(Json::Value array, std::string id){
 	}
 	return reducedArray;
 }
+
 /*
  bool utils::compare_recommendations(Profile p1, Profile p2){
  return p1.getRecommendationsCount() > p2.getRecommendationsCount();

@@ -37,4 +37,4 @@ public:
 	~Location();
 };
 
-#endif //APPSERVER_USER_H
+#endif //LOCATION_H

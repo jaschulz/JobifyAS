@@ -7,6 +7,7 @@
 #include <set>
 #include <stdlib.h>
 #include <jsoncpp/json/json.h>
+#include "ExpMin.h"
 
 using namespace std;
 
@@ -26,7 +27,7 @@ private:
 	set<string> invitationsSent;
 	set<string> invitationsReceived;
 	set<string> recommendations;
-	//map<Experience>
+	vector<ExpMin> experiences;
 
 public:
 	Profile(const string &mail);
@@ -62,6 +63,8 @@ public:
 	void addRecommendation(const string &email);
 
 	void fromJSON(Json::Value value);
+
+	Json::Value experiencesToJson();
 
 	Json::Value editableProfileToJSON();
 

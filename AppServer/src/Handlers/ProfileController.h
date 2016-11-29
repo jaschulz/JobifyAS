@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <list>
 #include "../Model/Entity.h"
+#include "../Model/ExpMin.h"
 #include "../Model/Category.h"
 #include "JobifyController.h"
 
@@ -26,9 +27,13 @@ public:
 
 	bool validateSkills(std::map<string, Category> CategoriesMap, Json::Value skillsJson, std::string &error);
 
+	bool validateExperience (std::map<string, Category> CategoriesMap, Json::Value expJson, std::string &error);
+
 	bool validateJP(std::map<string, Category> CategoriesMap, Json::Value jpJson, std::string &error);
 
 	bool validateInput(Json::Value Body, std::string &error);
+
+	void normalizeJsonProfile(Json::Value &jsonProfile);
 
 	void editProfile(Request &request, JsonResponse &response);
 
