@@ -50,21 +50,20 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 	Json::Value result;
 	leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
 	for (it->SeekToFirst(); it->Valid(); it->Next()) {
-		// Read the record
-		cout << "Read the record" << endl;
 		if (!it->value().empty()) {
 			leveldb::Slice keySlice = it->key();
 			leveldb::Slice dataSlice = it->value();
 			Json::Value userProfile;
 			Json::Reader reader;
-			cout << "dataSlice.ToString()" << dataSlice.ToString() << endl;
 			if (!reader.parse(dataSlice.ToString().c_str(), userProfile)) {
 				error = reader.getFormattedErrorMessages();
 				delete it;
 				cout << "error ->" << error << endl;
 				return result;
 			} else {
+				cout<<"userProfile.toStyledString(): "<<userProfile.toStyledString()<<endl;
 				Profile profile(userProfile);
+				//cout << "profile ->" << profile.profileToJSON().toStyledString() << endl;
 				string filter_job_pos = filter.get("job_position", profile.getJobPosition()).asString();
 				cout << "filter_job_pos ->" << filter_job_pos << endl;
 				string user = filter.get("user", profile.getEmail()).asString();
@@ -73,14 +72,16 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 				cout << "latitude ->" << latitude << endl;
 				double longitude = filter["Location"].get("longitude",profile.getLocation().getLongitude()).asDouble();
 				cout << "longitude ->" << longitude << endl;
-				double range = filter.get("range",MAX_DISTANCE).asDouble();
-				cout << "range ->" << range << endl;
-				Location location(latitude,longitude);
 				bool withinRange = true;
-				double userLatitude = profile.getLocation().getLatitude();
-				double userLongitude = profile.getLocation().getLongitude();
-				if (!isnan(userLatitude) && !isnan(userLongitude)) {
-					withinRange = (location.distanceTo(profile.getLocation()) < range);
+				if (!filter["range"].isNull()) {
+					double range = filter.get("range",MAX_DISTANCE).asDouble();
+					cout << "range ->" << range << endl;
+					Location location(latitude,longitude);
+					withinRange = false;
+					if ( profile.getLocation().isValid()) {
+						cout<<"is valid"<<endl;
+						withinRange = (location.distanceTo(profile.getLocation()) < range);
+					}
 				}
 				if (profile.getJobPosition().compare(filter_job_pos) == 0
 						&& (profile.getEmail().find(user) != std::string::npos
@@ -91,12 +92,13 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 						cout << "skills.isNull ->" << endl;
 					} else {
 						Json::Value skills = filter["skills"];
-						for (Json::Value::iterator it = skills.begin();
-								it != skills.end(); ++it) {
-							Json::Value keyValue = it.key();
-							Json::Value value = (*it);
-							string strValue = value.asString();
-							if (utils::setContainsValue(profile.getSkills(),strValue)){
+
+						cout << "Antes de iterar en skills->" << skills.toStyledString()<<endl;
+						for (Json::Value::iterator it = filter["skills"].begin();
+								it != filter["skills"].end(); ++it) {
+							string value = it->asString();
+							cout << "skills: " <<value<< endl;
+							if (utils::setContainsValue(profile.getSkills(),value)){
 								usersArray.append(userProfile);
 								break;
 							}

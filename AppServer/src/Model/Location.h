@@ -13,6 +13,8 @@ private:
 
 	double longitude;
 
+	bool valid;
+
 public:
 	Location(double &lat, double &lon);
 
@@ -27,6 +29,10 @@ public:
 	void setLongitude(double &l);
 
 	double getLongitude();
+
+	bool isValid();
+
+	void setValid(bool value);
 
 	~Location();
 };

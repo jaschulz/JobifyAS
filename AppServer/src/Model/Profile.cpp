@@ -41,6 +41,7 @@ Profile::Profile(const Json::Value &jsonProfile) :
 		double lon = jsonProfile["location"]["longitude"].asDouble();
 		location.setLatitude(lat);
 		location.setLongitude(lon);
+		location.setValid(true);
 	}
 	//cout<<"PERFIL CREADO CORRECTAMENTE"<<endl;
 }
@@ -55,8 +56,10 @@ Json::Value Profile::profileToJSON() {
 	jsonProfile["job_position"] = job_position;
 	//double latitude = location.getLatitude();
 	//double longitude = location.getLongitude();
-	jsonProfile["location"]["latitude"] = location.getLatitude();
-	jsonProfile["location"]["longitude"] = location.getLongitude();
+	if (location.isValid()) {
+		jsonProfile["location"]["latitude"] = location.getLatitude();
+		jsonProfile["location"]["longitude"] = location.getLongitude();
+	}
 	jsonProfile["skills"] = utils::setToJsonArray(skills);
 	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
 	jsonProfile["invitationsSent"] = utils::setToJsonArray(invitationsSent);
@@ -79,7 +82,7 @@ Json::Value Profile::publicProfileToJSON() {
 	jsonProfile["job_position"] = job_position;
 	//double latitude = location.getLatitude();
 	//double longitude = location.getLongitude();
-	if (&location != NULL) {
+	if (location.isValid()) {
 		jsonProfile["location"]["latitude"] = location.getLatitude();
 		jsonProfile["location"]["longitude"] = location.getLongitude();
 	}
@@ -98,8 +101,10 @@ Json::Value Profile::editableProfileToJSON() {
 	jsonProfile["pic"] = pic;
 	jsonProfile["skills"] = utils::setToJsonArray(skills);
 	jsonProfile["job_position"] = job_position;
-	jsonProfile["location"]["latitude"] = location.getLatitude();
-	jsonProfile["location"]["longitude"] = location.getLongitude();
+	if (location.isValid()) {
+		jsonProfile["location"]["latitude"] = location.getLatitude();
+		jsonProfile["location"]["longitude"] = location.getLongitude();
+	}
 	return jsonProfile;
 }
 

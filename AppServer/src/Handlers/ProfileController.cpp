@@ -417,7 +417,17 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 		filter["job_pos"] = job_pos;
 	}
 	if (!skills.empty()) {
-		filter["skills"] = skills;
+		filter["skills"] = Json::arrayValue;
+		std::string delimiter = ",";
+		size_t pos = 0;
+		std::string token;
+		while ((pos = skills.find(delimiter)) != std::string::npos) {
+		    token = skills.substr(0, pos);
+		    filter["skills"].append(token);
+		    skills.erase(0, pos + delimiter.length());
+		}
+		filter["skills"].append(skills);
+
 	}
 	if (!range.empty()) {
 		filter["range"] = atof(range.c_str());

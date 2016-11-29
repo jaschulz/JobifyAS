@@ -9,10 +9,13 @@
 Location::Location(double &lat, double &lon) {
 	this->latitude = lat;
 	this->longitude = lon;
+	cout<<"valid = true"<<endl;
+	valid = true;
 }
 
 Location::Location() {
-	cout<<latitude<<" - "<<longitude<<endl;
+	valid = false;
+	cout<<"valid = false"<<endl;
 }
 
 Location::~Location() {
@@ -48,4 +51,12 @@ void Location::setLongitude(double &l) {
 
 double Location::getLongitude() {
 	return longitude;
+}
+
+bool Location::isValid() {
+	return valid;
+}
+
+void Location::setValid(bool value) {
+	valid = value;
 }
