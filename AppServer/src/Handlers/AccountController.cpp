@@ -128,7 +128,7 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 					if (error.compare("") == 0) {
 						fillResponse(response, 200);
 						response["token"] = token;
-						Json::Value userJson= profile.profileToJSON();
+						Json::Value userJson= profile.publicProfileToJSON();
 						expandAttributes(userJson);
 						response["user"] = userJson;
 					}
