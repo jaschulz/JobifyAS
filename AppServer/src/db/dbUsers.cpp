@@ -93,7 +93,7 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 								|| profile.getLastName().find(user)
 										!= std::string::npos) && withinRange) {
 					if (filter["skills"].isNull()) {
-						usersArray.append(userProfile);
+						usersArray.append(profile.publicProfileToJSON());
 						cout << "skills.isNull ->" << endl;
 					} else {
 						Json::Value skills = filter["skills"];
@@ -107,7 +107,7 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 							cout << "skills: " << value << endl;
 							if (utils::setContainsValue(profile.getSkills(),
 									value)) {
-								usersArray.append(userProfile);
+								usersArray.append(profile.publicProfileToJSON());
 								break;
 							}
 						}
@@ -359,7 +359,8 @@ bool dbUsers::sendInvitation(Profile &sender, Profile &receiver, string &error,
 		int &code) {
 	error = "";
 	code = 201;
-	//			cout<<"anres if"<<endl;
+	std::string value;
+	leveldb::Status st = db->Get(leveldb::ReadOptions(), receiver.getEmail(), &value);
 	if (!addSentInvitation(sender, receiver, error)
 			|| !addReceivedInvitation(sender, receiver, error)) {
 		code = 401;

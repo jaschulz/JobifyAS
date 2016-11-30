@@ -288,7 +288,8 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 		dbuser.CloseDB();
 		if (error == "") {
 			fillResponse(response, 200);
-			response["contacts"] = JsonBody["contacts"];
+			Json::Value contacts = expandContacts(JsonBody["contacts"]);
+			response["contacts"] = contacts;
 			return;
 		}
 	}
@@ -338,7 +339,7 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 		string mail(email);
 		Json::Value JsonBody;
 		Json::Reader reader;
-		string error = "";
+		error = "";
 		if (reader.parse(data.c_str(), JsonBody)) {
 			int i = 0;
 			string newContact = JsonBody.get("email", "").asString();
@@ -356,9 +357,11 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 					response["user"] = JsonBody;
 					return;
 				}
+			} else {
+				error = senderJson["error"].asString() + " - "
+						+ receiverJson["error"].asString();
+				code = 404;
 			}
-			error = senderJson["error"].asString() + " - "
-					+ receiverJson["error"].asString();
 			dbuser.CloseDB();
 		} else {
 			error = reader.getFormattedErrorMessages();
@@ -489,14 +492,21 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 		transform(user.begin(), user.end(), user.begin(), ::toupper);
 		filter["user"] = user;
 	}
-	cout << "filter: " << filter.toStyledString() << endl;
+	//cout << "filter: " << filter.toStyledString() << endl;
 	dbUsers dbuser;
 	dbuser.connect("./usersdb");
 	string error;
 	Json::Value users = dbuser.searchProfile(filter, error);
+	Json::Value usersArray = Json::arrayValue;
+	for (Json::Value::iterator it = users.begin();
+			it != users.end(); ++it) {
+		Json::Value user = (*it);
+		expandAttributes(user);
+		usersArray.append(user);
+	}
 	dbuser.CloseDB();
 	if (error == "") {
-		response["users"] = users;
+		response["users"] = usersArray;
 		return;
 	}
 	fillResponse(response, 401);
