@@ -36,6 +36,9 @@ public:
 
 	Json::Value expandSkills(Json::Value skillsJson);
 
+
+	Json::Value expandUsers(Json::Value usersJson);
+
 	Json::Value expandContacts(Json::Value contactsJson);
 
 	virtual Response *process(Request &request) override;

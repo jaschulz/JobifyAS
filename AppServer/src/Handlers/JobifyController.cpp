@@ -78,21 +78,38 @@ Json::Value JobifyController::expandSkills(Json::Value skillsJson){
 	return skills;
 }
 
+Json::Value JobifyController::expandUsers(Json::Value usersJson) {
+	Json::Value users = Json::arrayValue;
+	dbUsers db;
+	db.connect("./usersdb");
+	for (Json::Value::iterator it = usersJson.begin(); it != usersJson.end(); ++it) {
+		std::string contact = it->asString();
+		Json::Value jsonProfile = db.getProfile(contact);
+		std::string error = jsonProfile.get("error", "").asString();
+		if (error == "") {
+			Profile profile(jsonProfile);
+			users.append(profile.publicProfileToJSON());
+		}
+	}
+	db.CloseDB();
+	return users;
+}
+
 
 Json::Value JobifyController::expandContacts(Json::Value contactsJson){
 	Json::Value contacts = Json::arrayValue;
+	dbUsers db;
+	db.connect("./usersdb");
 	for (Json::Value::iterator it = contactsJson.begin(); it != contactsJson.end(); ++it) {
 		std::string contact = it->asString();
-		dbUsers db;
-		db.connect("./usersdb");
 		Json::Value jsonProfile = db.getProfile(contact);
-		Profile profile(jsonProfile);
 		std::string error = jsonProfile.get("error", "").asString();
-		db.CloseDB();
 		if (error == "") {
+			Profile profile(jsonProfile);
 			contacts.append(profile.getContactInfoAsJson());
 		}
 	}
+	db.CloseDB();
 	return contacts;
 }
 

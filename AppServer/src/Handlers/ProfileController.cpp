@@ -288,7 +288,7 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 		dbuser.CloseDB();
 		if (error == "") {
 			fillResponse(response, 200);
-			Json::Value contacts = expandContacts(JsonBody["contacts"]);
+			Json::Value contacts = expandUsers(JsonBody["contacts"]);
 			response["contacts"] = contacts;
 			return;
 		}
