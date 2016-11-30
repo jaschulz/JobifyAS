@@ -28,11 +28,15 @@ public:
 
 	~JobifyController();
 
+	void expandAttributes(Json::Value &userJson);
+
 	Json::Value expandJP(std::string jpJson);
 
 	Json::Value expandExperiences(Json::Value expJson);
 
 	Json::Value expandSkills(Json::Value skillsJson);
+
+	Json::Value expandContacts(Json::Value contactsJson);
 
 	virtual Response *process(Request &request) override;
 

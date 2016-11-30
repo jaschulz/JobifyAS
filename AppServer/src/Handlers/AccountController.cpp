@@ -110,6 +110,7 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 				string fname = fbData.get("first_name", "").asString();
 				string lname = fbData.get("last_name", "").asString();
 				string locationId = fbData["location"]["id"].asString();
+				string pic = fbData["picture"]["data"]["url"].asString();
 				JsonResponse fbLocationData = fbh.getLocationData(request,
 						locationId);
 				if (fbLocationData["error"].isNull()) {
@@ -117,7 +118,6 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 							fbLocationData["location"]["latitude"].asDouble();
 					double longitude =
 							fbLocationData["location"]["longitude"].asDouble();
-					string pic = "";
 					string jp = "";
 					Profile profile(email, fname, lname, pic, jp, lat,
 							longitude);
@@ -128,7 +128,9 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 					if (error.compare("") == 0) {
 						fillResponse(response, 200);
 						response["token"] = token;
-						response["user"] = profile.publicProfileToJSON();
+						Json::Value userJson= profile.profileToJSON();
+						expandAttributes(userJson);
+						response["user"] = userJson;
 					}
 				} else {
 					response["error"] = fbLocationData["error"]["message"];
@@ -141,9 +143,12 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 			dbuser.connect("./usersdb");
 			Json::Value jsonProfile = dbuser.getProfile(email);
 			dbuser.CloseDB();
+			Profile profile(jsonProfile);
 			fillResponse(response, 200);
 			response["token"] = token;
-			response["user"] = jsonProfile;
+			Json::Value userJson= profile.publicProfileToJSON();
+			expandAttributes(userJson);
+			response["user"] = userJson;
 		}
 
 	} else {
@@ -188,7 +193,9 @@ void AccountController::login(Request &request, JsonResponse &response) {
 			if (error == "") {
 				fillResponse(response, 200);
 				response["token"] = token;
-				response["user"] = profile.publicProfileToJSON();
+				Json::Value userJson= profile.publicProfileToJSON();
+				expandAttributes(userJson);
+				response["user"] = userJson;
 				return;
 			}
 		}

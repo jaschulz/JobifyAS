@@ -253,13 +253,14 @@ bool dbUsers::addSentInvitation(Profile &sender, Profile &receiver,
 		string &error) {
 	string key = sender.getEmail();
 	string rec_mail = receiver.getEmail();
-	//TODO Validar que no se encuentre ni entre los contactos, ni en las invitaciones recibidas o enviadas
 	if (utils::setContainsValue(sender.getInvitationsSent(), rec_mail)) {
 		error = "An invitation to " + rec_mail + " has already been sent.";
+		cout<<error<<endl;
 		return false;
 	}
 	if (utils::setContainsValue(sender.getContacts(), rec_mail)) {
 		error = rec_mail + " is already a contact.";
+		cout<<error<<endl;
 		return false;
 	}
 	if (utils::setContainsValue(sender.getInvitationsReceived(), rec_mail)) {
@@ -361,7 +362,7 @@ bool dbUsers::sendInvitation(Profile &sender, Profile &receiver, string &error,
 	//			cout<<"anres if"<<endl;
 	if (!addSentInvitation(sender, receiver, error)
 			|| !addReceivedInvitation(sender, receiver, error)) {
-		code = 404;
+		code = 401;
 		return false;
 	}
 	//		cout<<"despues if"<<endl;

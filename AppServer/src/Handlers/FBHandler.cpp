@@ -21,7 +21,7 @@ JsonResponse FBHandler::getData(Request &request) {
 	CurlWrapper cw;
 	std::string authValue = request.getHeaderKeyValue("Authorization");
 	cw.handleGet(
-			"https://graph.facebook.com/v2.8/me?fields=email,first_name,last_name,location",
+			"https://graph.facebook.com/v2.8/me?fields=email,first_name,last_name,location,picture.width(400).height(400)",
 			authValue, response);
 	return response;
 }

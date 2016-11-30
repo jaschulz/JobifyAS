@@ -27,7 +27,7 @@ Profile::Profile(const Json::Value &jsonProfile) :
 	this->email = jsonProfile.get("email", "").asString();
 	this->first_name = jsonProfile.get("first_name", "").asString();
 	this->last_name = jsonProfile.get("last_name", "").asString();
-	this->about = jsonProfile.get("last_name", "").asString();
+	this->about = jsonProfile.get("about", "").asString();
 	this->pic = jsonProfile.get("pic", "").asString();
 	this->job_position = jsonProfile.get("job_position", "").asString();
 	utils::jsonArrayToSet(jsonProfile["skills"], skills);
@@ -78,6 +78,7 @@ Json::Value Profile::profileToJSON() {
 	jsonProfile["recommendations"]["count"] = getRecommendationsCount();
 	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(
 			recommendations);
+	jsonProfile["experiences"] = experiencesToJson();
 	return jsonProfile;
 }
 
@@ -101,7 +102,16 @@ Json::Value Profile::publicProfileToJSON() {
 	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(
 			recommendations);
 	jsonProfile["experiences"] = experiencesToJson();
-	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
+	return jsonProfile;
+}
+
+Json::Value Profile::getContactInfoAsJson() {
+	Json::Value jsonProfile;
+	jsonProfile["email"] = email;
+	jsonProfile["first_name"] = first_name;
+	jsonProfile["last_name"] = last_name;
+	jsonProfile["pic"] = pic;
+	jsonProfile["job_position"] = job_position;
 	return jsonProfile;
 }
 

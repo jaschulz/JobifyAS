@@ -19,6 +19,13 @@ JobifyController::~JobifyController() {
 	delete (routeParams);
 }
 
+void JobifyController::expandAttributes(Json::Value &userJson) {
+	userJson["job_position"] = expandJP(userJson.get("job_position","").asString());
+	userJson["experiences"] = expandExperiences(userJson.get("experiences",Json::arrayValue));
+	userJson["skills"] = expandSkills(userJson.get("skills",Json::arrayValue));
+	userJson["contacts"] = expandContacts(userJson.get("contacts",Json::arrayValue));
+}
+
 Json::Value JobifyController::expandJP(std::string jpJson){
 	Json::Value job_position = "";
 	CurlWrapper cw;
@@ -55,18 +62,12 @@ Json::Value JobifyController::expandSkills(Json::Value skillsJson){
 	Json::Value skills = Json::arrayValue;
 	CurlWrapper cw;
 	JsonResponse response;
-	cout<<"antes handle get "<<endl;
 	cw.handleGet("https://still-falls-40635.herokuapp.com/skills", "",
 				response);
 	Json::Value array = response["skills"];
-
-	cout<<"antes skillsMap "<<endl;
 	std::map<string, Entity> skillsMap = utils::entityJsonArraytoMap(array);
 	for (Json::Value::iterator it = skillsJson.begin(); it != skillsJson.end(); ++it) {
-
-		cout<<"antes std::string skill = it->asString(); "<<endl;
 		std::string skill = it->asString();
-		cout<<"skill: "<<skill<<endl;
 		std::map<string, Entity>::iterator mapIt;
 		mapIt = skillsMap.find(skill);
 		if (mapIt != skillsMap.end()) {
@@ -76,6 +77,25 @@ Json::Value JobifyController::expandSkills(Json::Value skillsJson){
 	}
 	return skills;
 }
+
+
+Json::Value JobifyController::expandContacts(Json::Value contactsJson){
+	Json::Value contacts = Json::arrayValue;
+	for (Json::Value::iterator it = contactsJson.begin(); it != contactsJson.end(); ++it) {
+		std::string contact = it->asString();
+		dbUsers db;
+		db.connect("./usersdb");
+		Json::Value jsonProfile = db.getProfile(contact);
+		Profile profile(jsonProfile);
+		std::string error = jsonProfile.get("error", "").asString();
+		db.CloseDB();
+		if (error == "") {
+			contacts.append(profile.getContactInfoAsJson());
+		}
+	}
+	return contacts;
+}
+
 
 bool JobifyController::handles(string method, string url) {
 

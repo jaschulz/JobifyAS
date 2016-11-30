@@ -64,6 +64,8 @@ public:
 
 	void fromJSON(Json::Value value);
 
+	Json::Value getContactInfoAsJson();
+
 	Json::Value experiencesToJson();
 
 	Json::Value editableProfileToJSON();

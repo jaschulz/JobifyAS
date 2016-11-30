@@ -234,7 +234,9 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 				dbuser.CloseDB();
 				if (error == "") {
 					fillResponse(response, 200);
-					response["user"] = JsonBody;
+					Json::Value userJson= profile.publicProfileToJSON();
+					expandAttributes(userJson);
+					response["user"] = userJson;
 					return;
 				}
 			} else {
@@ -262,10 +264,7 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 		if (error == "") {
 			fillResponse(response, 200);
 			Json::Value userJson= profile.publicProfileToJSON();
-			userJson["job_position"] = expandJP(userJson.get("job_position","").asString());
-			userJson["experiences"] = expandExperiences(userJson.get("experiences",Json::arrayValue));
-			cout<<"userJson[\"skills\"]: "<<userJson.get("skills",Json::arrayValue).toStyledString()<<endl;
-			userJson["skills"] = expandSkills(userJson.get("skills",Json::arrayValue));
+			expandAttributes(userJson);
 			response["user"] = userJson;
 			return;
 		}
