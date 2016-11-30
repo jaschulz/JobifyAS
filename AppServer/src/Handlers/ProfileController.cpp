@@ -80,44 +80,49 @@ bool ProfileController::validateSkills(std::map<string, Category> CategoriesMap,
 			if (it != skillsMap.end()) {
 				Entity e = it->second;
 				if (e == skill) {
-					cout<<"break"<<endl;
+					cout << "break" << endl;
 					break;
 				} else {
-					error = "Skill " + skill.getName() + " already exists for category " + e.getCategory() + ".";
+					error = "Skill " + skill.getName()
+							+ " already exists for category " + e.getCategory()
+							+ ".";
 					return false;
 				}
 			}
 		} else {
 			if (skillsMap.find(skill.getName()) != skillsMap.end()) {
-				error = "Skill " + skill.getName() + " already exists for another category.";
-				cout<<error<<endl;
+				error = "Skill " + skill.getName()
+						+ " already exists for another category.";
+				cout << error << endl;
 				return false;
 			}
 			Category category(cat, "");
-			Json::Value  catJsonStr = category.toJson();
+			Json::Value catJsonStr = category.toJson();
 			//request.setData(catJsonStr);
 			//Category is created
 
-			cout<<"Category is created"<<endl;
+			cout << "Category is created" << endl;
 			sharedServer.addCategory(catJsonStr, response);
 		}
 		Json::Value skillJson = skill.toJson();
 		//request.setData(skillJsonStr);
-		cout<<"Skill is created"<<skillJson.toStyledString()<<endl;
-		sharedServer.addSkills(skillJson,response);
+		cout << "Skill is created" << skillJson.toStyledString() << endl;
+		sharedServer.addSkills(skillJson, response);
 		//TODO ver el código de la response
 	}
 	return true;
 }
 
-bool ProfileController::validateExperience (std::map<string, Category> CategoriesMap, Json::Value expJson, std::string &error) {
+bool ProfileController::validateExperience(
+		std::map<string, Category> CategoriesMap, Json::Value expJson,
+		std::string &error) {
 	for (Json::Value::iterator it = expJson.begin(); it != expJson.end();
 			++it) {
-				Json::Value value = (*it);
-				//reducedArray.append(value[id]);
-				if (!validateJP(CategoriesMap,value["job_position"],error)){
-					return false;
-				}
+		Json::Value value = (*it);
+		//reducedArray.append(value[id]);
+		if (!validateJP(CategoriesMap, value["job_position"], error)) {
+			return false;
+		}
 	}
 	return true;
 }
@@ -129,9 +134,9 @@ bool ProfileController::validateJP(std::map<string, Category> CategoriesMap,
 	std::string name = jpJson.get("name", "").asString();
 	std::string cat = jpJson.get("category", "").asString();
 	std::string desc = jpJson.get("description", "").asString();
-	cout<<"name: "<<name<<endl;
-	cout<<"category: "<<cat<<endl;
-	cout<<"description: "<<desc<<endl;
+	cout << "name: " << name << endl;
+	cout << "category: " << cat << endl;
+	cout << "description: " << desc << endl;
 	JsonResponse response;
 	Entity jobPosition(name, desc, cat);
 	if (validateCategory(jobPosition, CategoriesMap)) {
@@ -142,7 +147,9 @@ bool ProfileController::validateJP(std::map<string, Category> CategoriesMap,
 			if (e == jobPosition) {
 				return true;
 			} else {
-				error = "Job Position " + jobPosition.getName() + " already exists for category " + e.getCategory() + ".";
+				error = "Job Position " + jobPosition.getName()
+						+ " already exists for category " + e.getCategory()
+						+ ".";
 				return false;
 			}
 		}
@@ -165,24 +172,19 @@ bool ProfileController::validateJP(std::map<string, Category> CategoriesMap,
 
 bool ProfileController::validateInput(Json::Value Body, std::string &error) {
 	SSController sharedServer;
-	cout<<"antes de CategoriesMap"<<endl;
 	std::map<string, Category> CategoriesMap = sharedServer.getCategoriesMap();
-
-	cout<<"antes de skills"<<Body["skills"].toStyledString()<<endl;
 	if (!Body["skills"].isNull()) {
 		Json::Value skills = Body["skills"];
 		if (!validateSkills(CategoriesMap, skills, error)) {
 			return false;
 		}
 	}
-	cout<<"antes de job_position"<<Body["job_position"].toStyledString()<<endl;
 	if (!Body["job_position"].isNull()) {
 		Json::Value job_position = Body["job_position"];
 		if (!validateJP(CategoriesMap, job_position, error)) {
 			return false;
 		}
 	}
-	cout<<"antes de experiences"<<endl;
 	if (!Body["experiences"].isNull()) {
 		Json::Value experiences = Body["experiences"];
 		if (!validateExperience(CategoriesMap, experiences, error)) {
@@ -195,15 +197,16 @@ bool ProfileController::validateInput(Json::Value Body, std::string &error) {
 void ProfileController::normalizeJsonProfile(Json::Value &jsonProfile) {
 	Json::Value skills = jsonProfile["skills"];
 	jsonProfile["skills"] = utils::reduceJsonArrayToIds(skills, "name");
-	jsonProfile["job_position"] = jsonProfile["job_position"].get("name","").asString();
+	jsonProfile["job_position"] =
+			jsonProfile["job_position"].get("name", "").asString();
 	Json::Value experiences = Json::arrayValue;
-	for (Json::Value::iterator it = jsonProfile["experiences"].begin(); it != jsonProfile["experiences"].end();
-			++it) {
+	for (Json::Value::iterator it = jsonProfile["experiences"].begin();
+			it != jsonProfile["experiences"].end(); ++it) {
 		Json::Value value = (*it);
 		//reducedArray.append(value[id]);
-		std::string jpName = value["job_position"].get("name","").asString();
+		std::string jpName = value["job_position"].get("name", "").asString();
 		std::string where = value["where"].asString();
-		ExpMin objExpMin(jpName,where);
+		ExpMin objExpMin(jpName, where);
 		experiences.append(objExpMin.toJson());
 	}
 	jsonProfile["experiences"] = experiences;
@@ -223,7 +226,7 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 			if (validateInput(JsonBody, error)) {
 				dbUsers dbuser;
 				dbuser.connect("./usersdb");
-				cout<<"antes de normalizeJsonProfile"<<endl;
+				cout << "antes de normalizeJsonProfile" << endl;
 				normalizeJsonProfile(JsonBody);
 				Profile profile(JsonBody);
 				//string key(email);
@@ -252,12 +255,18 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 		string mail(email);
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
-		Json::Value JsonBody = dbuser.getProfile(mail);
-		error = JsonBody.get("error", "").asString();
+		Json::Value jsonProfile = dbuser.getProfile(mail);
+		Profile profile(jsonProfile);
+		error = jsonProfile.get("error", "").asString();
 		dbuser.CloseDB();
 		if (error == "") {
 			fillResponse(response, 200);
-			response["user"] = JsonBody;
+			Json::Value userJson= profile.publicProfileToJSON();
+			userJson["job_position"] = expandJP(userJson.get("job_position","").asString());
+			userJson["experiences"] = expandExperiences(userJson.get("experiences",Json::arrayValue));
+			cout<<"userJson[\"skills\"]: "<<userJson.get("skills",Json::arrayValue).toStyledString()<<endl;
+			userJson["skills"] = expandSkills(userJson.get("skills",Json::arrayValue));
+			response["user"] = userJson;
 			return;
 		}
 	}
@@ -454,7 +463,7 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 
 	Json::Value filter;
 	if (!job_pos.empty()) {
-		filter["job_pos"] = job_pos;
+		filter["job_position"] = job_pos;
 	}
 	if (!skills.empty()) {
 		filter["skills"] = Json::arrayValue;
@@ -462,9 +471,9 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 		size_t pos = 0;
 		std::string token;
 		while ((pos = skills.find(delimiter)) != std::string::npos) {
-		    token = skills.substr(0, pos);
-		    filter["skills"].append(token);
-		    skills.erase(0, pos + delimiter.length());
+			token = skills.substr(0, pos);
+			filter["skills"].append(token);
+			skills.erase(0, pos + delimiter.length());
 		}
 		filter["skills"].append(skills);
 

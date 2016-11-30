@@ -4,6 +4,7 @@
 #include <jsoncpp/json/json.h>
 #include <set>
 #include "../Model/Profile.h"
+#include "../Model/Entity.h"
 
 class utils {
 public:
@@ -25,6 +26,8 @@ public:
 			std::set<std::string> &destination, std::string value);
 
 	static Json::Value reduceJsonArrayToIds(Json::Value array, std::string id);
+
+	static std::map<string, Entity> entityJsonArraytoMap(Json::Value array);
 
 	//static bool compare_recommendations(Profile p1, Profile p2);
 

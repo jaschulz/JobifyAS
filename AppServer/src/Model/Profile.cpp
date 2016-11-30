@@ -4,7 +4,8 @@
 #include <iostream>
 #include "Location.h"
 
-Profile::Profile(const string &mail):location() {
+Profile::Profile(const string &mail) :
+		location() {
 	this->email = mail;
 }
 
@@ -36,7 +37,8 @@ Profile::Profile(const Json::Value &jsonProfile) :
 			invitationsReceived);
 	utils::jsonArrayToSet(jsonProfile["recommendations"]["users"],
 			recommendations);
-	if (!jsonProfile["location"]["latitude"].isNull() && !jsonProfile["location"]["longitude"].isNull()) {
+	if (!jsonProfile["location"]["latitude"].isNull()
+			&& !jsonProfile["location"]["longitude"].isNull()) {
 		double lat = jsonProfile["location"]["latitude"].asDouble();
 		double lon = jsonProfile["location"]["longitude"].asDouble();
 		location.setLatitude(lat);
@@ -44,13 +46,13 @@ Profile::Profile(const Json::Value &jsonProfile) :
 		location.setValid(true);
 	}
 
-	for (Json::Value::iterator it = jsonProfile["experiences"].begin(); it != jsonProfile["experiences"].end();
-			++it) {
-				Json::Value value = (*it);
-				std::string where = value.get("where","").asString();
-				std::string jp= value["job_position"].asString();
-				ExpMin exp(jp, where);
-				experiences.push_back(exp);
+	for (Json::Value::iterator it = jsonProfile["experiences"].begin();
+			it != jsonProfile["experiences"].end(); ++it) {
+		Json::Value value = (*it);
+		std::string where = value.get("where", "").asString();
+		std::string jp = value["job_position"].asString();
+		ExpMin exp(jp, where);
+		experiences.push_back(exp);
 	}
 }
 
@@ -96,7 +98,8 @@ Json::Value Profile::publicProfileToJSON() {
 	}
 	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
 	jsonProfile["recommendations"]["count"] = getRecommendationsCount();
-	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(recommendations);
+	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(
+			recommendations);
 	jsonProfile["experiences"] = experiencesToJson();
 	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
 	return jsonProfile;
@@ -104,11 +107,11 @@ Json::Value Profile::publicProfileToJSON() {
 
 Json::Value Profile::experiencesToJson() {
 	Json::Value exp = Json::arrayValue;
-		for (unsigned int i = 0; i < experiences.size(); i++) {
-			ExpMin expMin = experiences[i];
-			exp.append(expMin.toJson());
-		}
-		return exp;
+	for (unsigned int i = 0; i < experiences.size(); i++) {
+		ExpMin expMin = experiences[i];
+		exp.append(expMin.toJson());
+	}
+	return exp;
 }
 
 Json::Value Profile::editableProfileToJSON() {
@@ -128,7 +131,7 @@ Json::Value Profile::editableProfileToJSON() {
 	return jsonProfile;
 }
 
-Location &Profile::getLocation(){
+Location &Profile::getLocation() {
 	return location;
 }
 
@@ -143,14 +146,13 @@ const string &Profile::getEmail() const {
 const string &Profile::getLastName() const {
 	return last_name;
 }
-void Profile::setJobPosition(string &jobPosition){
+void Profile::setJobPosition(string &jobPosition) {
 	job_position = jobPosition;
 }
 
-const string &Profile::getJobPosition() const{
+const string &Profile::getJobPosition() const {
 	return job_position;
 }
-
 
 int Profile::getRecommendationsCount() {
 	return recommendations.size();

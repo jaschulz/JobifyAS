@@ -13,7 +13,7 @@ using namespace std;
 
 #define MAX_DISTANCE 21000
 
-string dbUsers::editProfile(Profile &profile) {//string &key, Json::Value &user) {
+string dbUsers::editProfile(Profile &profile) { //string &key, Json::Value &user) {
 	leveldb::WriteOptions writeOptions;
 	string strJson;
 	string error = "";
@@ -61,44 +61,52 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 				cout << "error ->" << error << endl;
 				return result;
 			} else {
-				cout<<"userProfile.toStyledString(): "<<userProfile.toStyledString()<<endl;
+				cout << "userProfile.toStyledString(): "
+						<< userProfile.toStyledString() << endl;
 				Profile profile(userProfile);
 				//cout << "profile ->" << profile.profileToJSON().toStyledString() << endl;
-				string filter_job_pos = filter.get("job_position", profile.getJobPosition()).asString();
+				string filter_job_pos = filter.get("job_position",
+						profile.getJobPosition()).asString();
 				cout << "filter_job_pos ->" << filter_job_pos << endl;
 				string user = filter.get("user", profile.getEmail()).asString();
 				cout << "user ->" << user << endl;
-				double latitude = filter["Location"].get("latitude",profile.getLocation().getLatitude()).asDouble();
+				double latitude = filter["Location"].get("latitude",
+						profile.getLocation().getLatitude()).asDouble();
 				cout << "latitude ->" << latitude << endl;
-				double longitude = filter["Location"].get("longitude",profile.getLocation().getLongitude()).asDouble();
+				double longitude = filter["Location"].get("longitude",
+						profile.getLocation().getLongitude()).asDouble();
 				cout << "longitude ->" << longitude << endl;
 				bool withinRange = true;
 				if (!filter["range"].isNull()) {
-					double range = filter.get("range",MAX_DISTANCE).asDouble();
+					double range = filter.get("range", MAX_DISTANCE).asDouble();
 					cout << "range ->" << range << endl;
-					Location location(latitude,longitude);
+					Location location(latitude, longitude);
 					withinRange = false;
-					if ( profile.getLocation().isValid()) {
-						cout<<"is valid"<<endl;
-						withinRange = (location.distanceTo(profile.getLocation()) < range);
+					if (profile.getLocation().isValid()) {
+						cout << "is valid" << endl;
+						withinRange = (location.distanceTo(
+								profile.getLocation()) < range);
 					}
 				}
 				if (profile.getJobPosition().compare(filter_job_pos) == 0
 						&& (profile.getEmail().find(user) != std::string::npos
-								|| profile.getLastName().find(user) != std::string::npos)
-								&& withinRange) {
+								|| profile.getLastName().find(user)
+										!= std::string::npos) && withinRange) {
 					if (filter["skills"].isNull()) {
 						usersArray.append(userProfile);
 						cout << "skills.isNull ->" << endl;
 					} else {
 						Json::Value skills = filter["skills"];
 
-						cout << "Antes de iterar en skills->" << skills.toStyledString()<<endl;
-						for (Json::Value::iterator it = filter["skills"].begin();
+						cout << "Antes de iterar en skills->"
+								<< skills.toStyledString() << endl;
+						for (Json::Value::iterator it =
+								filter["skills"].begin();
 								it != filter["skills"].end(); ++it) {
 							string value = it->asString();
-							cout << "skills: " <<value<< endl;
-							if (utils::setContainsValue(profile.getSkills(),value)){
+							cout << "skills: " << value << endl;
+							if (utils::setContainsValue(profile.getSkills(),
+									value)) {
 								usersArray.append(userProfile);
 								break;
 							}
@@ -136,15 +144,18 @@ std::list<Profile> dbUsers::getMostPopularUsers(Json::Value &filter,
 				return profiles;
 			} else {
 				Profile profile(userProfile);
-				string job_position = filter.get("job_position", profile.getJobPosition()).asString();
-				cout<<"job_position: "<<job_position<<endl;
-				cout<<"profile.getJobPosition(): "<<profile.getJobPosition()<<endl;
+				string job_position = filter.get("job_position",
+						profile.getJobPosition()).asString();
+				cout << "job_position: " << job_position << endl;
+				cout << "profile.getJobPosition(): " << profile.getJobPosition()
+						<< endl;
 				string skill = filter.get("skill", "").asString();
-				cout<<"skill: "<<skill<<endl;
+				cout << "skill: " << skill << endl;
 				bool hasSkill = true;
 				if (skill != "") {
-					cout<<"skill !=: "<<skill<<endl;
-					hasSkill = utils::setContainsValue(profile.getSkills(),skill);
+					cout << "skill !=: " << skill << endl;
+					hasSkill = utils::setContainsValue(profile.getSkills(),
+							skill);
 				}
 				if (job_position == profile.getJobPosition() && hasSkill) {
 					profiles.push_back(profile);

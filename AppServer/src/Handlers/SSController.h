@@ -57,14 +57,13 @@ public:
 
 	void filterSkillsByCategory(Request &request, JsonResponse &response);
 
-	std::map <string, Entity> getMap(Json::Value array);
+	std::map<string, Entity> getMap(Json::Value array);
 
-	std::map <string, Entity> getSkillsMap();
+	std::map<string, Entity> getSkillsMap();
 
-	std::map <string, Entity> getJPMap();
+	std::map<string, Entity> getJPMap();
 
-	std::map <string, Category> getCategoriesMap();
-
+	std::map<string, Category> getCategoriesMap();
 
 	bool verifyInput(Json::Value value, std::string error);
 

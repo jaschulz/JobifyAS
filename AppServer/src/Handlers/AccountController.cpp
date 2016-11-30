@@ -60,7 +60,7 @@ bool AccountController::addNewUser(Credentials &credentials, string &error) {
 	dbCredentials dbCred;
 	dbCred.connect("./accounts");
 	bool isCreated = dbCred.addNewUser(credentials.toJSON(), error);
-	cout<<"addNewUser -> error: "<<error<<endl;
+	cout << "addNewUser -> error: " << error << endl;
 	dbCred.CloseDB();
 	return isCreated;
 }
@@ -110,13 +110,17 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 				string fname = fbData.get("first_name", "").asString();
 				string lname = fbData.get("last_name", "").asString();
 				string locationId = fbData["location"]["id"].asString();
-				JsonResponse fbLocationData = fbh.getLocationData(request, locationId);
+				JsonResponse fbLocationData = fbh.getLocationData(request,
+						locationId);
 				if (fbLocationData["error"].isNull()) {
-					double lat = fbLocationData["location"]["latitude"].asDouble();
-					double longitude = fbLocationData["location"]["longitude"].asDouble();
+					double lat =
+							fbLocationData["location"]["latitude"].asDouble();
+					double longitude =
+							fbLocationData["location"]["longitude"].asDouble();
 					string pic = "";
 					string jp = "";
-					Profile profile(email, fname, lname, pic, jp, lat, longitude);
+					Profile profile(email, fname, lname, pic, jp, lat,
+							longitude);
 					dbuser.connect("./usersdb");
 					Json::Value publicProfile = profile.profileToJSON();
 					error = dbuser.addProfile(email, publicProfile);
@@ -124,12 +128,12 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 					if (error.compare("") == 0) {
 						fillResponse(response, 200);
 						response["token"] = token;
-						response["user"] = publicProfile;
+						response["user"] = profile.publicProfileToJSON();
 					}
 				} else {
 					response["error"] = fbLocationData["error"]["message"];
 				}
-			} 		else {
+			} else {
 				response["error"] = fbData["error"]["message"];
 			}
 		} else {
@@ -142,7 +146,7 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 			response["user"] = jsonProfile;
 		}
 
-	} 		else {
+	} else {
 		response["error"] = fbBasicData["error"]["message"];
 	}
 }
@@ -178,12 +182,13 @@ void AccountController::login(Request &request, JsonResponse &response) {
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
 			Json::Value jsonProfile = dbuser.getProfile(email);
+			Profile profile(jsonProfile);
 			dbuser.CloseDB();
 			dbCred.CloseDB();
 			if (error == "") {
 				fillResponse(response, 200);
 				response["token"] = token;
-				response["user"] = jsonProfile;
+				response["user"] = profile.publicProfileToJSON();
 				return;
 			}
 		}
@@ -193,24 +198,24 @@ void AccountController::login(Request &request, JsonResponse &response) {
 	}
 }
 /*
-void AccountController::getFacebookData(Request &request,
-		JsonResponse &response) {
-	Json::Reader reader;
-	std::string data = request.getData();
-	Json::Value root;
+ void AccountController::getFacebookData(Request &request,
+ JsonResponse &response) {
+ Json::Reader reader;
+ std::string data = request.getData();
+ Json::Value root;
  "header: " << request.getHeaderKeyValue("Authorization") << endl;
-	string token = root["token"].asString();
-	string fbid = root["fbid"].asString();
-	CurlWrapper ss;
-	ss.handleGet(
-			"https://graph.facebook.com/v2.8/" + fbid
-					+ "?fields=about,birthday,email,first_name,gender,last_name,location",
-			request, response);
-	string locationId = response["location"]["id"].asString();
-	ss.handleGet(
-			"https://graph.facebook.com/v2.8/" + locationId
-					+ "?fields=location", request, response);
-}*/
+ string token = root["token"].asString();
+ string fbid = root["fbid"].asString();
+ CurlWrapper ss;
+ ss.handleGet(
+ "https://graph.facebook.com/v2.8/" + fbid
+ + "?fields=about,birthday,email,first_name,gender,last_name,location",
+ request, response);
+ string locationId = response["location"]["id"].asString();
+ ss.handleGet(
+ "https://graph.facebook.com/v2.8/" + locationId
+ + "?fields=location", request, response);
+ }*/
 
 string AccountController::generateToken(const string &email,
 		const string &password) const {

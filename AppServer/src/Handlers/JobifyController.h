@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <mongoose/JsonController.h>
+#include <mongoose/Response.h>
+#include "CurlWrapper.h"
 
 using namespace std;
 using namespace Mongoose;
@@ -25,6 +27,12 @@ public:
 	JobifyController();
 
 	~JobifyController();
+
+	Json::Value expandJP(std::string jpJson);
+
+	Json::Value expandExperiences(Json::Value expJson);
+
+	Json::Value expandSkills(Json::Value skillsJson);
 
 	virtual Response *process(Request &request) override;
 

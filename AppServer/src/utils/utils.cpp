@@ -76,13 +76,26 @@ bool utils::moveFromSetToSet(std::set<std::string> &source,
 	return false;
 }
 
-Json::Value utils::reduceJsonArrayToIds(Json::Value array, std::string id){
+Json::Value utils::reduceJsonArrayToIds(Json::Value array, std::string id) {
 	Json::Value reducedArray;
 	for (Json::Value::iterator it = array.begin(); it != array.end(); ++it) {
 		Json::Value value = (*it);
 		reducedArray.append(value[id]);
 	}
 	return reducedArray;
+}
+
+std::map<string, Entity> utils::entityJsonArraytoMap(Json::Value array) {
+	std::map<string, Entity> entityMap;
+	for (Json::Value::iterator it = array.begin(); it != array.end(); ++it) {
+		Json::Value value = (*it);
+		std::string name = value.get("name", "").asString();
+		std::string cat = value.get("category", "").asString();
+		std::string desc = value.get("description", "").asString();
+		Entity objEntity(name, desc, cat);
+		entityMap[name] = objEntity;
+	}
+	return entityMap;
 }
 
 /*

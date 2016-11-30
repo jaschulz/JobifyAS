@@ -37,8 +37,7 @@ void CurlWrapper::handleGet(string url, std::string authValue,
 
 	} else {
 		Json::Reader reader2;
-		if (!reader2.parse(response_string.c_str(),
-				response)) {
+		if (!reader2.parse(response_string.c_str(), response)) {
 			response["error"] = reader2.getFormattedErrorMessages();
 
 		}
@@ -49,7 +48,8 @@ void CurlWrapper::handleGet(string url, std::string authValue,
 	slist1 = NULL;
 }
 
-void CurlWrapper::handlePost(string url, string jsonData, JsonResponse &response) {
+void CurlWrapper::handlePost(string url, string jsonData,
+		JsonResponse &response) {
 	CURLcode ret;
 	CURL *hnd;
 	struct curl_slist *slist1;
@@ -171,8 +171,7 @@ void CurlWrapper::handlePut(string url, Request &request,
 	} else {
 		if (response_string.empty()) {
 			Json::Reader reader2;
-			if (!reader2.parse(response_string.c_str(),
-					response)) {
+			if (!reader2.parse(response_string.c_str(), response)) {
 				response["error"] = reader2.getFormattedErrorMessages();
 
 			}

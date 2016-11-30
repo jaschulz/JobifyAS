@@ -23,13 +23,17 @@ public:
 
 	//void printDB(Request &request, JsonResponse &response);
 
-	bool validateCategory(Entity entity, std::map<string, Category> CategoriesMap);
+	bool validateCategory(Entity entity,
+			std::map<string, Category> CategoriesMap);
 
-	bool validateSkills(std::map<string, Category> CategoriesMap, Json::Value skillsJson, std::string &error);
+	bool validateSkills(std::map<string, Category> CategoriesMap,
+			Json::Value skillsJson, std::string &error);
 
-	bool validateExperience (std::map<string, Category> CategoriesMap, Json::Value expJson, std::string &error);
+	bool validateExperience(std::map<string, Category> CategoriesMap,
+			Json::Value expJson, std::string &error);
 
-	bool validateJP(std::map<string, Category> CategoriesMap, Json::Value jpJson, std::string &error);
+	bool validateJP(std::map<string, Category> CategoriesMap,
+			Json::Value jpJson, std::string &error);
 
 	bool validateInput(Json::Value Body, std::string &error);
 

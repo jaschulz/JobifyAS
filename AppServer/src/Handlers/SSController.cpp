@@ -22,8 +22,8 @@ void SSController::getJobPositions(Request &request, JsonResponse &response) {
 
 void SSController::getJobPositions(JsonResponse &response) {
 	CurlWrapper ss;
-	ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions",
-			"", response);
+	ss.handleGet("https://still-falls-40635.herokuapp.com/job_positions", "",
+			response);
 }
 
 std::string replaceSpace(std::string text) {
@@ -188,20 +188,22 @@ void SSController::addJobPositions(Request &request, JsonResponse &response) {
 
 void SSController::addJobPositions(Json::Value newJP, JsonResponse &response) {
 	CurlWrapper ss;
-	ss.handlePost("https://still-falls-40635.herokuapp.com/job_positions/categories/" + newJP.get("category","").asString(),
+	ss.handlePost(
+			"https://still-falls-40635.herokuapp.com/job_positions/categories/"
+					+ newJP.get("category", "").asString(),
 			newJP.toStyledString(), response);
 }
 
 void SSController::addCategory(Request &request, JsonResponse &response) {
 	CurlWrapper ss;
-	ss.handlePost("https://still-falls-40635.herokuapp.com/categories", request.getData(),
-			response);
+	ss.handlePost("https://still-falls-40635.herokuapp.com/categories",
+			request.getData(), response);
 }
 
 void SSController::addCategory(Json::Value newCat, JsonResponse &response) {
 	CurlWrapper ss;
-	ss.handlePost("https://still-falls-40635.herokuapp.com/categories", newCat.toStyledString(),
-			response);
+	ss.handlePost("https://still-falls-40635.herokuapp.com/categories",
+			newCat.toStyledString(), response);
 }
 
 void SSController::getCategories(Request &request, JsonResponse &response) {
@@ -242,15 +244,15 @@ void SSController::addSkills(Request &request, JsonResponse &response) {
 	}
 }
 
-
 void SSController::addSkills(Json::Value newSkill, JsonResponse &response) {
 
-		CurlWrapper ss;
-		cout<<"1"<<newSkill.get("category","").asString()<<endl;
-		//cout<<"2"<<newSkill.asString()<<endl;
-		ss.handlePost(
-				"https://still-falls-40635.herokuapp.com/skills/categories/"
-						+ newSkill.get("category","").asString(), newSkill.toStyledString(), response);
+	CurlWrapper ss;
+	cout << "1" << newSkill.get("category", "").asString() << endl;
+	//cout<<"2"<<newSkill.asString()<<endl;
+	ss.handlePost(
+			"https://still-falls-40635.herokuapp.com/skills/categories/"
+					+ newSkill.get("category", "").asString(),
+			newSkill.toStyledString(), response);
 }
 
 void SSController::filterJobPositionsByCategory(Request &request,
@@ -289,42 +291,29 @@ void SSController::filterSkillsByCategory(Request &request,
 	}
 }
 
-std::map <string, Entity> SSController::getMap(Json::Value array){
-	std::map <string, Entity> entityMap;
-	for(Json::Value::iterator it = array.begin(); it !=array.end(); ++it){
-		Json::Value value = (*it);
-		std::string name = value.get("name","").asString();
-		std::string cat = value.get("category","").asString();
-		std::string desc = value.get("description","").asString();
-		Entity objEntity(name, desc, cat);
-		entityMap[name] = objEntity;
-	}
-	return entityMap;
-}
-
-std::map <string, Entity> SSController::getSkillsMap(){
+std::map<string, Entity> SSController::getSkillsMap() {
 	JsonResponse response;
 	getSkills(response);
 	Json::Value array = response["skills"];
-	return getMap(array);
+	return utils::entityJsonArraytoMap(array);
 }
 
-std::map <string, Entity> SSController::getJPMap(){
+std::map<string, Entity> SSController::getJPMap() {
 	JsonResponse response;
 	getJobPositions(response);
 	Json::Value array = response["job_positions"];
-	return getMap(array);
+	return utils::entityJsonArraytoMap(array);
 }
 
-std::map <string, Category> SSController::getCategoriesMap(){
+std::map<string, Category> SSController::getCategoriesMap() {
 	JsonResponse response;
 	getCategories(response);
 	Json::Value array = response["categories"];
-	std::map <string, Category> categoriesMap;
-	for(Json::Value::iterator it = array.begin(); it !=array.end(); ++it){
+	std::map<string, Category> categoriesMap;
+	for (Json::Value::iterator it = array.begin(); it != array.end(); ++it) {
 		Json::Value value = (*it);
-		std::string name = value.get("name","").asString();
-		std::string desc = value.get("description","").asString();
+		std::string name = value.get("name", "").asString();
+		std::string desc = value.get("description", "").asString();
 		Category category(name, desc);
 		categoriesMap[name] = category;
 	}

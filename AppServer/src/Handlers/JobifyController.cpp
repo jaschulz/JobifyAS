@@ -4,11 +4,11 @@
 #include <mongoose/JsonController.h>
 #include <fstream>
 #include <iostream>
+#include <curl/curl.h>
 #include "JobifyController.h"
 #include "../db/dbCredentials.h"
 #include "../db/dbController.h"
 #include "../db/dbUsers.h"
-#include <curl/curl.h>
 #include "../Model/Profile.h"
 
 JobifyController::JobifyController() {
@@ -17,6 +17,64 @@ JobifyController::JobifyController() {
 
 JobifyController::~JobifyController() {
 	delete (routeParams);
+}
+
+Json::Value JobifyController::expandJP(std::string jpJson){
+	Json::Value job_position = "";
+	CurlWrapper cw;
+	JsonResponse response;
+	cw.handleGet("https://still-falls-40635.herokuapp.com/job_positions", "",
+				response);
+	Json::Value array = response["job_positions"];
+	std::map<string, Entity> jpMap = utils::entityJsonArraytoMap(array);
+	std::map<string, Entity>::iterator it;
+	it = jpMap.find(jpJson);
+	if (it != jpMap.end()) {
+		Entity e = it->second;
+		job_position = e.toJson();
+	}
+	return job_position;
+}
+
+Json::Value JobifyController::expandExperiences(Json::Value expJson){
+	Json::Value experiences = Json::arrayValue;
+	for (Json::Value::iterator it = expJson.begin(); it != expJson.end(); ++it) {
+		Json::Value value = (*it);
+		Json::Value exp;
+		std::string where = value.get("where", "").asString();
+		std::string jp = value["job_position"].asString();
+		exp["where"] = where;
+		exp["job_position"] = expandJP(jp);
+		experiences.append(exp);
+	}
+	return experiences;
+}
+
+
+Json::Value JobifyController::expandSkills(Json::Value skillsJson){
+	Json::Value skills = Json::arrayValue;
+	CurlWrapper cw;
+	JsonResponse response;
+	cout<<"antes handle get "<<endl;
+	cw.handleGet("https://still-falls-40635.herokuapp.com/skills", "",
+				response);
+	Json::Value array = response["skills"];
+
+	cout<<"antes skillsMap "<<endl;
+	std::map<string, Entity> skillsMap = utils::entityJsonArraytoMap(array);
+	for (Json::Value::iterator it = skillsJson.begin(); it != skillsJson.end(); ++it) {
+
+		cout<<"antes std::string skill = it->asString(); "<<endl;
+		std::string skill = it->asString();
+		cout<<"skill: "<<skill<<endl;
+		std::map<string, Entity>::iterator mapIt;
+		mapIt = skillsMap.find(skill);
+		if (mapIt != skillsMap.end()) {
+			Entity e = mapIt->second;
+			skills.append(e.toJson());
+		}
+	}
+	return skills;
 }
 
 bool JobifyController::handles(string method, string url) {
