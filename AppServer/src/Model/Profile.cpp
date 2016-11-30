@@ -23,7 +23,7 @@ Profile::Profile(const string &mail, const string &firstName,
 Profile::Profile(const Json::Value &jsonProfile) :
 		location() {
 
-	//cout<<"INICION CREACION PERFIL"<<endl;
+	cout<<"INICION CREACION PERFIL"<<endl;
 	this->email = jsonProfile.get("email", "").asString();
 	this->first_name = jsonProfile.get("first_name", "").asString();
 	this->last_name = jsonProfile.get("last_name", "").asString();
@@ -54,6 +54,8 @@ Profile::Profile(const Json::Value &jsonProfile) :
 		ExpMin exp(jp, where);
 		experiences.push_back(exp);
 	}
+
+	cout<<"FIN CREACION PERFIL"<<endl;
 }
 
 Json::Value Profile::profileToJSON() {
@@ -89,19 +91,23 @@ Json::Value Profile::publicProfileToJSON() {
 	jsonProfile["last_name"] = last_name;
 	jsonProfile["about"] = about;
 	jsonProfile["pic"] = pic;
+	cout<<"antes de skills"<<endl;
 	jsonProfile["skills"] = utils::setToJsonArray(skills);
 	jsonProfile["job_position"] = job_position;
 	//double latitude = location.getLatitude();
 	//double longitude = location.getLongitude();
+	cout<<"antes de loc"<<endl;
 	if (location.isValid()) {
 		jsonProfile["location"]["latitude"] = location.getLatitude();
 		jsonProfile["location"]["longitude"] = location.getLongitude();
 	}
+	cout<<"despues de location"<<endl;
 	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
 	jsonProfile["recommendations"]["count"] = getRecommendationsCount();
 	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(
 			recommendations);
 	jsonProfile["experiences"] = experiencesToJson();
+	cout<<"fin ACA"<<endl;
 	return jsonProfile;
 }
 

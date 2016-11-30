@@ -288,7 +288,7 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 		dbuser.CloseDB();
 		if (error == "") {
 			fillResponse(response, 200);
-			Json::Value contacts = expandUsers(JsonBody["contacts"]);
+			Json::Value contacts = expandContacts(JsonBody["contacts"]);
 			response["contacts"] = contacts;
 			return;
 		}
@@ -498,13 +498,13 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 	string error;
 	Json::Value users = dbuser.searchProfile(filter, error);
 	Json::Value usersArray = Json::arrayValue;
+	dbuser.CloseDB();
 	for (Json::Value::iterator it = users.begin();
 			it != users.end(); ++it) {
 		Json::Value user = (*it);
 		expandAttributes(user);
 		usersArray.append(user);
 	}
-	dbuser.CloseDB();
 	if (error == "") {
 		response["users"] = usersArray;
 		return;

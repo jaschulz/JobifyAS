@@ -61,29 +61,33 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 				cout << "error ->" << error << endl;
 				return result;
 			} else {
-				cout << "userProfile.toStyledString(): "
-						<< userProfile.toStyledString() << endl;
+				//cout << "userProfile.toStyledString(): "
+					//	<< userProfile.toStyledString() << endl;
 				Profile profile(userProfile);
-				//cout << "profile ->" << profile.profileToJSON().toStyledString() << endl;
+				if (filter.isNull()) {
+					usersArray.append(profile.publicProfileToJSON());
+					break;
+				}
+				//cout << "despues de filster ins null"<< endl;
 				string filter_job_pos = filter.get("job_position",
 						profile.getJobPosition()).asString();
-				cout << "filter_job_pos ->" << filter_job_pos << endl;
+				//cout << "filter_job_pos ->" << filter_job_pos << endl;
 				string user = filter.get("user", profile.getEmail()).asString();
 				cout << "user ->" << user << endl;
 				double latitude = filter["Location"].get("latitude",
 						profile.getLocation().getLatitude()).asDouble();
-				cout << "latitude ->" << latitude << endl;
+				//cout << "latitude ->" << latitude << endl;
 				double longitude = filter["Location"].get("longitude",
 						profile.getLocation().getLongitude()).asDouble();
-				cout << "longitude ->" << longitude << endl;
+				//cout << "longitude ->" << longitude << endl;
 				bool withinRange = true;
 				if (!filter["range"].isNull()) {
 					double range = filter.get("range", MAX_DISTANCE).asDouble();
-					cout << "range ->" << range << endl;
+					//cout << "range ->" << range << endl;
 					Location location(latitude, longitude);
 					withinRange = false;
 					if (profile.getLocation().isValid()) {
-						cout << "is valid" << endl;
+						//cout << "is valid" << endl;
 						withinRange = (location.distanceTo(
 								profile.getLocation()) < range);
 					}
@@ -94,17 +98,17 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 										!= std::string::npos) && withinRange) {
 					if (filter["skills"].isNull()) {
 						usersArray.append(profile.publicProfileToJSON());
-						cout << "skills.isNull ->" << endl;
+						//cout << "skills.isNull ->" << endl;
 					} else {
 						Json::Value skills = filter["skills"];
 
-						cout << "Antes de iterar en skills->"
-								<< skills.toStyledString() << endl;
+						//cout << "Antes de iterar en skills->"
+						//	<< skills.toStyledString() << endl;
 						for (Json::Value::iterator it =
 								filter["skills"].begin();
 								it != filter["skills"].end(); ++it) {
 							string value = it->asString();
-							cout << "skills: " << value << endl;
+							//cout << "skills: " << value << endl;
 							if (utils::setContainsValue(profile.getSkills(),
 									value)) {
 								usersArray.append(profile.publicProfileToJSON());

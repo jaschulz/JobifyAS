@@ -24,6 +24,7 @@ void JobifyController::expandAttributes(Json::Value &userJson) {
 	userJson["experiences"] = expandExperiences(userJson.get("experiences",Json::arrayValue));
 	userJson["skills"] = expandSkills(userJson.get("skills",Json::arrayValue));
 	userJson["contacts"] = expandContacts(userJson.get("contacts",Json::arrayValue));
+	cout<<"fin expand attr"<<endl;
 }
 
 Json::Value JobifyController::expandJP(std::string jpJson){
@@ -75,6 +76,7 @@ Json::Value JobifyController::expandSkills(Json::Value skillsJson){
 			skills.append(e.toJson());
 		}
 	}
+	cout<<"JobifyController::expandSkills: "<<skills.toStyledString()<<endl;
 	return skills;
 }
 
@@ -103,9 +105,9 @@ Json::Value JobifyController::expandContacts(Json::Value contactsJson){
 	for (Json::Value::iterator it = contactsJson.begin(); it != contactsJson.end(); ++it) {
 		std::string contact = it->asString();
 		Json::Value jsonProfile = db.getProfile(contact);
+		Profile profile(jsonProfile);
 		std::string error = jsonProfile.get("error", "").asString();
 		if (error == "") {
-			Profile profile(jsonProfile);
 			contacts.append(profile.getContactInfoAsJson());
 		}
 	}
