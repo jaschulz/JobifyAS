@@ -12,7 +12,7 @@ Manual de Administrador
 +-------------------------------------+--------------------------------------+
 |       Apellido y Nombre             |              Padrón                  |
 +=====================================+======================================+
-|       Lambre, Juan Manuel           |                                      |
+|       Lambre, Juan Manuel           |              95978                   |
 +-------------------------------------+--------------------------------------+
 |       Longhi, Federico              |                                      |
 +-------------------------------------+--------------------------------------+
@@ -41,7 +41,11 @@ Este script instala todo lo necesario para correr la aplicación sin inconvenien
 
 Cliente
 --------------------------------------------
+- Clonar desde el repositorio remote git:
+    - ``git clone https://github.com/fede29/Jobify
 
+- Para compilar la aplicación correr ./gradlew
 
+- El binario .apk se encuentra en ./build/outputs/apk
 
 
