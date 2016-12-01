@@ -487,10 +487,6 @@ install.sh installs every dependency so that the AppServer can be built and run 
         <td>Requires token?</td>
         <td>Yes</td>
     </tr>
-    <tr>
-      <td>Requires token?</td>
-      <td>Yes</td>
-    </tr>
   </tbody>
 </table>
 >Response: HTTP 204, HTTP 401 
@@ -509,6 +505,12 @@ install.sh installs every dependency so that the AppServer can be built and run 
     <tr>
       <td>URL</td>
       <td>/ranking</td>
+    </tr>
+    <tr>
+        <td>Parameters (Optionals)</td>
+        <td><ul>
+            <li>skills</li>
+            <li>job_position</li>
     </tr>
   </tbody>
 </table>
