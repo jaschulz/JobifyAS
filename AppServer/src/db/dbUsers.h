@@ -29,7 +29,7 @@ public:
 
 	//string addContact(string &key,Json::Value &user);
 
-	bool addContact(string &key, Json::Value &user, string &error, int code);
+	bool addContact(Profile &sender, Profile &receiver, string &error);
 
 	Json::Value getContacts(string &key);
 
@@ -39,7 +39,7 @@ public:
 	bool sendInvitation(Profile &sender, Profile &receiver, string &error,
 			int &code);
 
-	bool addContact(string &key, Json::Value &user, string &error, int &code);
+	//bool addContact(string &key, Json::Value &user, string &error, int &code);
 
 	bool acceptInvitation(Profile &sender, Profile &invitee, string &error,
 			int code);

@@ -185,6 +185,10 @@ void Profile::addReceivedInvitation(const string &sender) {
 	invitationsReceived.insert(sender);
 }
 
+void Profile::addContact(const string &contact) {
+	contacts.insert(contact);
+}
+
 set<string> &Profile::getSkills() {
 	return skills;
 }

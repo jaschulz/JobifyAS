@@ -1,4 +1,4 @@
 echo '' | \
 curl -X POST -H 'Content-type: application/json' \
--H 'Authorization: EAACEdEose0cBAK4MTNX4onT5FtZBGz5DWrtSVeW6Hsro6LybGmKIU2Va1om2RF8LqXZAjbobq2fJN3HsS3vpJ7ZC8eZBZC6bgg8Xn5CM84vWhzaLhisGx2XHkcno0ZC3pUsZCvdxzYNcZAiSNsJTCTm8Ocpp1LLeAAVN3H76J3sJkQZDZD' -d @- http://localhost:8081/api/session
+-H 'Authorization: EAACEdEose0cBAFxpuAbTyEjyeNu61If6ghZCLNwpVjPFm72M3t4CJBXwvUduNCUJqMJpmEBqyv2lnvPvFdn8mSnkqtyJc2QuEeMTkwdZC6scPXLqGxb2KZCZClVCob1eZAqfjFSeOGO5fk6d5em7gKiogzhHPG0K1HtGBbpPq4AZDZD' -d @- http://localhost:8081/api/session
 

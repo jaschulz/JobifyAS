@@ -19,7 +19,7 @@ public:
 
 	bool isValidToken(string email, string token);
 
-	void updateToken(jobifyCredentials &credentials, string &error);
+	void updateToken(Credentials &credentials, string &error);
 };
 
 #endif 

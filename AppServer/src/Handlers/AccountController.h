@@ -27,7 +27,7 @@ public:
 
 	void getFacebookData(Request &request, JsonResponse &response);
 
-	void fbLogin(Request &request, JsonResponse &response, std::string token);
+	void fbLogin(Request &request, JsonResponse &response);
 
 	void setup();
 private:

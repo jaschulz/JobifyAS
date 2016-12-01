@@ -7,6 +7,7 @@
 #include <mongoose/JsonController.h>
 #include <mongoose/Response.h>
 #include "CurlWrapper.h"
+#include "../db/dbToken.h"
 
 using namespace std;
 using namespace Mongoose;
@@ -51,7 +52,9 @@ public:
 
 	string requestToJson(Request &request, Json::Value &root);
 
-	bool isValidToken(string email, string token);
+	bool isValidToken(string token, string & error);
+
+	bool isValidTokenForUser(string token, string & error, string &email);
 };
 
 #endif 

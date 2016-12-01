@@ -36,13 +36,13 @@ std::string Entity::getDescription() {
 
 Json::Value Entity::toJson() {
 	Json::Value jsonEntity;
-	std::cout << "name: " << this->name << std::endl;
+	//std::cout << "name: " << this->name << std::endl;
 	jsonEntity["name"] = this->name;
-	std::cout << "category: " << this->category << std::endl;
+	//std::cout << "category: " << this->category << std::endl;
 	jsonEntity["category"] = this->category;
-	std::cout << "description: " << this->description << std::endl;
+	//std::cout << "description: " << this->description << std::endl;
 	jsonEntity["description"] = this->description;
-	std::cout << "creado ok" << std::endl;
+	//std::cout << "creado ok" << std::endl;
 	return jsonEntity;
 }
 

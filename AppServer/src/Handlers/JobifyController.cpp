@@ -202,11 +202,44 @@ string JobifyController::requestToJson(Request &request, Json::Value & root) {
 	return error;
 }
 
-bool JobifyController::isValidToken(string email, string token) {
+bool JobifyController::isValidToken(string token, string & error) {
+	dbToken dbTkn;
+	dbTkn.connect("./tokens");
+	string loggedUser = dbTkn.getUser(token, error);
+	dbTkn.CloseDB();
+	if (!error.empty()) {
+		error = "Invalid token: " + error;
+		return false;
+	}
 	dbCredentials credentials;
 	credentials.connect("./accounts");
-	if (!credentials.isValidToken(email, token)) {
+	if (!credentials.isValidToken(loggedUser, token)) {
 		credentials.CloseDB();
+		error = "Invalid token";
+		return false;
+	}
+	credentials.CloseDB();
+	return true;
+}
+
+bool JobifyController::isValidTokenForUser(string token, string & error, string &email) {
+	dbToken dbTkn;
+	dbTkn.connect("./tokens");
+	string loggedUser = dbTkn.getUser(token, error);
+	dbTkn.CloseDB();
+	if (!error.empty()) {
+		error = "Invalid token: " + error;
+		return false;
+	}
+	if (email.compare(loggedUser) != 0) {
+		error = "Invalid token";
+		return false;
+	}
+	dbCredentials credentials;
+	credentials.connect("./accounts");
+	if (!credentials.isValidToken(loggedUser, token)) {
+		credentials.CloseDB();
+		error = "Invalid token";
 		return false;
 	}
 	credentials.CloseDB();

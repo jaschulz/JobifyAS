@@ -21,7 +21,7 @@ void CurlWrapper::handleGet(string url, std::string authValue,
 
 	if (!authValue.empty()) {
 		std::string auth = "Authorization: OAuth " + authValue;
-		cout << "auth: " << auth << endl;
+		//cout << "auth: " << auth << endl;
 		slist1 = curl_slist_append(slist1, auth.c_str());
 	}
 	curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());

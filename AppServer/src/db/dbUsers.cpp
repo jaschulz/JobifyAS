@@ -13,14 +13,14 @@ using namespace std;
 
 #define MAX_DISTANCE 21000
 
-string dbUsers::editProfile(Profile &profile) { //string &key, Json::Value &user) {
+string dbUsers::editProfile(Profile &profile) {
 	leveldb::WriteOptions writeOptions;
 	string strJson;
 	string error = "";
 	string email = profile.getEmail();
 	leveldb::Status st = db->Get(leveldb::ReadOptions(), email, &strJson);
 	if (st.ok() != 1) {
-		error = "Failed1: " + st.ToString();
+		error = "Failed: " + email + " - " + st.ToString();
 	} else {
 		Json::Value root;
 		Json::Reader reader;
@@ -231,32 +231,33 @@ string dbUsers::putContact(string &user1, string &idNewContact) {
 	}
 	return error;
 }
-/*
- string dbUsers::addContact(string &key,Json::Value &user){
- leveldb::WriteOptions writeOptions;
- string loggedUserJson;
- string error = "";
- string newContactJson;
- string	newContact = user.get("email","").asString();
- //	cout<<"newContact: "<<newContact<<endl;
- //	cout<<"key: "<<key<<endl;
- leveldb::Status st =  db->Get(leveldb::ReadOptions(),key,&loggedUserJson);
- if (st.ok() != 1) {
- error = "Failed4: " + st.ToString();
- return error;
- }
- st =  db->Get(leveldb::ReadOptions(),newContact,&newContactJson);
- if (st.ok() != 1) {
- error = "Failed5: " + st.ToString();
- return error;
- }
- //	cout<<"loggedUserJson: "<<loggedUserJson<<endl;
- error = putContact(loggedUserJson,newContact);
- //		cout<<"addContact newContactJson: "<<newContactJson<<endl;
- error = putContact(newContactJson,key);
 
- return error;
- }*/
+bool dbUsers::addContact(Profile &sender, Profile &receiver, string &error) {
+	string key = sender.getEmail();
+	string rec_mail = receiver.getEmail();
+	if (utils::setContainsValue(sender.getContacts(), rec_mail)) {
+		error = rec_mail + " is already a contact.";
+		cout<<error<<endl;
+		return false;
+	}
+	sender.addContact(rec_mail);
+	receiver.addContact(key);
+	cout<<sender.profileToJSON().toStyledString()<<endl;
+	leveldb::Status st = db->Put(leveldb::WriteOptions(), key,
+			sender.profileToJSON().toStyledString());
+	if (st.ok() != 1) {
+		error = "Error finding sender: " + st.ToString();
+		return false;
+	}
+	cout<<receiver.profileToJSON().toStyledString()<<endl;
+	st = db->Put(leveldb::WriteOptions(), rec_mail,
+			receiver.profileToJSON().toStyledString());
+	if (st.ok() != 1) {
+		error = "Error finding receiver: " + st.ToString();
+		return false;
+	}
+	return true;
+}
 
 bool dbUsers::addSentInvitation(Profile &sender, Profile &receiver,
 		string &error) {
@@ -368,14 +369,14 @@ bool dbUsers::sendInvitation(Profile &sender, Profile &receiver, string &error,
 		int &code) {
 	error = "";
 	code = 201;
-	std::string value;
+	/*std::string value;
 	leveldb::Status st = db->Get(leveldb::ReadOptions(), receiver.getEmail(), &value);
 	if (!addSentInvitation(sender, receiver, error)
-			|| !addReceivedInvitation(sender, receiver, error)) {
+			|| !addReceivedInvitation(sender, receiver, error)) {*/
+	if (!addContact(sender, receiver, error)) {
 		code = 401;
 		return false;
 	}
-	//		cout<<"despues if"<<endl;
 	return true;
 }
 /*

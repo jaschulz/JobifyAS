@@ -4,6 +4,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include "../src/Handlers/AccountController.h"
 #include "JobifyControllerTest.h"
+#include <Handlers/CurlWrapper.h>
 
 using namespace CPPUNIT_NS;
 

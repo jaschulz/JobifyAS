@@ -9,9 +9,9 @@
 
 bool dbToken::addNewToken(string &token, string &user, string &error){
 	leveldb::WriteOptions writeOptions;
-	leveldb::Status st = db->Put(writeOptions, user, token);
+	leveldb::Status st = db->Put(writeOptions, token, user);
 	if (st.ok() != 1) {
-		error = "Failed: " + st.ToString();
+		error = "Failure: " + st.ToString();
 		return false;
 	}
 	return true;

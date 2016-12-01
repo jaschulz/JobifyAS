@@ -78,6 +78,8 @@ public:
 
 	void addReceivedInvitation(const string &sender);
 
+	void addContact(const string &contact);
+
 	set<string> &getSkills();
 
 	set<string> &getContacts();

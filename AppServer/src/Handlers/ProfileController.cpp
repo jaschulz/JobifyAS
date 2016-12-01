@@ -34,22 +34,6 @@ ProfileController::ProfileController() {
  }
  }
  */
-/*
- bool ProfileController::validateEntity(std::map<string, Entity> entitiesMap,
- std::map<string, Category> CategoriesMap, Entity entity,
- std::string &error) {
- std::string cat = entity.getCategory();
- SSController sharedServer;
- if (CategoriesMap.find(cat) == CategoriesMap.end()) {
- if (entitiesMap.find(entity.getName()) != entitiesMap.end()) {
- error = " already exists for another category.";
- return false;
- } else {
-
- }
- }
- }
- */
 
 bool ProfileController::validateCategory(Entity entity,
 		std::map<string, Category> CategoriesMap) {
@@ -80,7 +64,7 @@ bool ProfileController::validateSkills(std::map<string, Category> CategoriesMap,
 			if (it != skillsMap.end()) {
 				Entity e = it->second;
 				if (e == skill) {
-					cout << "break" << endl;
+					//cout << "break" << endl;
 					break;
 				} else {
 					error = "Skill " + skill.getName()
@@ -215,9 +199,17 @@ void ProfileController::normalizeJsonProfile(Json::Value &jsonProfile) {
 void ProfileController::editProfile(Request &request, JsonResponse &response) {
 	char email[50];
 	string data = request.getData();
-//TODO verify token
-	string error = "Wrong number or type of parameters.";
+
+	string error;
+	std::string token = request.getHeaderKeyValue("token");
+	error = "Wrong number or type of parameters.";
 	if (1 == sscanf(request.getUrl().c_str(), "/api/users/%s", email)) {
+		string mail(email);
+		if (!isValidTokenForUser(token, error, mail)) {
+			fillResponse(response,401);
+			response["error"] = error;
+			return;
+		}
 		error = "";
 		Json::Reader reader;
 		Json::Value JsonBody;
@@ -228,17 +220,20 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 				dbuser.connect("./usersdb");
 				cout << "antes de normalizeJsonProfile" << endl;
 				normalizeJsonProfile(JsonBody);
+
+				cout << "despues de normalizeJsonProfile" << endl;
 				Profile profile(JsonBody);
-				//string key(email);
+				profile.setEmail(mail);
 				error = dbuser.editProfile(profile); //key, JsonBody);
 				dbuser.CloseDB();
 				if (error == "") {
 					fillResponse(response, 200);
-					Json::Value userJson= profile.publicProfileToJSON();
+					Json::Value userJson = profile.publicProfileToJSON();
 					expandAttributes(userJson);
 					response["user"] = userJson;
 					return;
 				}
+				error = "Error editing profile: " + error;
 			} else {
 				error = "Incorrect input: " + error;
 			}
@@ -254,17 +249,11 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 	char email[50];
 	string error;
 
-	string token = request.getHeaderKeyValue("Authorization");
-	dbToken dbTkn;
-	dbTkn.connect("./tokens");
-	string loggedUser = dbTkn.getUser(token, error);
-	dbTkn.CloseDB();
-	if (!error.isEmpty()) {
-		request["error"] = error;
-		return;
-	}
-	if (!isValidToken(loggedUser, token)) {
-
+	string token = request.getHeaderKeyValue("token");
+	cout << "token: " << token << endl;
+	if (!isValidToken(token, error)) {
+		fillResponse(response,401);
+		response["error"] = "ProfileController::getProfile: " + error;
 		return;
 	}
 	error = "Wrong number or type of parameters.";
@@ -278,7 +267,7 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 		dbuser.CloseDB();
 		if (error == "") {
 			fillResponse(response, 200);
-			Json::Value userJson= profile.publicProfileToJSON();
+			Json::Value userJson = profile.publicProfileToJSON();
 			expandAttributes(userJson);
 			response["user"] = userJson;
 			return;
@@ -290,11 +279,20 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 
 void ProfileController::getContacts(Request &request, JsonResponse &response) {
 	char email[50];
-	string error = "Wrong number or type of parameters.";
+
+	string error;
+
+	error = "Wrong number or type of parameters.";
 	if (1
 			== sscanf(request.getUrl().c_str(), "/api/users/%99[^/]/contacts",
 					email)) {
 		string mail(email);
+		string token = request.getHeaderKeyValue("token");
+		if (!isValidToken(token, error)) {
+			fillResponse(response,401);
+			response["error"] = error;
+			return;
+		}
 		Json::Value JsonBody;
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
@@ -315,13 +313,20 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 void ProfileController::setLocation(Request &request, JsonResponse &response) {
 	char email[50];
 	string data = request.getData();
+	string error;
 	if (1
 			== sscanf(request.getUrl().c_str(), "/api/users/%99[^/]/location",
 					email)) {
 		string mail(email);
+
+		string token = request.getHeaderKeyValue("token");
+		if (!isValidTokenForUser(token, error, mail)) {
+			fillResponse(response,401);
+			response["error"] = error;
+			return;
+		}
 		Json::Value JsonBody;
 		Json::Reader reader;
-		string error = "";
 		if (reader.parse(data.c_str(), JsonBody)) {
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
@@ -346,12 +351,20 @@ void ProfileController::setLocation(Request &request, JsonResponse &response) {
 void ProfileController::addContact(Request &request, JsonResponse &response) {
 	char email[50];
 	int code = 401;
-	string error = "Wrong number or type of parameters.";
+	string error;
+
+	error = "Wrong number or type of parameters.";
 	string data = request.getData();
 	if (1
 			== sscanf(request.getUrl().c_str(), "/api/users/%99[^/]/contacts",
 					email)) {
 		string mail(email);
+		string token = request.getHeaderKeyValue("token");
+		if (!isValidTokenForUser(token, error, mail)) {
+			fillResponse(response,401);
+			response["error"] = error;
+			return;
+		}
 		Json::Value JsonBody;
 		Json::Reader reader;
 		error = "";
@@ -390,87 +403,107 @@ void ProfileController::recommendUser(Request &request,
 		JsonResponse &response) {
 	char email[50];
 	int code = 401;
-	string error = "Wrong number or type of parameters.";
+	string error;
+
+	string token = request.getHeaderKeyValue("token");
+	if (!isValidToken(token, error)) {
+		fillResponse(response,code);
+		response["error"] = error;
+		return;
+	}
+
+	error = "Wrong number or type of parameters.";
 	string data = request.getData();
 	if (1
 			== sscanf(request.getUrl().c_str(),
 					"/api/users/%99[^/]/recommendation", email)) {
-		string mail(email);
-		cout << "mail:" << mail << endl;
-		Json::Value JsonBody;
-		Json::Reader reader;
-		string error = "";
-		if (reader.parse(data.c_str(), JsonBody)) {
-			int i = 0;
-			string recommendedUser = JsonBody.get("email", "").asString();
-			cout << "recommendedUser:" << recommendedUser << endl;
-			dbUsers dbuser;
-			dbuser.connect("./usersdb");
-			Json::Value senderJson = dbuser.getProfile(mail);
-			Json::Value receiverJson = dbuser.getProfile(recommendedUser);
-			if (senderJson["error"].isNull()
-					&& receiverJson["error"].isNull()) {
-				cout << "senderJson: " << senderJson.toStyledString();
-				Profile sender(senderJson);
-				Profile receiver(receiverJson);
-				dbuser.recommendUser(sender, receiver);
-				dbuser.CloseDB();
-				fillResponse(response, 201);
-				response["user"] = JsonBody;
-				return;
-			}
-			error = senderJson["error"].asString() + " - "
-					+ receiverJson["error"].asString();
-			dbuser.CloseDB();
-		} else {
-			error = reader.getFormattedErrorMessages();
+		error ="";
+		string recommendedUser(email);
+		cout << "recommendedUser:" << recommendedUser << endl;
+		dbToken dbTkn;
+		dbTkn.connect("./tokens");
+		string loggedUser = dbTkn.getUser(token, error);
+		dbTkn.CloseDB();
+		if (!error.empty()) {
+			fillResponse(response, code);
+			response["error"] = "Problems retrieving user: " + error;
+			return;
 		}
+		dbUsers dbuser;
+		dbuser.connect("./usersdb");
+		Json::Value senderJson = dbuser.getProfile(loggedUser);
+		Json::Value receiverJson = dbuser.getProfile(recommendedUser);
+		if (senderJson["error"].isNull() && receiverJson["error"].isNull()) {
+			Profile sender(senderJson);
+			Profile receiver(receiverJson);
+			dbuser.recommendUser(sender, receiver);
+			dbuser.CloseDB();
+			fillResponse(response, 204);
+			//Json::Value userJson = receiver.publicProfileToJSON();
+			//expandAttributes(userJson);
+			//response["user"] = userJson;
+			return;
+		}
+		error = senderJson["error"].asString() + " - "
+				+ receiverJson["error"].asString();
+		dbuser.CloseDB();
 	}
 	fillResponse(response, code);
 	response["error"] = error;
 }
 
-void ProfileController::acceptInvitation(Request &request,
-		JsonResponse &response) {
-	char email[50];
-	int code = 401;
-	string error = "Wrong number or type of parameters.";
-	string data = request.getData();
-	if (1
-			== sscanf(request.getUrl().c_str(), "/api/users/%99[^/]/invitation",
-					email)) {
-		string mail(email);
-		Json::Value JsonBody;
-		Json::Reader reader;
-		string error = "";
-		if (reader.parse(data.c_str(), JsonBody)) {
-			int i = 0;
-			string newContact = JsonBody.get("email", "").asString();
-			dbUsers dbuser;
-			dbuser.connect("./usersdb");
-			Json::Value receiverJson = dbuser.getProfile(mail);
-			Json::Value senderJson = dbuser.getProfile(newContact);
-			if (senderJson["error"].isNull()
-					&& receiverJson["error"].isNull()) {
-				Profile sender(senderJson);
-				Profile receiver(receiverJson);
-				if (dbuser.acceptInvitation(sender, receiver, error, code)) {
-					dbuser.CloseDB();
-					fillResponse(response, code);
-					response["user"] = JsonBody;
-					return;
-				}
-			}
-			error = senderJson["error"].asString() + " - "
-					+ receiverJson["error"].asString();
-			dbuser.CloseDB();
-		} else {
-			error = reader.getFormattedErrorMessages();
-		}
-	}
-	fillResponse(response, code);
-	response["error"] = error;
-}
+/*
+ void ProfileController::acceptInvitation(Request &request,
+ JsonResponse &response) {
+ char email[50];
+ int code = 401;
+ string error;
+
+ string token = request.getHeaderKeyValue("token");
+ if (!isValidToken(token, error)) {
+ fillResponse(response,401);
+ response["error"] = error;
+ return;
+ }
+
+ error = "Wrong number or type of parameters.";
+ string data = request.getData();
+ if (1
+ == sscanf(request.getUrl().c_str(), "/api/users/%99[^/]/invitation",
+ email)) {
+ string mail(email);
+ Json::Value JsonBody;
+ Json::Reader reader;
+ string error = "";
+ if (reader.parse(data.c_str(), JsonBody)) {
+ int i = 0;
+ string newContact = JsonBody.get("email", "").asString();
+ dbUsers dbuser;
+ dbuser.connect("./usersdb");
+ Json::Value receiverJson = dbuser.getProfile(mail);
+ Json::Value senderJson = dbuser.getProfile(newContact);
+ if (senderJson["error"].isNull()
+ && receiverJson["error"].isNull()) {
+ Profile sender(senderJson);
+ Profile receiver(receiverJson);
+ if (dbuser.acceptInvitation(sender, receiver, error, code)) {
+ dbuser.CloseDB();
+ fillResponse(response, code);
+ response["user"] = JsonBody;
+ return;
+ }
+ }
+ error = senderJson["error"].asString() + " - "
+ + receiverJson["error"].asString();
+ dbuser.CloseDB();
+ } else {
+ error = reader.getFormattedErrorMessages();
+ }
+ }
+ fillResponse(response, code);
+ response["error"] = error;
+ }
+ */
 
 void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 	string job_pos = request.get("job_position", "");
@@ -513,8 +546,7 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 	Json::Value users = dbuser.searchProfile(filter, error);
 	Json::Value usersArray = Json::arrayValue;
 	dbuser.CloseDB();
-	for (Json::Value::iterator it = users.begin();
-			it != users.end(); ++it) {
+	for (Json::Value::iterator it = users.begin(); it != users.end(); ++it) {
 		Json::Value user = (*it);
 		expandAttributes(user);
 		usersArray.append(user);
@@ -572,8 +604,8 @@ void ProfileController::setup() {
 			JsonResponse);
 	addRouteResponse("POST", "/users/{email}/contacts", ProfileController,
 			addContact, JsonResponse);
-	addRouteResponse("POST", "/users/{email}/invitation", ProfileController,
-			acceptInvitation, JsonResponse);
+	//addRouteResponse("POST", "/users/{email}/invitation", ProfileController,
+	//	acceptInvitation, JsonResponse);
 	addRouteResponse("GET", "/users/{email}/contacts", ProfileController,
 			getContacts, JsonResponse);
 	addRouteResponse("POST", "/users/{email}/location", ProfileController,

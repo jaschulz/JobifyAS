@@ -26,7 +26,7 @@ bool dbCredentials::addNewUser(Json::Value user, string &error) {
 	return false;
 }
 
-void dbCredentials::updateToken(jobifyCredentials &credentials, string &error) {
+void dbCredentials::updateToken(Credentials &credentials, string &error) {
 	leveldb::Status st = db->Put(leveldb::WriteOptions(), credentials.getEmail(), credentials.toJSON().toStyledString());
 	if (st.ok() != 1) {
 			error = "Failed: " + st.ToString();

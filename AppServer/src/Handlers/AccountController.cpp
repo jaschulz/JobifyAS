@@ -92,26 +92,26 @@ bool AccountController::addNewUser(Credentials &credentials, string &error) {
  }
  */
 
-void AccountController::fbLogin(Request &request, JsonResponse &response, std::string token) {
-
-	Json::Reader reader;
-	Json::Value root;
-	std::string data = request.getData();
-
-	if (reader.parse(data.c_str(), root)) {
-		fillResponse(response, 401);
-		response["error"] = reader.getFormattedErrorMessages();
-	}
+void AccountController::fbLogin(Request &request, JsonResponse &response) {
 	FBHandler fbh;
-
+	string token;
 	JsonResponse fbBasicData = fbh.getBasicData(request);
 	cout << fbBasicData.toStyledString() << endl;
 	if (fbBasicData["error"].isNull()) {
 		string email = fbBasicData.get("email", "").asString();
 		string fbid = fbBasicData.get("id", "").asString();
-		string token = generateToken(email, pass);
+		token = generateToken(email, "");
 		fbCredentials credentials(email, fbid, token);
+		dbToken dbTkn;
+		dbTkn.connect("./tokens");
 		string error;
+		bool tokenCreated = dbTkn.addNewToken(token, email,error);
+		dbTkn.CloseDB();
+		if (!tokenCreated) {
+			fillResponse(response, 401);
+			response["error"] = error;
+			return;
+		}
 		if (addNewUser(credentials, error)) {
 			dbUsers dbuser;
 			JsonResponse fbData = fbh.getData(request);
@@ -148,16 +148,25 @@ void AccountController::fbLogin(Request &request, JsonResponse &response, std::s
 				response["error"] = fbData["error"]["message"];
 			}
 		} else {
+			error = "";
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
 			Json::Value jsonProfile = dbuser.getProfile(email);
 			dbuser.CloseDB();
-			Profile profile(jsonProfile);
-			fillResponse(response, 200);
-			response["token"] = token;
-			Json::Value userJson= profile.publicProfileToJSON();
-			expandAttributes(userJson);
-			response["user"] = userJson;
+			dbCredentials dbCred;
+			dbCred.connect("./accounts");
+			dbCred.updateToken(credentials, error);
+			dbCred.CloseDB();
+			if (error.empty()) {
+				Profile profile(jsonProfile);
+				fillResponse(response, 200);
+				response["token"] = token;
+				Json::Value userJson= profile.publicProfileToJSON();
+				expandAttributes(userJson);
+				response["user"] = userJson;
+			} else {
+				response["error"] = "Error updating token: " + error;
+			}
 		}
 
 	} else {
@@ -167,42 +176,37 @@ void AccountController::fbLogin(Request &request, JsonResponse &response, std::s
 
 void AccountController::login(Request &request, JsonResponse &response) {
 
-	Json::Reader reader;
-
-	std::string data = request.getData();
-
-	Json::Value req;
-	Json::Value root;
-
-	if (!reader.parse(data.c_str(), root)) {
-		fillResponse(response, 401);
-		response["error"] = reader.getFormattedErrorMessages();
-		return;
-	}
-	string email = root.get("email", "").asString();
-	string pass = root.get("password", "").asString();
-	string token = generateToken(email, pass);
-
-	dbToken dbTkn;
-	dbTkn.connect("./tokens");
-	string error;
-	bool tokenCreated = dbTkn.addNewToken(token, email,error);
-	dbTkn.CloseDB();
-
-	if (!tokenCreated) {
-		fillResponse(response, 401);
-		response["error"] = error;
-		return;
-	}
-
 	if (!request.getHeaderKeyValue("Authorization").empty()) {
-		fbLogin(request, response, token);
+		fbLogin(request, response);
 	} else {
-		jobifyCredentials credentials(email, pass);
+		Json::Reader reader;
+
+		std::string data = request.getData();
+
+		Json::Value req;
+		Json::Value root;
+		if (!reader.parse(data.c_str(), root)) {
+			fillResponse(response, 401);
+			response["error"] = reader.getFormattedErrorMessages();
+			return;
+		}
+		string email = root.get("email", "").asString();
+		string pass = root.get("password", "").asString();
+		string token = generateToken(email, pass);
+
+		dbToken dbTkn;
+		dbTkn.connect("./tokens");
+		string error;
+		bool tokenCreated = dbTkn.addNewToken(token, email,error);
+		dbTkn.CloseDB();
+		if (!tokenCreated) {
+			fillResponse(response, 401);
+			response["error"] = error;
+			return;
+		}
+		jobifyCredentials credentials(email, pass, token);
 		dbCredentials dbCred;
 		dbCred.connect("./accounts");
-		string error;
-
 		if (dbCred.verifyLogin(credentials, error)) {
 			dbUsers dbuser;
 			dbuser.connect("./usersdb");
@@ -225,25 +229,7 @@ void AccountController::login(Request &request, JsonResponse &response) {
 		response["error"] = error;
 	}
 }
-/*
- void AccountController::getFacebookData(Request &request,
- JsonResponse &response) {
- Json::Reader reader;
- std::string data = request.getData();
- Json::Value root;
- "header: " << request.getHeaderKeyValue("Authorization") << endl;
- string token = root["token"].asString();
- string fbid = root["fbid"].asString();
- CurlWrapper ss;
- ss.handleGet(
- "https://graph.facebook.com/v2.8/" + fbid
- + "?fields=about,birthday,email,first_name,gender,last_name,location",
- request, response);
- string locationId = response["location"]["id"].asString();
- ss.handleGet(
- "https://graph.facebook.com/v2.8/" + locationId
- + "?fields=location", request, response);
- }*/
+
 
 string AccountController::generateToken(const string &email,
 		const string &password) const {
