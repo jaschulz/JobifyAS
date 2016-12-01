@@ -290,7 +290,7 @@ install.sh installs every dependency so that the AppServer can be built and run 
     </tr>
     <tr>
       <td>Method</td>
-      <td>PUT</td>
+      <td>POST</td>
     </tr>
     <tr>
       <td>URL</td>

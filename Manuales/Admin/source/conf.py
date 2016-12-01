@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# matchApp documentation build configuration file, created by
+# Jobify documentation build configuration file, created by
 # sphinx-quickstart on Wed Oct 28 22:06:21 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -49,8 +49,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'matchApp'
-copyright = u'2016, Grupo10'
+project = u'Jobify'
+copyright = u'2016, Grupo8'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -182,7 +182,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'matchAppdoc'
+htmlhelp_basename = 'Jobify'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -202,8 +202,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'matchApp.tex', u'matchApp Documentation',
-   u'Grupo10', 'manual'),
+  ('index', 'Jobify.tex', u'Jobify Documentation',
+   u'Grupo8', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -232,8 +232,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'matchApp', u'matchApp Documentation',
-     [u'Grupo10'], 1)
+    ('index', 'Jobify', u'Jobify Documentation',
+     [u'Grupo8'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -246,8 +246,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'matchApp', u'matchApp Documentation',
-   u'Grupo10', 'matchApp', 'One line description of project.',
+  ('index', 'Jobify', u'Jobify Documentation',
+   u'Grupo8', 'Jobify', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -267,13 +267,13 @@ texinfo_documents = [
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'matchApp'
-epub_author = u'Grupo10'
-epub_publisher = u'Grupo10'
-epub_copyright = u'2016, Grupo10'
+epub_title = u'Jobify'
+epub_author = u'Grupo8'
+epub_publisher = u'Grupo8'
+epub_copyright = u'2016, Grupo8'
 
 # The basename for the epub file. It defaults to the project name.
-#epub_basename = u'matchApp'
+#epub_basename = 
 
 # The HTML theme for the epub output. Since the default themes are not optimized
 # for small screen space, using the same theme for HTML and epub output is
