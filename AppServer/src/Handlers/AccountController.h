@@ -6,6 +6,7 @@
 #include <signal.h>
 #include "JobifyController.h"
 #include "../Model/Profile.h"
+#include "../db/dbToken.h"
 #include "../Model/Credentials.h"
 
 using namespace std;
@@ -26,7 +27,7 @@ public:
 
 	void getFacebookData(Request &request, JsonResponse &response);
 
-	void fbLogin(Request &request, JsonResponse &response);
+	void fbLogin(Request &request, JsonResponse &response, std::string token);
 
 	void setup();
 private:

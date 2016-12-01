@@ -36,9 +36,12 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 		string email = root.get("email", "").asString();
 		string pass = root.get("password", "").asString();
 		string token = generateToken(email, pass);
+		dbToken dbTkn;
+		dbTkn.connect("./tokens");
+		bool tokenCreated = dbTkn.addNewToken(token, email,error);
+		dbTkn.CloseDB();
 		jobifyCredentials credentials(email, pass, token);
-
-		if (addNewUser(credentials, error)) {
+		if (tokenCreated && addNewUser(credentials, error)) {
 			Profile profile(email);
 			Json::Value JsonBody = profile.profileToJSON();
 			dbUsers dbuser;
@@ -46,13 +49,19 @@ void AccountController::registerUser(Request &request, JsonResponse &response) {
 			error = dbuser.addProfile(email, JsonBody);
 			dbuser.CloseDB();
 			if (error.compare("") == 0) {
-				fillResponse(response, 200);
-				response["token"] = token;
+				dbCredentials dbCred;
+				dbCred.connect("./accounts");
+				dbCred.updateToken(credentials, error);
+				dbCred.CloseDB();
+				if (error.compare("") == 0) {
+					fillResponse(response, 200);
+					response["token"] = token;
+					return;
+				}
 			}
-		} else {
-			fillResponse(response, 401);
-			response["error"] = error;
 		}
+		fillResponse(response, 401);
+		response["error"] = error;
 	}
 }
 
@@ -83,7 +92,7 @@ bool AccountController::addNewUser(Credentials &credentials, string &error) {
  }
  */
 
-void AccountController::fbLogin(Request &request, JsonResponse &response) {
+void AccountController::fbLogin(Request &request, JsonResponse &response, std::string token) {
 
 	Json::Reader reader;
 	Json::Value root;
@@ -100,7 +109,7 @@ void AccountController::fbLogin(Request &request, JsonResponse &response) {
 	if (fbBasicData["error"].isNull()) {
 		string email = fbBasicData.get("email", "").asString();
 		string fbid = fbBasicData.get("id", "").asString();
-		string token = generateToken(email, "");
+		string token = generateToken(email, pass);
 		fbCredentials credentials(email, fbid, token);
 		string error;
 		if (addNewUser(credentials, error)) {
@@ -165,20 +174,31 @@ void AccountController::login(Request &request, JsonResponse &response) {
 	Json::Value req;
 	Json::Value root;
 
+	if (!reader.parse(data.c_str(), root)) {
+		fillResponse(response, 401);
+		response["error"] = reader.getFormattedErrorMessages();
+		return;
+	}
+	string email = root.get("email", "").asString();
+	string pass = root.get("password", "").asString();
+	string token = generateToken(email, pass);
+
+	dbToken dbTkn;
+	dbTkn.connect("./tokens");
+	string error;
+	bool tokenCreated = dbTkn.addNewToken(token, email,error);
+	dbTkn.CloseDB();
+
+	if (!tokenCreated) {
+		fillResponse(response, 401);
+		response["error"] = error;
+		return;
+	}
+
 	if (!request.getHeaderKeyValue("Authorization").empty()) {
-		fbLogin(request, response);
+		fbLogin(request, response, token);
 	} else {
-
-		if (!reader.parse(data.c_str(), root)) {
-			fillResponse(response, 401);
-			response["error"] = reader.getFormattedErrorMessages();
-			return;
-		}
-		string email = root.get("email", "").asString();
-		string pass = root.get("password", "").asString();
-		string token = generateToken(email, pass);
-		jobifyCredentials credentials(email, pass, token);
-
+		jobifyCredentials credentials(email, pass);
 		dbCredentials dbCred;
 		dbCred.connect("./accounts");
 		string error;
@@ -189,6 +209,7 @@ void AccountController::login(Request &request, JsonResponse &response) {
 			Json::Value jsonProfile = dbuser.getProfile(email);
 			Profile profile(jsonProfile);
 			dbuser.CloseDB();
+			dbCred.updateToken(credentials, error);
 			dbCred.CloseDB();
 			if (error == "") {
 				fillResponse(response, 200);

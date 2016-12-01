@@ -252,7 +252,22 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 
 void ProfileController::getProfile(Request &request, JsonResponse &response) {
 	char email[50];
-	string error = "Wrong number or type of parameters.";
+	string error;
+
+	string token = request.getHeaderKeyValue("Authorization");
+	dbToken dbTkn;
+	dbTkn.connect("./tokens");
+	string loggedUser = dbTkn.getUser(token, error);
+	dbTkn.CloseDB();
+	if (!error.isEmpty()) {
+		request["error"] = error;
+		return;
+	}
+	if (!isValidToken(loggedUser, token)) {
+
+		return;
+	}
+	error = "Wrong number or type of parameters.";
 	if (1 == sscanf(request.getUrl().c_str(), "/api/users/%99[^/]", email)) {
 		string mail(email);
 		dbUsers dbuser;

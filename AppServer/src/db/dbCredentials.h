@@ -18,6 +18,8 @@ public:
 	bool verifyLogin(jobifyCredentials &credentials, string &error);
 
 	bool isValidToken(string email, string token);
+
+	void updateToken(jobifyCredentials &credentials, string &error);
 };
 
 #endif 
