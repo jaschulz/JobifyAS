@@ -12,7 +12,7 @@ Documentación Técnica
 +-------------------------------------+--------------------------------------+
 |       Apellido y Nombre             |              Padrón                  |
 +=====================================+======================================+
-|       Lambre, Juan Manuel           |                                      |
+|       Lambre, Juan Manuel           |              95978                   |
 +-------------------------------------+--------------------------------------+
 |       Longhi, Federico              |                                      |
 +-------------------------------------+--------------------------------------+
@@ -26,7 +26,17 @@ Tecnologías utilizadas
 Cliente
 ----------------------------------------
 
-
+- Pager Sliding Tabstrip 1.0.1 (astuetz)
+- OkHttp 3.4.1 (squareup)
+- Picasso 2.5.2 (squareup)
+- Gson 2.4
+- CircleImageView 2.1.0 (hdodenhof)
+- ViewPager Indicator 2.4.1 (JakeWharton)
+- Facebook Android SDK 4.5.0
+- FAB 1.1.2 (shell-software)
+- Firebase Auth 9.8.0
+- Firebase UI 1.0.0
+- Firebase messaging 9.6.1
 
 
 Application Server
@@ -312,8 +322,6 @@ Sharedserver
 
 
 
-Client
---------------------------------------------
 
 
 ============================================
