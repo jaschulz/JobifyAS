@@ -22,8 +22,6 @@ Profile::Profile(const string &mail, const string &firstName,
 
 Profile::Profile(const Json::Value &jsonProfile) :
 		location() {
-
-	cout<<"INICION CREACION PERFIL"<<endl;
 	this->email = jsonProfile.get("email", "").asString();
 	this->first_name = jsonProfile.get("first_name", "").asString();
 	this->last_name = jsonProfile.get("last_name", "").asString();
@@ -54,8 +52,6 @@ Profile::Profile(const Json::Value &jsonProfile) :
 		ExpMin exp(jp, where);
 		experiences.push_back(exp);
 	}
-
-	cout<<"FIN CREACION PERFIL"<<endl;
 }
 
 Json::Value Profile::profileToJSON() {

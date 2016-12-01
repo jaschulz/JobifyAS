@@ -71,30 +71,35 @@ Json::Value dbUsers::searchProfile(Json::Value &filter, string &error) {
 				//cout << "despues de filster ins null"<< endl;
 				string filter_job_pos = filter.get("job_position",
 						profile.getJobPosition()).asString();
-				//cout << "filter_job_pos ->" << filter_job_pos << endl;
+				cout << "filter_job_pos ->" << filter_job_pos << endl;
 				string user = filter.get("user", profile.getEmail()).asString();
+				transform(user.begin(), user.end(), user.begin(), ::toupper);
 				cout << "user ->" << user << endl;
 				double latitude = filter["Location"].get("latitude",
 						profile.getLocation().getLatitude()).asDouble();
-				//cout << "latitude ->" << latitude << endl;
+				cout << "latitude ->" << latitude << endl;
 				double longitude = filter["Location"].get("longitude",
 						profile.getLocation().getLongitude()).asDouble();
-				//cout << "longitude ->" << longitude << endl;
+				cout << "longitude ->" << longitude << endl;
 				bool withinRange = true;
 				if (!filter["range"].isNull()) {
 					double range = filter.get("range", MAX_DISTANCE).asDouble();
-					//cout << "range ->" << range << endl;
+					cout << "range ->" << range << endl;
 					Location location(latitude, longitude);
 					withinRange = false;
 					if (profile.getLocation().isValid()) {
-						//cout << "is valid" << endl;
+						cout << "is valid" << endl;
 						withinRange = (location.distanceTo(
 								profile.getLocation()) < range);
 					}
+
 				}
+				std::string mail = profile.getEmail();
+				transform(mail.begin(), mail.end(), mail.begin(), ::toupper);
+				std::string lName = profile.getEmail();
+				transform(lName.begin(), lName.end(), lName.begin(), ::toupper);
 				if (profile.getJobPosition().compare(filter_job_pos) == 0
-						&& (profile.getEmail().find(user) != std::string::npos
-								|| profile.getLastName().find(user)
+						&& (mail.find(user) != std::string::npos || lName.find(user)
 										!= std::string::npos) && withinRange) {
 					if (filter["skills"].isNull()) {
 						usersArray.append(profile.publicProfileToJSON());

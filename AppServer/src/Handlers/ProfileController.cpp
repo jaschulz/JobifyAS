@@ -489,10 +489,9 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 		filter["Location"]["longitude"] = longitude;
 	}
 	if (!user.empty()) {
-		transform(user.begin(), user.end(), user.begin(), ::toupper);
 		filter["user"] = user;
 	}
-	//cout << "filter: " << filter.toStyledString() << endl;
+	cout << "filter: " << filter.toStyledString() << endl;
 	dbUsers dbuser;
 	dbuser.connect("./usersdb");
 	string error;
