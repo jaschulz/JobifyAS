@@ -12,18 +12,6 @@
 
 install.sh installs every dependency so that the AppServer can be built and run flawlessly.
 
-**Simple Test**
-
-1. cd AppServer/scripts
-
-2. sh prueba.sh
-
-**Checkpoint 3**
-
-1. POST Requests al SharedServer. Incompleto -> Segmentation Fault. (resuelto)
-
-2. Uso de token para validación.
-
 ## REST API
 
 ### Objects
@@ -214,7 +202,6 @@ install.sh installs every dependency so that the AppServer can be built and run 
 >```
 >{
 >    user: USER
->    relationship: string (contact/invitation Sent/invitation Received/None)
 >}
 >```
 
@@ -507,4 +494,28 @@ install.sh installs every dependency so that the AppServer can be built and run 
   </tbody>
 </table>
 >Response: HTTP 204, HTTP 401 
+
+#### User's Ranking
+><table>
+  <tbody>
+    <tr>
+      <th>Attribute</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td>Method</td>
+      <td>GET</td>
+    </tr>
+    <tr>
+      <td>URL</td>
+      <td>/ranking</td>
+    </tr>
+  </tbody>
+</table>
+>Response (HTTP 200 OK):
+>```
+>{
+>    users: [USERS]
+>}
+>```
 
