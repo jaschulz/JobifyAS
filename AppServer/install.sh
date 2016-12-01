@@ -65,4 +65,4 @@ cmake .. && make
 
 
 #corro para ejecutar los tests
-./appServer &
+./appServer
