@@ -52,9 +52,9 @@ public:
 
 	string requestToJson(Request &request, Json::Value &root);
 
-	bool isValidToken(string token, string & error);
+	bool isValidToken(string & token, string & error);
 
-	bool isValidTokenForUser(string token, string & error, string &email);
+	bool isValidTokenForUser(string & token, string & error, string &email);
 };
 
 #endif 

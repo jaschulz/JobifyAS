@@ -205,6 +205,7 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 	error = "Wrong number or type of parameters.";
 	if (1 == sscanf(request.getUrl().c_str(), "/api/users/%s", email)) {
 		string mail(email);
+		error = "";
 		if (!isValidTokenForUser(token, error, mail)) {
 			fillResponse(response,401);
 			response["error"] = error;
@@ -352,14 +353,13 @@ void ProfileController::addContact(Request &request, JsonResponse &response) {
 	char email[50];
 	int code = 401;
 	string error;
-
-	error = "Wrong number or type of parameters.";
 	string data = request.getData();
 	if (1
 			== sscanf(request.getUrl().c_str(), "/api/users/%99[^/]/contacts",
 					email)) {
 		string mail(email);
 		string token = request.getHeaderKeyValue("token");
+		error = "";
 		if (!isValidTokenForUser(token, error, mail)) {
 			fillResponse(response,401);
 			response["error"] = error;

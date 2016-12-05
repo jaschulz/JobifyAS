@@ -202,7 +202,7 @@ string JobifyController::requestToJson(Request &request, Json::Value & root) {
 	return error;
 }
 
-bool JobifyController::isValidToken(string token, string & error) {
+bool JobifyController::isValidToken(string & token, string & error) {
 	dbToken dbTkn;
 	dbTkn.connect("./tokens");
 	string loggedUser = dbTkn.getUser(token, error);
@@ -222,7 +222,7 @@ bool JobifyController::isValidToken(string token, string & error) {
 	return true;
 }
 
-bool JobifyController::isValidTokenForUser(string token, string & error, string &email) {
+bool JobifyController::isValidTokenForUser(string & token, string & error, string &email) {
 	dbToken dbTkn;
 	dbTkn.connect("./tokens");
 	string loggedUser = dbTkn.getUser(token, error);
