@@ -138,33 +138,35 @@ std::list<Profile> dbUsers::getMostPopularUsers(Json::Value &filter,
 	std::list<Profile> profiles;
 	leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
 	for (it->SeekToFirst(); it->Valid(); it->Next()) {
-		// Read the record
-		cout << "Read the record" << endl;
 		if (!it->value().empty()) {
 			leveldb::Slice keySlice = it->key();
 			leveldb::Slice dataSlice = it->value();
 			Json::Value userProfile;
 			Json::Reader reader;
-			cout << "dataSlice.ToString()" << dataSlice.ToString() << endl;
+			//cout << "dataSlice.ToString()" << dataSlice.ToString() << endl;
 			if (!reader.parse(dataSlice.ToString().c_str(), userProfile)) {
 				error = reader.getFormattedErrorMessages();
 				delete it;
-				cout << "error ->" << error << endl;
 				return profiles;
 			} else {
 				Profile profile(userProfile);
 				string job_position = filter.get("job_position",
 						profile.getJobPosition()).asString();
-				cout << "job_position: " << job_position << endl;
-				cout << "profile.getJobPosition(): " << profile.getJobPosition()
-						<< endl;
-				string skill = filter.get("skill", "").asString();
-				cout << "skill: " << skill << endl;
-				bool hasSkill = true;
-				if (skill != "") {
-					cout << "skill !=: " << skill << endl;
-					hasSkill = utils::setContainsValue(profile.getSkills(),
-							skill);
+				bool hasSkill;
+				if (!filter["skills"].isNull()){
+					hasSkill = false;
+					for (Json::Value::iterator it =
+							filter["skills"].begin();
+							it != filter["skills"].end(); ++it) {
+						string value = it->asString();
+						if (utils::setContainsValue(profile.getSkills(),
+								value)) {
+							hasSkill = true;
+							break;
+						}
+					}
+				} else {
+					hasSkill = true;
 				}
 				if (job_position == profile.getJobPosition() && hasSkill) {
 					profiles.push_back(profile);

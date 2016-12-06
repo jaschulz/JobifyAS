@@ -77,7 +77,7 @@ bool ProfileController::validateSkills(std::map<string, Category> CategoriesMap,
 			if (skillsMap.find(skill.getName()) != skillsMap.end()) {
 				error = "Skill " + skill.getName()
 						+ " already exists for another category.";
-				cout << error << endl;
+				//cout << error << endl;
 				return false;
 			}
 			Category category(cat, "");
@@ -85,12 +85,12 @@ bool ProfileController::validateSkills(std::map<string, Category> CategoriesMap,
 			//request.setData(catJsonStr);
 			//Category is created
 
-			cout << "Category is created" << endl;
+			//cout << "Category is created" << endl;
 			sharedServer.addCategory(catJsonStr, response);
 		}
 		Json::Value skillJson = skill.toJson();
 		//request.setData(skillJsonStr);
-		cout << "Skill is created" << skillJson.toStyledString() << endl;
+		//cout << "Skill is created" << skillJson.toStyledString() << endl;
 		sharedServer.addSkills(skillJson, response);
 		//TODO ver el código de la response
 	}
@@ -118,9 +118,6 @@ bool ProfileController::validateJP(std::map<string, Category> CategoriesMap,
 	std::string name = jpJson.get("name", "").asString();
 	std::string cat = jpJson.get("category", "").asString();
 	std::string desc = jpJson.get("description", "").asString();
-	cout << "name: " << name << endl;
-	cout << "category: " << cat << endl;
-	cout << "description: " << desc << endl;
 	JsonResponse response;
 	Entity jobPosition(name, desc, cat);
 	if (validateCategory(jobPosition, CategoriesMap)) {
@@ -219,10 +216,7 @@ void ProfileController::editProfile(Request &request, JsonResponse &response) {
 			if (validateInput(JsonBody, error)) {
 				dbUsers dbuser;
 				dbuser.connect("./usersdb");
-				cout << "antes de normalizeJsonProfile" << endl;
 				normalizeJsonProfile(JsonBody);
-
-				cout << "despues de normalizeJsonProfile" << endl;
 				Profile profile(JsonBody);
 				profile.setEmail(mail);
 				error = dbuser.editProfile(profile); //key, JsonBody);
@@ -251,7 +245,6 @@ void ProfileController::getProfile(Request &request, JsonResponse &response) {
 	string error;
 
 	string token = request.getHeaderKeyValue("token");
-	cout << "token: " << token << endl;
 	if (!isValidToken(token, error)) {
 		fillResponse(response,401);
 		response["error"] = "ProfileController::getProfile: " + error;
@@ -420,7 +413,6 @@ void ProfileController::recommendUser(Request &request,
 					"/api/users/%99[^/]/recommendation", email)) {
 		error ="";
 		string recommendedUser(email);
-		cout << "recommendedUser:" << recommendedUser << endl;
 		dbToken dbTkn;
 		dbTkn.connect("./tokens");
 		string loggedUser = dbTkn.getUser(token, error);
@@ -540,7 +532,6 @@ void ProfileController::filterUsers(Request &request, JsonResponse &response) {
 	if (!user.empty()) {
 		filter["user"] = user;
 	}
-	cout << "filter: " << filter.toStyledString() << endl;
 	dbUsers dbuser;
 	dbuser.connect("./usersdb");
 	string error;
@@ -567,15 +558,26 @@ bool compare_recommendations(Profile p1, Profile p2) {
 
 void ProfileController::rankUsers(Request &request, JsonResponse &response) {
 	string job_pos = request.get("job_position", "");
-	string skill = request.get("skills", "");
-	cout << "skill: " << skill << endl;
-	cout << "job_pos: " << job_pos << endl;
+	string skills = request.get("skills", "");
 	Json::Value filter;
 	if (!job_pos.empty()) {
 		filter["job_position"] = job_pos;
 	}
-	if (!skill.empty()) {
-		filter["skill"] = skill;
+	if (!skills.empty()) {
+		filter["skills"] = Json::arrayValue;
+		std::string delimiter = ",";
+		size_t pos = 0;
+		std::string token;
+		while ((pos = skills.find(delimiter)) != std::string::npos) {
+			token = skills.substr(0, pos);
+			filter["skills"].append(token);
+			skills.erase(0, pos + delimiter.length());
+		}
+		filter["skills"].append(skills);
+
+		//cout<<"filter[skills].toStyledString();: "<<filter["skills"].toStyledString()<<endl;
+		//filter["skills"].toStyledString();
+
 	}
 	dbUsers dbuser;
 	dbuser.connect("./usersdb");
