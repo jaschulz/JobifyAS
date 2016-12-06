@@ -108,7 +108,9 @@ Json::Value JobifyController::expandContacts(Json::Value contactsJson){
 		Profile profile(jsonProfile);
 		std::string error = jsonProfile.get("error", "").asString();
 		if (error == "") {
-			contacts.append(profile.getContactInfoAsJson());
+			Json::Value jsonProfile = profile.getContactInfoAsJson();
+			jsonProfile["job_position"] = expandJP(jsonProfile.get("job_position","").asString());
+			contacts.append(jsonProfile);
 		}
 	}
 	db.CloseDB();

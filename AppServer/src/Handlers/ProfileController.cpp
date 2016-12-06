@@ -285,15 +285,15 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 		error = "";
 		if (!isValidToken(token, error)) {
 			fillResponse(response,401);
-			response["error"] = error;
+			response["error"] = "Invalid token: " + error;
 			return;
 		}
 		Json::Value JsonBody;
 		dbUsers dbuser;
 		dbuser.connect("./usersdb");
 		JsonBody = dbuser.getContacts(mail);
-		error = JsonBody.get("error", "").asString();
 		dbuser.CloseDB();
+		error = JsonBody.get("error", "").asString();
 		if (error == "") {
 			fillResponse(response, 200);
 			Json::Value contacts = expandContacts(JsonBody["contacts"]);
