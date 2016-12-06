@@ -36,7 +36,7 @@ string dbUsers::editProfile(Profile &profile) {
 				root[keyValue.asString()] = value;
 			}
 			db->Put(writeOptions, email, root.toStyledString());
-			user = root;
+			profile.fromJson(root);
 		}
 	}
 	return error;

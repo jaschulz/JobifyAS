@@ -296,7 +296,11 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 		error = JsonBody.get("error", "").asString();
 		if (error == "") {
 			fillResponse(response, 200);
-			Json::Value contacts = expandContacts(JsonBody["contacts"]);
+			Json::Value contacts = expandUsers(JsonBody["contacts"]);
+			for (Json::Value::iterator it = contacts.begin(); it != contacts.end(); ++it) {
+				expandAttributes(*it);
+			}
+			//expandAttributes(contacts);
 			response["contacts"] = contacts;
 			return;
 		}
@@ -589,7 +593,9 @@ void ProfileController::rankUsers(Request &request, JsonResponse &response) {
 		users.sort(compare_recommendations);
 		std::list<Profile>::iterator it;
 		for (it = users.begin(); it != users.end(); ++it) {
-			ranking.append(it->profileToJSON());
+			Json::Value user = (it->profileToJSON());
+			expandAttributes(user);
+			ranking.append(user);
 		}
 		response["users"] = ranking;
 		return;

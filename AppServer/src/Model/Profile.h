@@ -38,6 +38,8 @@ public:
 
 	Profile(const Json::Value &jsonProfile);
 
+	void fromJson(const Json::Value &jsonProfile);
+
 	void setEmail(string &mail);
 
 	const string &getEmail() const;
@@ -61,8 +63,6 @@ public:
 	~Profile();
 
 	void addRecommendation(const string &email);
-
-	void fromJSON(Json::Value value);
 
 	Json::Value getContactInfoAsJson();
 

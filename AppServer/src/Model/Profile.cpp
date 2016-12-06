@@ -54,6 +54,39 @@ Profile::Profile(const Json::Value &jsonProfile) :
 	}
 }
 
+void Profile::fromJson(const Json::Value &jsonProfile) {
+	this->email = jsonProfile.get("email", "").asString();
+	this->first_name = jsonProfile.get("first_name", "").asString();
+	this->last_name = jsonProfile.get("last_name", "").asString();
+	this->about = jsonProfile.get("about", "").asString();
+	this->pic = jsonProfile.get("pic", "").asString();
+	this->job_position = jsonProfile.get("job_position", "").asString();
+	utils::jsonArrayToSet(jsonProfile["skills"], skills);
+	utils::jsonArrayToSet(jsonProfile["contacts"], contacts);
+	utils::jsonArrayToSet(jsonProfile["invitationsSent"], invitationsSent);
+	utils::jsonArrayToSet(jsonProfile["invitationsReceived"],
+			invitationsReceived);
+	utils::jsonArrayToSet(jsonProfile["recommendations"]["users"],
+			recommendations);
+	if (!jsonProfile["location"]["latitude"].isNull()
+			&& !jsonProfile["location"]["longitude"].isNull()) {
+		double lat = jsonProfile["location"]["latitude"].asDouble();
+		double lon = jsonProfile["location"]["longitude"].asDouble();
+		location.setLatitude(lat);
+		location.setLongitude(lon);
+		location.setValid(true);
+	}
+
+	for (Json::Value::iterator it = jsonProfile["experiences"].begin();
+			it != jsonProfile["experiences"].end(); ++it) {
+		Json::Value value = (*it);
+		std::string where = value.get("where", "").asString();
+		std::string jp = value["job_position"].asString();
+		ExpMin exp(jp, where);
+		experiences.push_back(exp);
+	}
+}
+
 Json::Value Profile::profileToJSON() {
 	Json::Value jsonProfile;
 	jsonProfile["email"] = email;
@@ -87,23 +120,17 @@ Json::Value Profile::publicProfileToJSON() {
 	jsonProfile["last_name"] = last_name;
 	jsonProfile["about"] = about;
 	jsonProfile["pic"] = pic;
-	cout<<"antes de skills"<<endl;
 	jsonProfile["skills"] = utils::setToJsonArray(skills);
 	jsonProfile["job_position"] = job_position;
-	//double latitude = location.getLatitude();
-	//double longitude = location.getLongitude();
-	cout<<"antes de loc"<<endl;
 	if (location.isValid()) {
 		jsonProfile["location"]["latitude"] = location.getLatitude();
 		jsonProfile["location"]["longitude"] = location.getLongitude();
 	}
-	cout<<"despues de location"<<endl;
 	jsonProfile["contacts"] = utils::setToJsonArray(contacts);
 	jsonProfile["recommendations"]["count"] = getRecommendationsCount();
 	jsonProfile["recommendations"]["users"] = utils::setToJsonArray(
 			recommendations);
 	jsonProfile["experiences"] = experiencesToJson();
-	cout<<"fin ACA"<<endl;
 	return jsonProfile;
 }
 
@@ -113,7 +140,9 @@ Json::Value Profile::getContactInfoAsJson() {
 	jsonProfile["first_name"] = first_name;
 	jsonProfile["last_name"] = last_name;
 	jsonProfile["pic"] = pic;
-	jsonProfile["job_position"] = job_position;
+	if (!job_position.empty()) {
+		jsonProfile["job_position"] = job_position;
+	}
 	return jsonProfile;
 }
 
