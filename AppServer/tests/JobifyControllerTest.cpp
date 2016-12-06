@@ -3,7 +3,7 @@
 JobifyControllerTest::JobifyControllerTest() {
 }
 
-Request JobifyControllerTest::generateRequest(string method,
+Request  JobifyControllerTest::generateRequest(string method,
 		string queryString) const {
 
 	mg_connection connection;
@@ -34,7 +34,9 @@ Request JobifyControllerTest::makeDummyBodyRequest(string data,
 	Json::Value body;
 	reader.parse(data, body);
 	request.setBody(body);
+	cout<<"body: "<<request.getBody()<<endl;
 	request.setData(data);
+	cout<<"data: "<<request.getData()<<endl;
 	return request;
 }
 

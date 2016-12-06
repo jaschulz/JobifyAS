@@ -187,7 +187,7 @@ void AccountController::login(Request &request, JsonResponse &response) {
 		Json::Value root;
 		if (!reader.parse(data.c_str(), root)) {
 			fillResponse(response, 401);
-			response["error"] = reader.getFormattedErrorMessages();
+			response["error"] = "1" + reader.getFormattedErrorMessages();
 			return;
 		}
 		string email = root.get("email", "").asString();

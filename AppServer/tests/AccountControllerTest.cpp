@@ -16,10 +16,10 @@ void AccountControllerTest::successfulLogin() {
 
 	RequestHandler<AccountController, JsonResponse> requestHandler(
 			&accountController, &AccountController::login);
-	cout << "AccountControllerTest url: " << request.getUrl() << endl;
-	cout << "AccountControllerTest sessid: " << request.get("sessid") << endl;
-	cout << "AccountControllerTest request.hasCookie(key): "
-			<< request.hasCookie("sessid") << endl;
+//	cout << "AccountControllerTest url: " << request.getUrl() << endl;
+	//cout << "AccountControllerTest sessid: " << request.get("sessid") << endl;
+	//cout << "AccountControllerTest request.hasCookie(key): "
+	//	<< request.hasCookie("sessid") << endl;
 //request.hasCookie(key)
 	JsonResponse *response = (JsonResponse *) requestHandler.process(request);
 	cout << "ok" << endl;

@@ -167,12 +167,12 @@ string Request::get(string key, string fallback) {
 	}
 
 	// Looking on the POST data
-	if (getMethod() == "POST" || getMethod() == "PUT") {
+	//if (getMethod() == "POST" || getMethod() == "PUT") {
 		dataField = data.c_str();
 		if (dataField != NULL && readVariable(dataField, key, output)) {
 			return output;
 		}
-	}
+	//}
 
 	return fallback;
 }
@@ -180,7 +180,6 @@ string Request::get(string key, string fallback) {
 bool Request::hasCookie(string key) {
 	int i;
 	char dummy[10];
-
 	for (i = 0; i < connection->num_headers; i++) {
 		const struct mg_connection::mg_header *header =
 				&connection->http_headers[i];

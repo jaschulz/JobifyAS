@@ -289,6 +289,7 @@ void ProfileController::getContacts(Request &request, JsonResponse &response) {
 					email)) {
 		string mail(email);
 		string token = request.getHeaderKeyValue("token");
+		error = "";
 		if (!isValidToken(token, error)) {
 			fillResponse(response,401);
 			response["error"] = error;
@@ -566,7 +567,7 @@ bool compare_recommendations(Profile p1, Profile p2) {
 
 void ProfileController::rankUsers(Request &request, JsonResponse &response) {
 	string job_pos = request.get("job_position", "");
-	string skill = request.get("skill", "");
+	string skill = request.get("skills", "");
 	cout << "skill: " << skill << endl;
 	cout << "job_pos: " << job_pos << endl;
 	Json::Value filter;

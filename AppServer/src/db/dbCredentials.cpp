@@ -40,6 +40,10 @@ bool dbCredentials::verifyLogin(jobifyCredentials &credentials, string &error) {
 	leveldb::Status st = db->Get(leveldb::ReadOptions(), username, &strJson);
 	Json::Value root;
 	Json::Reader reader;
+	if (st.ok() != 1) {
+		error = "Login failed: " + st.ToString();
+		return false;
+	}
 	if (!reader.parse(strJson.c_str(), root)) {
 		error = reader.getFormattedErrorMessages();
 		return false;
