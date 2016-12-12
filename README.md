@@ -6,11 +6,24 @@
 
 **Building AppServer**
 
+## Option 1: 
+
 1. cd AppServer/
 
 2. sudo sh install.sh
 
 install.sh installs every dependency so that the AppServer can be built and run flawlessly.
+
+## Option 2: Dockerization
+
+1. ```sudo docker build -t appserver/ubuntu:16.04 .```
+
+2. ```sudo docker run -t -i -p 127.0.0.1:8081:8081 appserver/ubuntu:16.04 /bin/bash```
+
+3. Within the container prompt, type ```cd home/AppServer/build```
+
+4. Finally, type ```./appServer```
+
 
 ## REST API
 
