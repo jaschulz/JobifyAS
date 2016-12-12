@@ -6,13 +6,13 @@
 
 **Building AppServer**
 
-## Option 1: 
+## Option 1: Run locally
 
-1. cd AppServer/
+1. ```cd AppServer/```
 
-2. sudo sh install.sh
+2. ```sudo sh install.sh```
 
-install.sh installs every dependency so that the AppServer can be built and run flawlessly.
+install.sh installs every dependency, so that the AppServer can be built and run flawlessly.
 
 ## Option 2: Dockerization
 
