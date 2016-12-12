@@ -33,7 +33,7 @@ echo "Installation complete."
 
 cd $install_dir
 # Last release does not have cmake enabled, so we install it from master.
-echo "Installing mongose-cpp"
+echo "Installing mongoose-cpp"
 wget https://github.com/Gregwar/mongoose-cpp/archive/master.zip && \
 unzip master.zip && \
 rm master.zip && \
